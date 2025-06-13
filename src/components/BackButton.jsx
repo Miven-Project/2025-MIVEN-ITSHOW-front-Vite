@@ -20,7 +20,7 @@ const BackButton = ({ label = "돌아가기" }) => {
         `}
       </style>
       <button
-        onClick={() => navigate(-1)}
+        onClick={() => navigate("/booksearch")}
         style={{
           backgroundColor: "transparent",
           background: "none",
