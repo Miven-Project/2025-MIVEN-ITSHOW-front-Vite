@@ -1,0 +1,13 @@
+body {
+  width: 100%;
+  height: 100vh;
+  box-content: border-box;
+}
+
+.react-colorful {
+  width: 510px !important;
+}
+
+.react-colorful__saturation {
+  border-bottom: none !important;
+}

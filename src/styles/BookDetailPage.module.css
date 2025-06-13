@@ -1,0 +1,55 @@
+/* App.css */
+body,
+html {
+  margin: 0;
+  padding: 0;
+}
+
+.heading-primary {
+  color: #FFF;
+  font-family: Pretendard-Light;
+  font-size: 35px;
+  font-style: normal;
+  font-weight: 100;
+  line-height: normal;
+  z-index: 50;
+}
+
+.book-detail {
+  height: 100vh;
+  flex-direction: column;
+  /* background-color: #a5f3fc; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  position: relative;
+  gap: 33px;
+  z-index: 50;
+}
+
+.book-detail-review {
+  padding: 2rem;
+  background-color: #fef9c3;
+}
+
+.cover-img {
+  margin: 10px;
+  width: 350px;
+  height: 530px;
+  flex-shrink: 0;
+  aspect-ratio: 460.22 / 671.00;
+}
+
+/* 리뷰 스크롤 페이지 */
+.review-header {
+  display: flex;
+  justify-content: center;
+  /* flex-direction: column; */
+}
+
+.review-book-cover {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

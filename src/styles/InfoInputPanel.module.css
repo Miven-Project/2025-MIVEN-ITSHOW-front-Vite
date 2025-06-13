@@ -1,0 +1,104 @@
+/* ModalContent.module.css */
+
+.section-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 20px 0 10px 0;
+    color: #333;
+  }
+  
+  .section-block {
+    background-color: #f9f9f9;
+    padding: 16px;
+    border-radius: 10px;
+    position: relative;
+    margin-bottom: 24px;
+  }
+  
+  .info-panel-blur {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(4px);
+    border-radius: 10px;
+    opacity: 0.1;
+    z-index: 0;
+  }
+  
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+    z-index: 1;
+    position: relative;
+  }
+  
+  .info-label {
+    font-weight: 500;
+    color: #555;
+    flex: 0 0 100px;
+  }
+  
+  .info-value {
+    color: #222;
+    flex: 1;
+    text-align: right;
+    word-break: break-word;
+  }
+  
+  .review-writer {
+    font-weight: 600;
+    color: #15719E;
+  }
+  
+  .review-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 1;
+    position: relative;
+  }
+  
+  .review-rating {
+    display: flex;
+    align-items: center;
+  }
+  
+  .book-icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .rating-value {
+    margin-left: 8px;
+    font-weight: bold;
+    color: #15719E;
+  }
+  
+  .summary-rating-max {
+    margin-left: 4px;
+    color: #777;
+  }
+  
+  .review-comment {
+    color: #333;
+    line-height: 1.4;
+  }
+  
+  .info-back-button {
+    background-color: transparent;
+    border: none;
+    color: #15719E;
+    font-size: 0.95rem;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: color 0.2s;
+  }
+  
+  .info-back-button:hover {
+    color: #0d4f70;
+  }
+  

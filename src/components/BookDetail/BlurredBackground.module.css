@@ -1,0 +1,40 @@
+.blurred-background {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+}
+
+.blurred-background__image-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    filter: blur(10px);
+    overflow: hidden;
+    transform: scale(1.02);
+}
+
+.blurred-background__image {
+    width: 2000px;
+    height: 2800px;
+    flex-shrink: 0;
+    object-fit: cover;
+    filter: blur(10px);
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.blurred-background__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(66, 66, 66, 0.8);
+    pointer-events: none;
+}

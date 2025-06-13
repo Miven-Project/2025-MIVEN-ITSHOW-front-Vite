@@ -1,0 +1,405 @@
+.modal-content {
+    position: relative;
+    width: 840px;
+    height: 550px;
+}
+
+.blur-background {
+    border-radius: 30px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    filter: blur(2px);
+    background: inherit;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 1;
+}
+
+.content-wrapper {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+}
+
+.book-cover {
+    margin: 10px;
+    width: 350px;
+    height: 530px;
+    flex-shrink: 0;
+    aspect-ratio: 460.22 / 671.00;
+}
+
+.summary-panel {
+    position: relative;
+}
+
+.summary-blur-block,
+.summary-review-blur-block {
+    position: absolute;
+    margin-top: 10px;
+    z-index: 1;
+    border-radius: 25px;
+
+    filter: blur(2px);
+}
+
+.summary-quote-section,
+.summary-rating,
+.summary-detail-button {
+    position: relative;
+    z-index: 2;
+}
+
+.summary-blur-block {
+    display: flex;
+    width: 460px;
+    height: 390px;
+    background: rgba(255, 255, 255, 0.50);
+}
+
+.summary-quote-section {
+    top: 0;
+    left: 0;
+    width: 460px;
+    height: 390px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    gap: 40px;
+}
+
+.summary-quote {
+    margin-top: 110px;
+    width: 280px;
+    color: #516777;
+    text-align: center;
+    font-family: Pretendard-Light;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 1.7;
+}
+
+.summary-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 410px;
+}
+
+
+.summary-rating {
+    display: flex;
+    height: 30px;
+    padding: 0px 5px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    color: #516777;
+    font-family: Pretendard;
+    font-size: 10px;
+    gap: 5px;
+
+
+}
+
+.book-icon {
+    height: 25px;
+    width: 25px;
+}
+
+.rating-emoji {
+    display: inline-block;
+    vertical-align: sub;
+    /* 또는 middle */
+    margin-right: 4px;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.rating-value {
+    font-size: 22px;
+    font-family: Pretendard;
+    margin-right: 2px;
+    margin-left: 10px;
+}
+
+.summary-rating-max {
+    margin-top: 5px;
+    width: 21px;
+    height: 20px;
+    color: #ABABAB;
+    font-family: Pretendard;
+    font-size: 15px;
+
+}
+
+.summary-detail-button {
+    cursor: pointer;
+    display: flex;
+    width: 110px;
+    height: 40px;
+    padding: 12px 18px;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 30px;
+    border: 1px solid #5B7A91;
+    background: rgba(255, 255, 255, 0.60);
+
+    color: #516777;
+    text-align: center;
+    font-family: Pretendard-Light;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+
+.summary-review-blur-block {
+    width: 460px;
+    height: 125px;
+    background: rgba(91, 122, 145, 0.30);
+    filter: blur(2px);
+    margin-top: 24px;
+    /* z-index: 1; */
+    /* position: absolute; */
+}
+
+.summary-review-wrapper {
+    position: relative;
+    width: 460px;
+    height: 125px;
+}
+
+.summary-review-meta {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 40px 40px 2px 20px;
+    box-sizing: border-box;
+    z-index: 2;
+    margin-left: 5px;
+}
+
+.summary-review-row {
+    margin-top: 9px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    justify-content: space-between;
+    width: 390px;
+    color: #FFF;
+    font-family: Pretendard;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    /* margin-left: /5px; */
+}
+
+.summary-like-comment-row {
+    margin-top: 2px;
+    gap: 13px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 9px;
+}
+
+.summary-like {
+    display: flex;
+    gap: 3px;
+    justify-content: center;
+    align-items: center;
+}
+
+.summary-comment {
+    display: flex;
+    gap: 3px;
+    justify-content: center;
+    align-items: center;
+}
+
+.summary-writer {
+    font-size: 15px;
+    color: rgba(247, 247, 247, 0.89);
+}
+
+.summary-writer-data {
+    margin-left: 9px;
+    color: #FFF;
+    font-family: Pretendard-Light;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    color: rgba(247, 247, 247, 0.89);
+}
+
+.summary-review-ment {
+    color: #FFF;
+    font-family: Pretendard-Light;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    margin-top: 5px;
+    margin-bottom: 6px;
+    max-height: 60px;
+    /* 원하는 높이로 조절 */
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 10px;
+    box-sizing: border-box;
+
+    scrollbar-width: thin;
+    scrollbar-color: #90a4ae #e5ecf2;
+
+}
+
+
+.summary-review-ment::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+}
+
+.summary-review-ment::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #b0c4d6 0%, #90a4ae 100%);
+    border-radius: 8px;
+}
+
+.summary-review-ment::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #8aa6c1 0%, #5b7a91 100%);
+}
+
+.summary-review-ment::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* info */
+.info-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* 수평 가운데 정렬 */
+}
+
+.section-title {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: #000;
+    font-family: Pretendard-Light;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+
+.section-block {
+    width: 425px;
+    height: 90px;
+    flex-shrink: 0;
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 8px;
+}
+
+.info-panel-blur {
+    border-radius: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    filter: blur(2px);
+    background: inherit;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 1;
+}
+
+.info-item {
+    position: relative;
+    color: #000;
+    font-family: Pretendard-Light;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    justify-content: space-between;
+    display: flex;
+    z-index: 2;
+    grid-template-columns: 00px auto;
+    gap: 30px;
+}
+
+.info-label {
+    margin-left: 40px;
+    text-align: left;
+    font-weight: 500;
+    min-width: 80px;
+    /* label 너비 고정 가능(선택사항) */
+    padding-right: 10px;
+}
+
+.info-value {
+    margin-right: 20px;
+    text-align: left;
+    justify-self: start;
+    flex: 1;
+    /* value가 남은 공간 차지 */
+}
+
+.review-writer {
+    margin-top: 20px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    display: block;
+    font-size: 14px;
+    color: #333;
+    margin-left: 20px;
+}
+
+.review-row {
+    flex-direction: row;
+    display: flex;
+    width: 400px;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.review-rating {
+    margin-left: 20px;
+    display: flex;
+    gap: 5px;
+    font-size: 20px;
+    font-weight: 500;
+    width: 500px;
+    color: #2d3a4a;
+}
+
+.review-comment {
+    color: #555;
+    font-size: 0.98em;
+    white-space: pre-line;
+}
