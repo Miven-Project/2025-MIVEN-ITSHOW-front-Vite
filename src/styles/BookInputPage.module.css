@@ -152,7 +152,7 @@
 
 .info-item {
   position: relative;
-  color: #333;
+  color: gray;
   font-family: Pretendard-Light;
   font-size: 14px;
   font-style: normal;
@@ -436,3 +436,4 @@
   font-size: 18px;
   font-family: Pretendard;
 }
+
