@@ -21,7 +21,7 @@ function App() {
           <Route path="/Home" element={<Home />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/booksearch" element={<BookSearch />} />
-          <Route path="/book/:id" element={<BookInputPage />} />
+          <Route path="/bookinput" element={<BookInputPage />} />
           <Route path="/scroll" element={<BookDetailPage />} />
         </Routes>
       </Router>
