@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import styles from "../styles/BookInputPage.module.css";
 import BackButton from "../components/BackButton";
+import bookIcon from "../assets/images/bookicon.png";
 
 const BookInputPage = () => {
   const { state } = useLocation();
@@ -46,7 +47,18 @@ const BookInputPage = () => {
   if (!book) return <div>책 정보를 불러오는 중입니다...</div>;
 
   return (
-    <div className={styles.container}>
+    <div 
+      className={styles.container}
+      style={{
+        backgroundImage: `url(${book.image})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      {/* 블러 오버레이 */}
+      <div className={styles.blurOverlay}></div>
+      
       <BackButton />
       <div className={styles["page-title"]}>{book.title}</div>
 
@@ -120,8 +132,10 @@ const BookInputPage = () => {
               <div className={styles["rating-title"]}>이책바의 평점</div>
               <div className={styles["rating-stars"]}>
                 {[1, 2, 3, 4, 5].map((value) => (
-                  <div
+                  <img
                     key={value}
+                    src={bookIcon}
+                    alt="book rating"
                     className={`${styles.star} ${rating >= value ? styles.active : ""}`}
                     onClick={() => handleRating(value)}
                   />

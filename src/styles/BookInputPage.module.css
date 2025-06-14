@@ -4,20 +4,51 @@
   align-items: center;
   padding: 40px 20px;
   min-height: 100vh;
-  background: linear-gradient(135deg, #8B7D6B 0%, #A0927D 100%);
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
   position: relative;
 }
 
+/* 배경 이미지 블러 처리를 위한 가상 요소 */
+.container::before {
+  content: '';
+  position: fixed; /* absolute에서 fixed로 변경 */
+  top: -20px; /* 여유 공간 추가 */
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  width: calc(100% + 40px); /* 너비 확장 */
+  height: calc(100% + 40px); /* 높이 확장 */
+  background-image: inherit; /* 부모의 배경 이미지 상속 */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(15px); /* 이미지 블러 처리 */
+  z-index: 0;
+}
+
+/* 어두운 오버레이 */
+.blurOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4); /* 어두운 오버레이로 가독성 향상 */
+  z-index: 1;
+}
+
 .modal-content {
   position: relative;
-  width: 840px;
+  width: 1200px; /* 840px에서 1200px로 증가 */
   height: 550px;
   display: flex;
   margin-left: 40px;
+  z-index: 2;
 }
 
 .blur-background {
+  width: 1040px;
+  height: 690px;
   border-radius: 30px;
   position: absolute;
   top: -50px;
@@ -26,9 +57,8 @@
   bottom: -40px;
   background: rgba(255, 255, 255, 0.7);
   z-index: 1;
-  margin-left: -300px;
+  margin-left: -220px;
   margin-right: 200px;
-
 }
 
 .content-wrapper {
@@ -40,13 +70,14 @@
   justify-content: center;
   align-items: center;
   margin-left: -200px;
-    
 }
 
 .book-cover-section {
   margin: 10px;
   width: 300px;
-  height: 530px;
+  height: 700px; /* 530px에서 700px로 증가 */
+  /* 또는 height: auto; */
+  overflow: visible; /* 이것도 추가 */
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -56,12 +87,12 @@
 }
 
 .book-cover {
-  /* width: 380px; */
-  height: 600px;
+  height: 650px;
   object-fit: cover;
   border-radius: 30px;
-  margin-left: -50px;
-  margin-top: -20px;
+  margin-top: 35px; /* 원하는 위치로 조정 */
+  margin-left: 200px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .book-title {
@@ -87,7 +118,8 @@
   align-items: flex-start;
   width: 400px;
   padding: 10px;
-  margin-left: 20px;
+  margin-left: 200px;
+  margin-top: 35px;
 }
 
 .section-title {
@@ -214,18 +246,17 @@
 .star {
   width: 20px;
   height: 20px;
-  background: #E5E5E5;
-  border-radius: 3px;
   cursor: pointer;
   transition: all 0.2s ease;
+  filter: brightness(0) saturate(100%) invert(76%) sepia(8%) saturate(394%) hue-rotate(167deg) brightness(92%) contrast(86%); /* #B7C2C8 색상 */
 }
 
 .star.active {
-  background: gray;
+  filter: brightness(0) saturate(100%) invert(26%) sepia(99%) saturate(1324%) hue-rotate(192deg) brightness(93%) contrast(80%); /* #15719E 색상 */
 }
 
 .star:hover {
-  background: gray;
+  filter: brightness(0) saturate(100%) invert(40%) sepia(60%) saturate(800%) hue-rotate(180deg) brightness(90%) contrast(85%); /* 호버 시 중간 색상 */
   transform: scale(1.1);
 }
 
@@ -245,7 +276,6 @@
   margin-left: auto;
   outline: none;
   font-family: Pretendard;
-  /* font-weight: 500; */
 }
 
 .save-button {
@@ -273,23 +303,20 @@
 }
 
 .right-section {
-  /* background: rgba(255, 255, 255, 0.15); */
-  backdrop-filter: blur(20px);
   border-radius: 30px;
   padding: 40px 30px;
-  width: 390px;
-  /* border: 1px solid rgba(255, 255, 255, 0.2); */
+  width: 500px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   text-align: center;
   margin: 10px;
-  margin-left: 100px;
-  height: 670px;
+  margin-left: 50px;
+  height: 710px;
   position: relative;
-  /* box-sizing: border-box; */
-  margin-top:-115px;
+  margin-top: -110px;
 }
 
 .quote-icon {
@@ -385,14 +412,15 @@
 
 .page-title {
   position: absolute;
+  height: 50px;
   top: 90px;
-  left: 50%;
+  left: 36%;
   transform: translateX(-50%);
   color: white;
-  font-size: 24px;
-  font-weight: 300;
+  font-size: 40px;
   font-family: Pretendard-Light;
   z-index: 100;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* 가독성을 위한 텍스트 그림자 추가 */
 }
 
 .info-input::placeholder,
@@ -401,7 +429,7 @@
   color: gray; 
 }
 
-.count{
+.count {
   color: gray;
   font-weight: 600;
   margin-left: -6px;

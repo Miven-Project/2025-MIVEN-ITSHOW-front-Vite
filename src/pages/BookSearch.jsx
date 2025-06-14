@@ -3,6 +3,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BookCard from "../components/BookCard";
+import booksData from "../data/book.json";
 import styles from "../styles/BookSearch.module.css";
 import Nav from "../components/Nav";
 import { DebounceInput } from "react-debounce-input";
@@ -13,6 +14,7 @@ const BookSearch = () => {
   const hasQuery = query.trim() !== "";
   const navigate = useNavigate();
 
+  // 검색 기능 (Naver API)
   useEffect(() => {
     const fetchBooks = async () => {
       try {
@@ -52,6 +54,7 @@ const BookSearch = () => {
       </div>
 
       <div className={styles.booksearchContainer}>
+        {/* 상단 이미지들 */}
         <img
           src="/assets/images/Book Search.png"
           alt="Book Search"
@@ -63,6 +66,7 @@ const BookSearch = () => {
           className={styles.booksearchTopImage2}
         />
 
+        {/* 검색창 */}
         <div className={styles.booksearchInputContainer}>
           <div className={styles.searchInputWrapper}>
             <img
@@ -81,7 +85,29 @@ const BookSearch = () => {
           </div>
         </div>
 
-        {hasQuery ? (
+        {/* 검색어가 없을 때: book.json의 모든 책 + 딤 오버레이 */}
+        {!hasQuery && (
+          <>
+            <div className={styles.bookGrid}>
+              {booksData.map((book, idx) => (
+                <div key={idx} onClick={() => handleBookClick(book)}>
+                  <BookCard
+                    id={book.id}
+                    image={book.image}
+                    title={book.title || "제목 없음"}
+                    author={book.author || "저자 정보 없음"}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className={styles.overlayCtn}>
+              <div className={styles.dimOverlay}></div>
+            </div>
+          </>
+        )}
+
+        {/* 검색어가 있을 때: Naver API 검색 결과 */}
+        {hasQuery && (
           <div className={styles.resultsGrid}>
             {searchResults.length > 0 ? (
               searchResults.map((book, idx) => (
@@ -102,10 +128,6 @@ const BookSearch = () => {
                 </p>
               </div>
             )}
-          </div>
-        ) : (
-          <div className={styles.overlayCtn}>
-            <div className={styles.dimOverlay}></div>
           </div>
         )}
       </div>
