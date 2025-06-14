@@ -3,7 +3,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import PretendardLight from "../assets/fonts/Pretendard-Light.ttf";
 
-const BackButton = ({ label = "돌아가기" }) => {
+const BackButton = ({ label = "책 다시 검색" }) => {
   const navigate = useNavigate();
 
   return (
