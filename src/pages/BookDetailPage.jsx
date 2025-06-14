@@ -267,16 +267,7 @@ const BookDetailPage = () => {
                 </section>
             </BlurredBackground>
             <section className={styles["book-detail-review"]}>
-                <p>내용이 많아서 세로로 스크롤됩니다.</p>
-                <div style={{ height: "1500px", backgroundColor: "#ddd" }}>스크롤 내용</div>
-                {/* <BookDetailReview /> */}
-                {/* <BlurredBackground cover={bookData.cover}> */}
                 <BackButton />
-                <section className={styles["book-detail"]}>
-                    {/* <BoldText title={bookData.title} className={styles["heading-primary"]} /> */}
-                    <h1 className={styles["heading-primary"]}>{bookData.title}</h1>
-                    <ModalContent book={bookData} />
-                </section>
                 {/* </BlurredBackground> */}
                 <section className={bookDetailReview["book-detail-review"]}>
                     <div className={bookDetailReview["review-background-layer"]}>
@@ -287,9 +278,7 @@ const BookDetailPage = () => {
                             <div className={bookDetailReview["review-blur-background"]} />
                         </div>
                     </div>
-                    {/* <p>내용이 많아서 세로로 스크롤됩니다.</p> */}
                     <div className={bookDetailReview["review-header"]}>
-                        {/* <BoldText title={bookData.title} className={BookDetailReview["heading-primary-review"]} /> */}
                         <h1 className={bookDetailReview["heading-primary-review"]}>{bookData.title}</h1>
                         <BookCover cover={bookData.cover} className={bookDetailReview["review-book-cover"]} />
                         <div className={bookDetailReview["book-sub-info"]}>
