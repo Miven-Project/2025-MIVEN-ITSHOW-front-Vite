@@ -29,10 +29,24 @@ const SelectBook = () => {
           title: book.title,
           cover: book.cover,
         }));
-        setBooks([newPageBook, ...bookCovers]);
-        setCenterIndex(0);
+
+        const allBooks = [newPageBook, ...bookCovers];
+
+        setBooks(allBooks);
+        setCenterIndex(0); // 항상 뉴페이지가 중앙
       })
-      .catch((err) => console.error("📕 책 커버 로딩 실패", err));
+      .catch((err) => {
+        console.error("📕 책 커버 로딩 실패", err);
+
+        // 실패해도 뉴페이지는 항상 표시
+        setBooks([
+          {
+            title: "뉴페이지",
+            cover: "/assets/images/newpage.png",
+          },
+        ]);
+        setCenterIndex(0);
+      });
   }, []);
 
   const isNewPageCenter = books[centerIndex]?.title?.trim() === "뉴페이지";
