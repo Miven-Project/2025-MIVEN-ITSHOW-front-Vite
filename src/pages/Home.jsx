@@ -77,4 +77,4 @@ function Img_list(){
 
 export default Home;
 //커밋 테스트
-// URL 변경 완료
+// URL 변경 진짜 완료
