@@ -4,7 +4,6 @@
   align-items: center;
   margin-top: 60px;
   font-family: "Pretendard", sans-serif;
-
 }
 
 .title {
@@ -16,7 +15,7 @@
   font-weight: 500;
   text-shadow: 0.5px 0 0 #424242;
   line-height: normal;
-
+  margin-top: 70px;
 }
 
 .inputGroupBox {
@@ -28,10 +27,9 @@
   overflow: hidden;
   position: absolute;
   left: 50%;
-  top: 250px;      /* 위에서부터 200px 아래 */
+  top: 250px;
   transform: translateX(-50%);
 }
-
 
 .inputLine {
   display: flex;
@@ -44,7 +42,6 @@
 
 .inputLine:last-child {
   border-bottom: none;
-  
 }
 
 .inputLine img {
@@ -56,6 +53,19 @@
 
 .inputLine span {
   font-size: 15px;
+}
+
+.inputLine input {
+  border: none;
+  outline: none;
+  background: none;
+  flex: 1;
+  font-size: 16px;
+  color: #000000;
+}
+
+.inputLine input::placeholder {
+  color: #D9D9D9;
 }
 
 .eyeToggle {
@@ -72,7 +82,6 @@
   left: 50%;
   top: 490px;
   transform: translateX(-50%);
-
   background: #126a96;
   color: white;
   font-weight: bold;
@@ -82,16 +91,14 @@
   border-radius: 20px;
   font-size: 16px;
   cursor: pointer;
-
   font-family: Pretendard;
   font-size: 20px;
   font-weight: 500;
   padding: 20px 0;
-
 }
 
 .loginPrompt {
-
+  margin-top: 20px;
   font-size: 14px;
   color: #424242;
   text-align: center;
@@ -102,17 +109,4 @@
   cursor: pointer;
   font-weight: 600;
   margin-left: 5px;
-}
-
-.inputLine input {
-  border: none;
-  outline: none;
-  background: none;
-  flex: 1;
-  font-size: 16px;
-  color: #000000; /* 입력된 텍스트 색깔 (필요시 변경) */
-}
-
-.inputLine input::placeholder {
-
 }
