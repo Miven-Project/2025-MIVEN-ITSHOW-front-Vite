@@ -1,5 +1,5 @@
 // BookInputPage.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import styles from "../styles/BookInputPage.module.css";
 import BackButton from "../components/BackButton";
@@ -15,24 +15,106 @@ const BookInputPage = () => {
     isbn: book?.isbn || "",
     publishDate: book?.pubdate || "",
     publisher: book?.publisher || "",
-    readingPeriod: "",
+    readingStart: "",
+    readingEnd: "",
     writer: "",
     quote: "",
     shortReview: "",
   });
+
+  const [readingStartSelected, setReadingStartSelected] = useState(false);
+  const [readingEndSelected, setReadingEndSelected] = useState(false);
+
+  // 날짜를 "0000년00월00일" 형태로 변환하는 함수
+  const formatDateKR = (dateString) => {
+    if (!dateString) return "";
+    const [year, month, day] = dateString.split("-");
+    return `${year}년 ${month}월 ${day}일`;
+  };
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
+
+    if (field === "readingStart") {
+      setReadingStartSelected(!!value);
+    } else if (field === "readingEnd") {
+      setReadingEndSelected(!!value);
+    }
   };
 
   const handleRating = (value) => {
     setRating(value);
   };
 
-  const handleSave = () => {
+  const postQuote = async (quoteData) => {
+    try {
+      const response = await fetch("/api/quotes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(quoteData),
+      });
+
+      if (!response.ok) {
+        throw new Error("서버 응답 오류");
+      }
+
+      const result = await response.json();
+      console.log("구절 저장 서버 응답:", result);
+    } catch (error) {
+      console.error("구절 저장 실패:", error);
+      alert("인상 깊은 구절 저장 중 오류가 발생했습니다.");
+    }
+  };
+
+  const postReview = async (reviewData) => {
+    try {
+      const response = await fetch("/api/reviews", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reviewData),
+      });
+
+      if (!response.ok) {
+        throw new Error("서버 응답 오류");
+      }
+
+      const result = await response.json();
+      console.log("리뷰 저장 서버 응답:", result);
+    } catch (error) {
+      console.error("리뷰 저장 실패:", error);
+      alert("리뷰 저장 중 오류가 발생했습니다.");
+    }
+  };
+
+  // 새로 추가한 함수: /api/reading 에 독서 시작/끝 날짜 POST 요청
+  const postReadingDates = async (readingStart, readingEnd) => {
+    try {
+      const response = await fetch("/api/reading", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ readingStart, readingEnd }),
+      });
+      if (!response.ok) {
+        throw new Error("독서 날짜 저장 서버 오류");
+      }
+      const result = await response.json();
+      console.log("독서 날짜 저장 서버 응답:", result);
+    } catch (error) {
+      console.error("독서 날짜 저장 실패:", error);
+      alert("독서 날짜 저장 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleSave = async () => {
     const saveData = {
       book: book.title,
       author: book.author,
@@ -42,23 +124,39 @@ const BookInputPage = () => {
 
     console.log("저장할 데이터:", saveData);
     alert(`"${book.title}"에 대한 정보가 저장되었습니다!\n평점: ${rating}점`);
+
+    const quoteData = {
+      bookTitle: book.title,
+      quote: formData.quote,
+      writer: formData.writer,
+    };
+    await postQuote(quoteData);
+
+    const reviewData = {
+      bookTitle: book.title,
+      rating: rating,
+      review: formData.shortReview,
+      writer: formData.writer,
+    };
+    await postReview(reviewData);
+
+    // 여기서 독서 시작/끝 날짜 서버에 보냄
+    await postReadingDates(formData.readingStart, formData.readingEnd);
   };
 
   if (!book) return <div>책 정보를 불러오는 중입니다...</div>;
 
   return (
-    <div 
+    <div
       className={styles.container}
       style={{
         backgroundImage: `url(${book.image})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
       }}
     >
-      {/* 블러 오버레이 */}
       <div className={styles.blurOverlay}></div>
-      
       <BackButton />
       <div className={styles["page-title"]}>{book.title}</div>
 
@@ -107,13 +205,34 @@ const BookInputPage = () => {
             <div className={styles["section-title"]}>독서</div>
             <div className={styles["section-block"]}>
               <div className={styles["info-item"]}>
-                <span className={styles["info-label"]}>독서기간</span>
-                <input
-                  type="date"
-                  className={styles["info-input"]}
-                  value={formData.readingPeriod}
-                  onChange={(e) => handleInputChange("readingPeriod", e.target.value)}
-                />
+                <span className={styles["info-label"]}>시작 날짜</span>
+                {!readingStartSelected ? (
+                  <input
+                    type="date"
+                    className={styles["info-input"]}
+                    value={formData.readingStart}
+                    onChange={(e) => handleInputChange("readingStart", e.target.value)}
+                  />
+                ) : (
+                  <span className={styles["info-input"]} style={{ pointerEvents: "none" }}>
+                    {formatDateKR(formData.readingStart)}
+                  </span>
+                )}
+              </div>
+              <div className={styles["info-item"]}>
+                <span className={styles["info-label"]}>끝난 날짜</span>
+                {!readingEndSelected ? (
+                  <input
+                    type="date"
+                    className={styles["info-input"]}
+                    value={formData.readingEnd}
+                    onChange={(e) => handleInputChange("readingEnd", e.target.value)}
+                  />
+                ) : (
+                  <span className={styles["info-input"]} style={{ pointerEvents: "none" }}>
+                    {formatDateKR(formData.readingEnd)}
+                  </span>
+                )}
               </div>
               <div className={styles["info-item"]}>
                 <span className={styles["info-label"]}>작성자</span>
