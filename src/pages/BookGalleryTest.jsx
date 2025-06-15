@@ -2,13 +2,13 @@ import { Nav } from '../pages/Home.jsx';
 import "../styles/BookGallery.css";
 import React, { useState, useRef, useEffect } from "react";
 import searchIcon from '/assets/images/search-icon.png';
-import testData from "../data/TestData.json";  // ✅ JSON 파일 import 경로 확인
+import testData from "../data/TestData.json";  
 
 function BookGallery() {
   const [searchTerm, setSearchTerm] = useState("");
   const searchInputRef = useRef(null);
 
-  // ✅ JSON 데이터로 초기 설정
+  //JSON 데이터로 초기 설정
   const [bookData] = useState(testData);
   const [filteredData, setFilteredData] = useState(testData);
 
@@ -18,7 +18,7 @@ function BookGallery() {
     }
   }, []);
 
-  // ✅ 검색 필터링
+  // 검색 필터링
   const filteredBooks = filteredData.filter((book) =>
     book.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -60,6 +60,7 @@ function BookGallery() {
   );
 }
 
+// 갤러리 마크 이미지
 function GalleryMark() {
   return (
     <div className="GalleryMark">
