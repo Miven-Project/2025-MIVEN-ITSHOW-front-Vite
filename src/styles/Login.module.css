@@ -4,7 +4,6 @@
   align-items: center;
   margin-top: 60px;
   font-family: "Pretendard", sans-serif;
-
 }
 
 .title {
@@ -13,34 +12,24 @@
   font-family: Pretendard;
   font-size: 30px;
   font-style: normal; 
-  font-weight: 500;
+  font-weight: 500; /* 살짝 두껍게 하고 싶으면 520~550까지 조절 가능 */
   text-shadow: 0.5px 0 0 #424242;
   line-height: normal;
-  margin-top: 70px;     
-}
-
-.inputLine input {
-  border: none;      
-  outline: none;     
-  background: none;  
-  flex: 1;           
-  font-size: 16px;
-  color: #D9D9D9;
+  margin-top: 70px;
 }
 
 .inputGroupBox {
   width: 500px;
-  background: rgb(255, 255, 255);
+  background: white;
   color: white;
   border: 1px solid #D9D9D9;
   border-radius: 20px;
   overflow: hidden;
   position: absolute;
   left: 50%;
-  top: 250px;      /* 위에서부터 200px 아래 */
+  top: 250px;
   transform: translateX(-50%);
 }
-
 
 .inputLine {
   display: flex;
@@ -53,7 +42,6 @@
 
 .inputLine:last-child {
   border-bottom: none;
-  
 }
 
 .inputLine img {
@@ -61,10 +49,6 @@
   height: 30px;
   margin-right: 12px;
   opacity: 0.8;
-}
-
-.inputLine span {
-  font-size: 15px;
 }
 
 .eyeToggle {
@@ -76,12 +60,24 @@
   opacity: 0.7;
 }
 
+.inputLine input {
+  border: none;
+  outline: none;
+  background: none;
+  flex: 1;
+  font-size: 16px;
+  color: #000000;
+}
+
+.inputLine input::placeholder {
+  color: #D9D9D9;
+}
+
 .signupButton {
   position: absolute;
   left: 50%;
-  top: 490px;
+  top: 420px; /* 줄어든 높이에 맞게 조정 */
   transform: translateX(-50%);
-
   background: #126a96;
   color: white;
   font-weight: bold;
@@ -89,14 +85,11 @@
   padding: 14px 0;
   width: 500px;
   border-radius: 20px;
-  font-size: 16px;
-  cursor: pointer;
-
-  font-family: Pretendard;
   font-size: 20px;
+  font-family: Pretendard;
   font-weight: 500;
   padding: 20px 0;
-
+  cursor: pointer;
 }
 
 .loginPrompt {
@@ -111,17 +104,4 @@
   cursor: pointer;
   font-weight: 600;
   margin-left: 5px;
-}
-
-.inputLine input {
-  border: none;
-  outline: none;
-  background: none;
-  flex: 1;
-  font-size: 16px;
-  color: #000000; /* 입력된 텍스트 색깔 (필요시 변경) */
-}
-
-.inputLine input::placeholder {
-  color: #D9D9D9; 
 }
