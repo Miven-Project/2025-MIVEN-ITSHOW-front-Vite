@@ -16,16 +16,7 @@
   font-weight: 500;
   text-shadow: 0.5px 0 0 #424242;
   line-height: normal;
-  margin-top: 70px;     
-}
 
-.inputLine input {
-  border: none;      
-  outline: none;     
-  background: none;  
-  flex: 1;           
-  font-size: 16px;
-  color: #D9D9D9;
 }
 
 .inputGroupBox {
@@ -100,7 +91,7 @@
 }
 
 .loginPrompt {
-  margin-top: 20px;
+
   font-size: 14px;
   color: #424242;
   text-align: center;
@@ -123,5 +114,5 @@
 }
 
 .inputLine input::placeholder {
-  color: #D9D9D9; 
+
 }
