@@ -10,6 +10,7 @@ import BookDetailPage from "./pages/BookDetailPage";
 import "./global.css";
 import Home from "./pages/Home";
 import BookGallery from "./pages/BookGallery";
+import BookGalleryTest from "./pages/BookGalleryTest";
 import BookSearch from "./pages/BookSearch";
 import BookInputPage from "./pages/BookInputPage";
 
@@ -22,6 +23,7 @@ function App() {
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/Home" element={<Home />} />
           <Route path="/BookGallery" element={<BookGallery />} />
+          <Route path="/BookGalleryTest" element={<BookGalleryTest />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />  {/* ★ 여기 login 경로 추가 */}
           <Route path="/booksearch" element={<BookSearch />} />

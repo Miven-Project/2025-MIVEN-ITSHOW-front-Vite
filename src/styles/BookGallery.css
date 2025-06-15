@@ -4,37 +4,52 @@
   box-sizing: border-box;
 }
 
-/*갤러리 마크*/
-.GalleryMark{
+Nav {
+  position: fixed;  /* 화면에 고정 */
+  top: 0;           /* 화면 최상단 */
+  left: 0;
+  width: 100%;      /* 화면 가로 전체 */
+  z-index: 1000;    /* 다른 요소들 위에 있도록 */
+}
+
+.GalleryMark {
   position: relative;
+  width: 100%;
   height: 350px;
-  margin-bottom: 40px;
+  margin: 0;
+  padding: 0;
 }
 
-.GalleryMark-1{
-    position: absolute;
-    width: 1300px;
-    height: 350px;
-    top: 0;
-    left: 170px;
-    z-index: 1; /*레이아웃순서*/
+/* 공통 위치 설정: 완전 상단 + 중앙 정렬 */
+.GalleryMark-1,
+.GalleryMark-2 {
+  position: absolute;
+  top: 0; /* ← 진짜 맨 위로 */
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-.GalleryMark-2{
-    position: absolute;
-    width: 1300px;
-    height: 350px;
-    top: 0;
-    left: 140px;
+.GalleryMark-1 {
+  z-index: 2;
+  width: 1300px;
+  height: 350px;
 }
+
+.GalleryMark-2 {
+  z-index: 1;
+  width: 130x;
+  height: 350px;
+}
+
 
 /* 책 데이터 이미지*/
 .book-gallery-container {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   row-gap: 10px; /* 행(위아래) 간격 - 예시로 50px */
-  column-gap: 0px; /* 열(좌우) 간격 - 예시로 20px */
-  padding: 10px;
+  justify-content: center;         /* 가운데 정렬 */
+  gap: 20px 5px;                  /* row-gap: 20px, column-gap: 40px */
+  padding: 40px 20px;
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -47,8 +62,8 @@
 
 .book-cover-wrapper {
   position: relative;
-  width: 250px;
-  height: 350px;
+  width: 330px;
+  height: 480px;
   overflow: hidden;
 }
 
@@ -127,17 +142,18 @@
   display: flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.8); /* 약간 투명한 흰색 */
-  border-radius: 25px;
-  padding: 10px 20px;
-  width: 500px;
+  border-radius: 0px;
+  padding: 30px 32px;
+  width: 800px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* ✅ 돋보기 아이콘 */
 .search-icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
+  width: 40px;
+  height: 40px;
+  margin-left: 15px;
+  margin-right: 0px;
   opacity: 0.6;
 }
 
@@ -149,10 +165,64 @@
   width: 100%;
   font-size: 16px;
   color: #333;
+  text-align: center;
 }
 
 .search-input-container input::placeholder {
   color: #888;
+}
+
+.book-title {
+  position: absolute;
+  top: 140px; /* 맨 위에 위치 */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  text-shadow: 0 0 5px rgba(0,0,0,0.8);
+  user-select: none;
+  padding: 0 10px;
+  box-sizing: border-box;
+  z-index: 10; /* hover-overlay 위로 */
+}
+
+.book-quote {
+  font-size: 14px;
+  margin: 60px 0 20px 0;
+  line-height: 1.5;
+  max-width: 230px;
+  max-height: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;  /* 가운데 정렬 추가 */
+  color: white;
+  font-style: normal !important;
+}
+
+.view-button {
+  padding: 12px 50px;
+  border: 1px solid white;
+  background: transparent;
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.3s, color 0.3s;
+  margin-top: 10px;  /* 써머리와 간격 */
+
+  position: relative;
+  top: 40px;
+}
+
+
+.book-cover-wrapper:hover .book-title {
+  opacity: 1;
 }
 
 /*첫 커밋밋*/
