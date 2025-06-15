@@ -51,10 +51,11 @@ function SearchBar() {
   };
 
   return (
-    <div className="SearchBar" onClick={handleClick}>
-      <input type="text" className="search" placeholder="Search..." readOnly />
+    <div className={Homestyles.SearchBar} onClick={handleClick}>
+      <input type="text" className={Homestyles.search} placeholder="Search..." readOnly />
     </div>
   );
 }
+
 
 export default Home;

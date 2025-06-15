@@ -9,12 +9,13 @@
   padding: 0;
 }
 
+
 .Allnavcontainer {
   display: flex;
   flex-direction: column;
   row-gap: 10px;
-  margin-left: 50px;
-  margin-top: 40px; /* 위로 올리기 */
+  margin-left:70px;
+  margin-top: 55px; /* 위로 올리기 */
   position: absolute;
   top: 0;
   left: 0;
@@ -54,11 +55,10 @@
 
 
 /*서치바*/
-/* 서치바 */
 .SearchBar {
-  position: fixed;  /* 스크롤과 상관없이 화면 오른쪽 상단 고정 */
-  top: 20px;
-  right: 40px;
+  position: fixed;  /* 화면 오른쪽 상단에 고정 */
+  top: 70px;
+  right: 190px;
   width: 160px;
   height: 36px;
   z-index: 1000;
@@ -67,33 +67,44 @@
 .search {
   width: 100%;
   height: 100%;
-  font-size: 14px;
+  font-size: 30px;
   font-family: Pretendard;
   padding: 6px 12px;
-  border-radius: 20px;
+  border-radius: 0;            /* 동그라미 제거 */
   border: none;
-  background-color: #f8f8f8;
-  color: #98a9b2;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.05);
+  background-color: transparent;  /* 배경 투명 */
+  color: #333;
+  box-shadow: none;            /* 그림자 제거 */
   cursor: pointer;
+  outline: none; 
 }
 
+
 .search::placeholder {
-  color: #98a9b2;
+  color: #888;
 }
 
 
 .HomeImgContainer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 100vw;
-  height: 750px;
+  height: calc(100vh - 100px);  /* 위아래 50px 여백 */
+  z-index: -1;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
-  margin-top: 80px;
+  overflow: hidden;             /* 넘치는 부분 가리기 */
+  pointer-events: none;         /* 클릭 막기 */
 }
 
 .HomeImg {
-  max-width: 1000px;
-  max-height: 100%;
+  max-width: 210%;
+  max-height: 180%;
+  object-fit: contain;         /* 잘리지 않고 전체 보이기 */
+  user-select: none;
 }
+
+
