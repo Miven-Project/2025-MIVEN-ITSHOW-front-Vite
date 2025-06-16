@@ -5,11 +5,11 @@
 }
 
 Nav {
-  position: fixed;  
-  top: 0;           
+  position: fixed;
+  top: -10px;
   left: 0;
-  width: 100%;      
-  z-index: 1000;    
+  width: 100%;
+  z-index: 10000;
 }
 
 /* 갤러리 마크 */
@@ -20,7 +20,6 @@ Nav {
   margin: 0;
   padding: 0;
 }
-
 
 .GalleryMark-1,
 .GalleryMark-2 {
@@ -37,20 +36,19 @@ Nav {
 }
 
 .GalleryMark-2 {
-  z-index: 1;
+  /* z-index: 1; */
   width: 130x;
   height: 350px;
 }
-
 
 /* 책 데이터 이미지*/
 .book-gallery-container {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  row-gap: 10px; 
-  justify-content: center;         
-  gap: 15px 10px;                  
-  padding: 40px 20px;
+  row-gap: 10px;
+  justify-content: center;
+  gap: 15px 10px;
+  padding: 140px 20px;
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -129,12 +127,11 @@ Nav {
   color: black;
 }
 
-
 /* 서치바 */
 .search-bar-section {
   display: flex;
   justify-content: center;
-  margin-top: -250px; 
+  margin-top: -250px;
   z-index: 3;
   position: relative;
 }
@@ -177,7 +174,7 @@ Nav {
 /* 책 제 */
 .book-title {
   position: absolute;
-  top: 140px; 
+  top: 140px;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
@@ -188,11 +185,11 @@ Nav {
   opacity: 0;
   transition: opacity 0.3s;
   pointer-events: none;
-  text-shadow: 0 0 5px rgba(0,0,0,0.8);
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
   user-select: none;
   padding: 0 10px;
   box-sizing: border-box;
-  z-index: 10; 
+  z-index: 10;
 }
 
 /* 책 내용 */
@@ -204,7 +201,7 @@ Nav {
   max-height: 130px;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-align: center;  /* 가운데 정렬 추가 */
+  text-align: center; /* 가운데 정렬 추가 */
   color: white;
   font-style: normal !important;
 }
@@ -218,7 +215,7 @@ Nav {
   cursor: pointer;
   font-size: 15px;
   transition: background 0.3s, color 0.3s;
-  margin-top: 10px;  /* 써머리와 간격 */
+  margin-top: 10px; /* 써머리와 간격 */
 
   position: relative;
   top: 40px;
@@ -227,4 +224,3 @@ Nav {
 .book-cover-wrapper:hover .book-title {
   opacity: 1;
 }
-

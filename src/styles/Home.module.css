@@ -13,7 +13,7 @@
   display: flex;
   flex-direction: column;
   row-gap: 10px;
-  margin-left:70px;
+  margin-left: 70px;
   margin-top: 55px; /* 위로 올리기 */
   position: absolute;
   top: 0;
@@ -22,7 +22,7 @@
 
 .Gradation {
   width: 100vw;
-  height: 416px;
+  height: 86px;
 }
 
 .Logo {
@@ -40,7 +40,7 @@
 }
 
 .Clicknav {
-  color: #98A9B2;
+  color: #98a9b2;
   font-family: Pretendard;
   font-size: 21px;
   font-weight: 200;
@@ -53,10 +53,9 @@
   column-gap: 15px;
 }
 
-
 /*서치바*/
 .SearchBar {
-  position: fixed;  
+  position: fixed;
   top: 70px;
   right: 190px;
   width: 160px;
@@ -70,13 +69,13 @@
   font-size: 30px;
   font-family: Pretendard;
   padding: 6px 12px;
-  border-radius: 0;            
+  border-radius: 0;
   border: none;
-  background-color: transparent; 
+  background-color: transparent;
   color: #333;
-  box-shadow: none;            
+  box-shadow: none;
   cursor: pointer;
-  outline: none; 
+  outline: none;
 }
 
 .search::placeholder {
@@ -90,20 +89,18 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100vw;
-  height: calc(100vh - 100px);  
+  height: calc(100vh - 100px);
   z-index: -1;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;             
-  pointer-events: none;         
+  overflow: hidden;
+  pointer-events: none;
 }
 
 .HomeImg {
   max-width: 210%;
   max-height: 180%;
-  object-fit: contain;         
+  object-fit: contain;
   user-select: none;
 }
-
-
