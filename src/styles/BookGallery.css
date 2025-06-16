@@ -9,7 +9,7 @@ Nav {
   top: -10px;
   left: 0;
   width: 100%;
-  z-index: 10000;
+  z-index: 3;
 }
 
 /* 갤러리 마크 */
@@ -24,7 +24,7 @@ Nav {
 .GalleryMark-1,
 .GalleryMark-2 {
   position: absolute;
-  top: 0; /* ← 진짜 맨 위로 */
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
 }

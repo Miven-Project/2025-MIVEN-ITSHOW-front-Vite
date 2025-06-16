@@ -66,8 +66,18 @@ export default function MyPageHeader() {
 
   // API 설정
   const apiBaseUrl = "http://3.38.185.232:8080";
-  const token =
-    "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYW5nbWkxQG5hdmVyLmNvbSIsImlhdCI6MTc1MDA1MDE0NiwiZXhwIjoxNzUwOTE0MTQ2fQ.FhtjUlih_FPC6kcKdgkdD-23h6GJvrAu38tqW5VuZS0";
+
+  // 🔥 동적 토큰 가져오기 함수
+  const getAuthToken = () => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      throw new Error("로그인이 필요합니다. 토큰이 없습니다.");
+    }
+
+    // Bearer 접두사가 없으면 추가
+    return token.startsWith("Bearer ") ? token : `Bearer ${token}`;
+  };
 
   const uploadProfileImage = async (imageFile) => {
     try {
@@ -76,6 +86,9 @@ export default function MyPageHeader() {
       const formData = new FormData();
       formData.append("file", imageFile);
 
+      // 🔥 동적으로 토큰 가져오기
+      const token = getAuthToken();
+
       const response = await fetch(`${apiBaseUrl}/api/profile`, {
         method: "POST",
         headers: {
@@ -83,6 +96,16 @@ export default function MyPageHeader() {
         },
         body: formData,
       });
+
+      if (response.status === 403) {
+        localStorage.removeItem("authToken");
+        throw new Error("인증이 만료되었습니다. 다시 로그인해주세요.");
+      }
+
+      if (response.status === 401) {
+        localStorage.removeItem("authToken");
+        throw new Error("인증에 실패했습니다. 다시 로그인해주세요.");
+      }
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -100,6 +123,12 @@ export default function MyPageHeader() {
       return imageUrl;
     } catch (error) {
       console.error("이미지 업로드 실패:", error);
+
+      // 토큰 관련 에러인 경우 로그인 페이지로 리다이렉트
+      if (error.message.includes("로그인") || error.message.includes("인증")) {
+        // window.location.href = '/login';
+      }
+
       throw error;
     } finally {
       setIsUploadingImage(false);
@@ -112,6 +141,9 @@ export default function MyPageHeader() {
       setIsSaving(true);
       setSaveError(null);
 
+      // 🔥 동적으로 토큰 가져오기
+      const token = getAuthToken();
+
       const response = await fetch(`${apiBaseUrl}/api/profile`, {
         method: "PATCH",
         headers: {
@@ -120,6 +152,16 @@ export default function MyPageHeader() {
         },
         body: JSON.stringify(profileData),
       });
+
+      if (response.status === 403) {
+        localStorage.removeItem("authToken");
+        throw new Error("인증이 만료되었습니다. 다시 로그인해주세요.");
+      }
+
+      if (response.status === 401) {
+        localStorage.removeItem("authToken");
+        throw new Error("인증에 실패했습니다. 다시 로그인해주세요.");
+      }
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -134,6 +176,12 @@ export default function MyPageHeader() {
     } catch (error) {
       console.error("프로필 업데이트 실패:", error);
       setSaveError(error.message);
+
+      // 토큰 관련 에러인 경우 로그인 페이지로 리다이렉트
+      if (error.message.includes("로그인") || error.message.includes("인증")) {
+        // window.location.href = '/login';
+      }
+
       throw error;
     } finally {
       setIsSaving(false);
@@ -303,15 +351,18 @@ export default function MyPageHeader() {
     }
   }, []);
 
-  // 🔥 프로필 정보 가져오기 (GET 방식으로 수정)
+  // 🔥 프로필 정보 가져오기 (동적 토큰 사용)
   useEffect(() => {
     const loadProfile = async () => {
       try {
         setIsImageLoading(true);
         setIsMusicDataLoading(true);
 
+        // 🔥 동적으로 토큰 가져오기
+        const token = getAuthToken();
+
         const response = await fetch(`${apiBaseUrl}/api/profile`, {
-          method: "GET", // 🔥 GET 방식 유지
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
             Authorization: token,
@@ -321,7 +372,18 @@ export default function MyPageHeader() {
         // ✅ 403 에러 체크
         if (response.status === 403) {
           console.log("🔒 인증 만료 - 로그인이 필요합니다");
+          localStorage.removeItem("authToken");
           setSaveError("인증이 만료되었습니다. 다시 로그인해주세요.");
+          setIsImageLoading(false);
+          setIsMusicDataLoading(false);
+          return;
+        }
+
+        // ✅ 401 에러 체크
+        if (response.status === 401) {
+          console.log("🔒 인증 실패 - 로그인이 필요합니다");
+          localStorage.removeItem("authToken");
+          setSaveError("인증에 실패했습니다. 다시 로그인해주세요.");
           setIsImageLoading(false);
           setIsMusicDataLoading(false);
           return;
@@ -453,6 +515,14 @@ export default function MyPageHeader() {
         setSaveError(error.message);
         setIsImageLoading(false);
         setIsMusicDataLoading(false);
+
+        // 토큰 관련 에러인 경우 로그인 페이지로 리다이렉트
+        if (
+          error.message.includes("로그인") ||
+          error.message.includes("인증")
+        ) {
+          // window.location.href = '/login';
+        }
       }
     };
 
