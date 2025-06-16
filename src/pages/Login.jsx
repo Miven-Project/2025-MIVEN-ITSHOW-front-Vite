@@ -37,8 +37,8 @@ function Login() {
       const data = await response.json();
       console.log("로그인 성공", data);
 
-      // 예: 토큰 저장
-      localStorage.setItem("token", data.token);
+      // 예: 토큰 저장 - 이 부분을 제거했습니다.
+      // localStorage.setItem("token", data.token); // <--- 이 줄을 제거했습니다.
 
       alert("로그인 완료!");
       navigate("/Home"); // 로그인 성공 후 이동할 페이지 경로
