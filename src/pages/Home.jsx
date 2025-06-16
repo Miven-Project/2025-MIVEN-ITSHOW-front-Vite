@@ -33,8 +33,8 @@ export function Nav() {
             </p>
           </div>
           <div className={Homestyles.Navsecondline}>
-            <p className={`${Homestyles.Clickwrite} ${Homestyles.Clicknav}`}>Write</p>
-            <p className={`${Homestyles.Clickmypage} ${Homestyles.Clicknav}`}>My Page</p>
+            <p className={`${Homestyles.Clickwrite} ${Homestyles.Clicknav}`} onClick={() => navigate('/BookWrite')}>Write</p>
+            <p className={`${Homestyles.Clickmypage} ${Homestyles.Clicknav}`} onClick={() => navigate('/MyPage')}>My Page</p>
           </div>
         </div>
       </div>
