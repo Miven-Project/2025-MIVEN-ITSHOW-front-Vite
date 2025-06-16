@@ -7,7 +7,7 @@ import eyeoffImg from "../assets/images/eyeoff.png";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "" }); // username → email
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -15,9 +15,36 @@ function Login() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("로그인 완료!");
+
+    try {
+      const response = await fetch("http://3.38.185.232:8080/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: form.email,
+          passwd: form.password,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("로그인 실패");
+      }
+
+      const data = await response.json();
+      console.log("로그인 성공", data);
+
+      // 예: 토큰 저장
+      localStorage.setItem("token", data.token);
+
+      alert("로그인 완료!");
+      navigate("/Home"); // 로그인 성공 후 이동할 페이지 경로
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   const goToSignUp = () => {
@@ -30,12 +57,12 @@ function Login() {
 
       <div className={styles.inputGroupBox}>
         <div className={styles.inputLine}>
-          <img src={personImg} alt="아이디" />
+          <img src={personImg} alt="이메일" />
           <input
-            type="text"
-            name="username"
-            placeholder="아이디"
-            value={form.username}
+            type="email"
+            name="email"
+            placeholder="이메일"
+            value={form.email}
             onChange={handleChange}
             required
           />

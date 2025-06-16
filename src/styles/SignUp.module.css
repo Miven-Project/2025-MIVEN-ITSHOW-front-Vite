@@ -110,3 +110,10 @@
   font-weight: 600;
   margin-left: 5px;
 }
+
+.errorMessage {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  margin-left: 0px;
+}

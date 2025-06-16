@@ -29,6 +29,7 @@ function App() {
           <Route path="/booksearch" element={<BookSearch />} />
           <Route path="/bookinput" element={<BookInputPage />} />
           <Route path="/scroll" element={<BookDetailPage />} />
+          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
         </Routes>
       </Router>
     </CoverColorProvider>
