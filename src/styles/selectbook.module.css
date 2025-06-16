@@ -44,8 +44,8 @@
   color: #ffffff;
   pointer-events: auto;
   cursor: pointer;
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   border: 2px solid white;
   border-radius: 50%;
   display: flex;
@@ -63,8 +63,8 @@
   color: #ffffff;
   pointer-events: auto;
   cursor: pointer;
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   border: 2px solid white;
   border-radius: 50%;
   display: flex;
@@ -75,10 +75,10 @@
 /* 오른쪽 아래 플러스 아이콘 */
 .plusIconBottomRight {
   position: absolute;
-  bottom: 110px;
+  bottom: 70px;
   right: 70px;
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   border: 2px solid #2a84c2;
   border-radius: 50%;
   font-size: 30px;
