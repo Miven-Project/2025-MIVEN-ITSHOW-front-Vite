@@ -78,7 +78,7 @@ const BookSearch = () => {
               type="text"
               className={styles.booksearchInput}
               placeholder="책 제목을 입력해 주세요"
-              debounceTimeout={3000}
+              debounceTimeout={100}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
