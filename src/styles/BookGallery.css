@@ -36,7 +36,7 @@ Nav {
 }
 
 .GalleryMark-2 {
-  /* z-index: 1; */
+  z-index: -1;
   width: 130x;
   height: 350px;
 }
@@ -48,7 +48,7 @@ Nav {
   row-gap: 10px;
   justify-content: center;
   gap: 15px 10px;
-  padding: 140px 20px;
+  padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -128,12 +128,16 @@ Nav {
 }
 
 /* 서치바 */
+/* 서치바 */
 .search-bar-section {
   display: flex;
   justify-content: center;
-  margin-top: -250px;
+  position: absolute; /* relative에서 absolute로 변경 */
+  top: 560px; /* 원하는 위치로 조정 (예: 300px) */
+  left: 50%;
+  transform: translateX(-50%); /* 가운데 정렬 */
   z-index: 3;
-  position: relative;
+  width: 100%; /* 전체 너비 확보 */
 }
 
 /* 검색창 안쪽 구조 */
