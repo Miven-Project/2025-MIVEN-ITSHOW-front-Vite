@@ -34,8 +34,8 @@ export default function MyPageHeader() {
   const [searchQuery, setSearchQuery] = useState("");
   const [userName, setUserName] = useState("");
   const [quoteCount, setQuoteCount] = useState(0);
-  const [isImageLoading, setIsImageLoading] = useState(true); // 이미지 로딩 상태
-  const [isMusicDataLoading, setIsMusicDataLoading] = useState(true); // 음악 데이터 로딩 상태
+  const [isImageLoading, setIsImageLoading] = useState(true);
+  const [isMusicDataLoading, setIsMusicDataLoading] = useState(true);
 
   // 백엔드 연결용 상태 추가
   const [isSaving, setIsSaving] = useState(false);
@@ -67,7 +67,7 @@ export default function MyPageHeader() {
   // API 설정
   const apiBaseUrl = "http://3.38.185.232:8080";
   const token =
-    "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYW5nbWkxQG5hdmVyLmNvbSIsImlhdCI6MTc0OTcyNDg0NSwiZXhwIjoxNzQ5NzQyODQ1fQ.pJ6yiFNE0FbXUOkC5idRAkr218q2yZpMszG2RrzTe8Y";
+    "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYW5nbWkxQG5hdmVyLmNvbSIsImlhdCI6MTc1MDA1MDE0NiwiZXhwIjoxNzUwOTE0MTQ2fQ.FhtjUlih_FPC6kcKdgkdD-23h6GJvrAu38tqW5VuZS0";
 
   const uploadProfileImage = async (imageFile) => {
     try {
@@ -93,12 +93,6 @@ export default function MyPageHeader() {
 
       const result = await response.json();
       console.log("이미지 업로드 응답 전체:", result);
-      console.log("result.data:", result.data);
-      console.log("result.data?.url:", result.data?.url);
-
-      if (result.data) {
-        console.log("data 객체의 모든 키:", Object.keys(result.data));
-      }
 
       const imageUrl = result.data?.url || result.url;
       console.log("최종 이미지 URL:", imageUrl);
@@ -309,24 +303,56 @@ export default function MyPageHeader() {
     }
   }, []);
 
-  // 프로필 정보 가져오기
+  // 🔥 프로필 정보 가져오기 (GET 방식으로 수정)
   useEffect(() => {
     const loadProfile = async () => {
       try {
+        setIsImageLoading(true);
+        setIsMusicDataLoading(true);
+
         const response = await fetch(`${apiBaseUrl}/api/profile`, {
-          method: "GET",
+          method: "GET", // 🔥 GET 방식 유지
           headers: {
+            "Content-Type": "application/json",
             Authorization: token,
           },
         });
 
+        // ✅ 403 에러 체크
+        if (response.status === 403) {
+          console.log("🔒 인증 만료 - 로그인이 필요합니다");
+          setSaveError("인증이 만료되었습니다. 다시 로그인해주세요.");
+          setIsImageLoading(false);
+          setIsMusicDataLoading(false);
+          return;
+        }
+
+        // ✅ 다른 에러 체크
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const responseData = await response.json();
-        console.log("Success:", responseData);
+        // ✅ 빈 응답 체크
+        const text = await response.text();
+        if (!text || text.trim() === "") {
+          console.log("📭 서버에서 빈 응답을 받았습니다");
+          setIsImageLoading(false);
+          setIsMusicDataLoading(false);
+          return;
+        }
+
+        // ✅ JSON 파싱
+        const responseData = JSON.parse(text);
+        console.log("✅ 프로필 데이터 로드 성공:", responseData);
+
+        // 데이터 구조 확인
         const profileData = responseData.data;
+        if (!profileData) {
+          console.warn("⚠️ profileData가 없습니다:", responseData);
+          setIsImageLoading(false);
+          setIsMusicDataLoading(false);
+          return;
+        }
 
         // 기본 정보 즉시 설정 (텍스트 정보)
         setUserName(profileData.name || "");
@@ -423,7 +449,8 @@ export default function MyPageHeader() {
           setIsMusicDataLoading(false);
         }
       } catch (error) {
-        console.error("프로필 로딩 에러:", error);
+        console.error("❌ 프로필 로딩 에러:", error);
+        setSaveError(error.message);
         setIsImageLoading(false);
         setIsMusicDataLoading(false);
       }
@@ -509,7 +536,6 @@ export default function MyPageHeader() {
             setSelectedImage(uploadedImageUrl);
             alert("프로필 이미지가 업로드되었습니다!");
           } else {
-            // URL이 없어도 일단 미리보기는 유지
             console.warn(
               "서버에서 이미지 URL을 반환하지 않았지만 업로드는 성공한 것 같습니다."
             );
@@ -518,7 +544,6 @@ export default function MyPageHeader() {
       } catch (error) {
         console.error("이미지 업로드 오류:", error);
         alert(`이미지 업로드에 실패했습니다: ${error.message}`);
-        // 실패 시에도 미리보기는 유지 (로컬 URL)
         console.log("미리보기는 유지됩니다.");
       }
     }
@@ -702,7 +727,7 @@ export default function MyPageHeader() {
 
             {/* 에러 메시지 표시 */}
             {saveError && (
-              <div className={styles.errorMessage}>저장 실패: {saveError}</div>
+              <div className={styles.errorMessage}>오류: {saveError}</div>
             )}
 
             <div className={styles.actionSection}>

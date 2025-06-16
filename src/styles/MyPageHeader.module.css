@@ -213,10 +213,10 @@
 
 /* 음악 플레이어 */
 .music {
-  max-width: 245px;
+  max-width: 285px;
   background: rgba(255, 255, 255, 0.5);
   box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.08);
-  padding: 7px 20px;
+  padding: 16px 20px;
   border-radius: 6px;
   display: flex;
   align-items: center;
