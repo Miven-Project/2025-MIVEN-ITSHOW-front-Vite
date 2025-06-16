@@ -7,8 +7,8 @@ function BookGallery() {
   const [bookData, setBookData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [quotes, setQuotes] = useState({}); // bookId를 key로 하는 quote 저장소
-  const [loadingQuotes, setLoadingQuotes] = useState({}); // 로딩 상태 관리
+  const [bookDetails, setBookDetails] = useState({}); // bookId를 key로 하는 상세 정보 저장소
+  const [loadingDetails, setLoadingDetails] = useState({}); // 로딩 상태 관리
   const searchInputRef = useRef(null);
 
   useEffect(() => {
@@ -39,18 +39,19 @@ function BookGallery() {
       .catch((err) => console.error("❌ 데이터 불러오기 실패:", err));
   }, []);
 
-  // hover 시 quote 가져오기
-  const fetchQuote = async (bookId, gNo) => {
-    // 이미 로딩 중이거나 quote가 있으면 반환
-    if (loadingQuotes[bookId] || quotes[bookId]) {
+  // hover 시 책 상세 정보(제목, quote) 가져오기
+  const fetchBookDetails = async (bookId) => {
+    // 이미 로딩 중이거나 상세정보가 있으면 반환
+    if (loadingDetails[bookId] || bookDetails[bookId]) {
       return;
     }
 
-    setLoadingQuotes((prev) => ({ ...prev, [bookId]: true }));
+    setLoadingDetails((prev) => ({ ...prev, [bookId]: true }));
 
     const apiBaseUrl = "http://3.38.185.232:8080";
     try {
-      const res = await fetch(`${apiBaseUrl}/api/gallery/detail/${gNo}`, {
+      // bookId를 사용해서 detail API 호출
+      const res = await fetch(`${apiBaseUrl}/api/gallery/detail/${bookId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -61,20 +62,27 @@ function BookGallery() {
 
       if (res.ok) {
         const detailJson = await res.json();
-        const quote = detailJson.data?.quote || "";
-        setQuotes((prev) => ({ ...prev, [bookId]: quote }));
+        const detailData = {
+          title: detailJson.data?.title || "",
+          quote: detailJson.data?.quote || "",
+          author: detailJson.data?.author || "",
+        };
+        setBookDetails((prev) => ({ ...prev, [bookId]: detailData }));
       } else {
-        console.error(`❌ Quote API 에러 (${res.status}):`, res.statusText);
-        setQuotes((prev) => ({
+        console.error(`❌ Detail API 에러 (${res.status}):`, res.statusText);
+        setBookDetails((prev) => ({
           ...prev,
-          [bookId]: "명언을 불러올 수 없습니다",
+          [bookId]: { title: "", quote: "상세 정보를 불러올 수 없습니다" },
         }));
       }
     } catch (error) {
-      console.error("❌ Quote 불러오기 실패:", error);
-      setQuotes((prev) => ({ ...prev, [bookId]: "명언을 불러올 수 없습니다" }));
+      console.error("❌ 상세 정보 불러오기 실패:", error);
+      setBookDetails((prev) => ({
+        ...prev,
+        [bookId]: { title: "", quote: "상세 정보를 불러올 수 없습니다" },
+      }));
     } finally {
-      setLoadingQuotes((prev) => ({ ...prev, [bookId]: false }));
+      setLoadingDetails((prev) => ({ ...prev, [bookId]: false }));
     }
   };
 
@@ -103,15 +111,33 @@ function BookGallery() {
           <div className="book-card" key={index}>
             <div
               className="book-cover-wrapper"
-              onMouseEnter={() => fetchQuote(book.bookId, book.bookId)} // 임시로 bookId 사용
+              onMouseEnter={() => fetchBookDetails(book.bookId)}
             >
               <img src={book.cover} alt={book.title} className="book-cover" />
               <div className="hover-overlay">
-                <p className="book-quote">
-                  {loadingQuotes[book.bookId]
-                    ? "명언을 불러오는 중..."
-                    : quotes[book.bookId] || "마우스를 올려 명언을 확인하세요"}
-                </p>
+                {loadingDetails[book.bookId] ? (
+                  <div>
+                    <p className="book-quote">상세 정보를 불러오는 중...</p>
+                  </div>
+                ) : bookDetails[book.bookId] ? (
+                  <div>
+                    <h3 className="detailed-title">
+                      {bookDetails[book.bookId].title || book.title}
+                    </h3>
+                    {bookDetails[book.bookId].author && (
+                      <p className="book-author">
+                        저자: {bookDetails[book.bookId].author}
+                      </p>
+                    )}
+                    <p className="book-quote">
+                      {bookDetails[book.bookId].quote || "명언이 없습니다"}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="book-quote">
+                    마우스를 올려 상세 정보를 확인하세요
+                  </p>
+                )}
                 <button className="view-button">View</button>
               </div>
             </div>
