@@ -1,15 +1,16 @@
-// BookInputPage.jsx
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styles from "../styles/BookInputPage.module.css";
 import BackButton from "../components/BackButton";
 import bookIcon from "../assets/images/bookicon.png";
 
 const BookInputPage = () => {
   const { state } = useLocation();
+  const navigate = useNavigate();
   const book = state?.book;
 
   const [rating, setRating] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     isbn: book?.isbn || "",
@@ -25,11 +26,19 @@ const BookInputPage = () => {
   const [readingStartSelected, setReadingStartSelected] = useState(false);
   const [readingEndSelected, setReadingEndSelected] = useState(false);
 
-  // 날짜를 "0000년00월00일" 형태로 변환하는 함수
   const formatDateKR = (dateString) => {
     if (!dateString) return "";
     const [year, month, day] = dateString.split("-");
     return `${year}년 ${month}월 ${day}일`;
+  };
+
+  const formatPublishDate = (rawDate) => {
+    if (!rawDate || rawDate.includes("-")) return rawDate;
+    if (rawDate.length !== 8) return rawDate;
+    const year = rawDate.slice(0, 4);
+    const month = rawDate.slice(4, 6);
+    const day = rawDate.slice(6, 8);
+    return `${year}-${month}-${day}`;
   };
 
   const handleInputChange = (field, value) => {
@@ -49,102 +58,141 @@ const BookInputPage = () => {
     setRating(value);
   };
 
-  const postQuote = async (quoteData) => {
+  const apiBaseUrl = "http://3.38.185.232:8080";
+  const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYW5nbWlAbmF2ZXIuY29tIiwiaWF0IjoxNzUwMDQyMzc2LCJleHAiOjE3NTA5MDYzNzZ9.FI-cRWO5cGioOZ00AQsVPMOZPRTXUTLO5zYHcjoey0w";
+
+  const getUserInfoFromToken = (token) => {
     try {
-      const response = await fetch("/api/quotes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(quoteData),
-      });
-
-      if (!response.ok) {
-        throw new Error("서버 응답 오류");
-      }
-
-      const result = await response.json();
-      console.log("구절 저장 서버 응답:", result);
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return {
+        email: payload.sub,
+        userId: payload.userId || payload.sub,
+      };
     } catch (error) {
-      console.error("구절 저장 실패:", error);
-      alert("인상 깊은 구절 저장 중 오류가 발생했습니다.");
+      console.error('토큰 파싱 실패:', error);
+      return null;
     }
   };
 
-  const postReview = async (reviewData) => {
+  const postGallery = async (galleryData) => {
+    setIsLoading(true);
     try {
-      const response = await fetch("/api/reviews", {
+      const userInfo = getUserInfoFromToken(token);
+      if (!userInfo) {
+        throw new Error("사용자 정보를 토큰에서 추출할 수 없습니다.");
+      }
+
+      const dataWithUser = {
+        ...galleryData,
+        userEmail: userInfo.email,
+        userId: userInfo.userId,
+      };
+
+      console.log("사용자 정보가 포함된 전송 데이터:", dataWithUser);
+
+      const response = await fetch(`${apiBaseUrl}/api/gallery/regist`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify(reviewData),
+        body: JSON.stringify(dataWithUser),
       });
 
       if (!response.ok) {
-        throw new Error("서버 응답 오류");
+        if (response.status === 403) {
+          throw new Error("인증 토큰이 만료되었거나 유효하지 않습니다. 다시 로그인해주세요.");
+        } else if (response.status === 401) {
+          throw new Error("인증이 필요합니다. 로그인해주세요.");
+        }
+
+        const errorText = await response.text();
+        throw new Error(`서버 오류 (${response.status}): ${errorText}`);
       }
 
       const result = await response.json();
-      console.log("리뷰 저장 서버 응답:", result);
+      console.log("갤러리 저장 서버 응답:", result);
+
+      if (result.code === 200) {
+        const savedBook = result.data?.books?.find(b => b.title === book.title) || {};
+        const bookId = savedBook.bookId;
+
+        alert(
+          `"${book.title}"이(가) 성공적으로 저장되었습니다!\n` +
+          `평점: ${rating}점\n` +
+          `등록 시간: ${savedBook.regTime || '방금 전'}\n` +
+          (bookId ? `도서 ID: ${bookId}` : '')
+        );
+
+        // navigate('/gallery'); 
+        // navigate(-1);
+      } else {
+        throw new Error(`응답 오류: ${result.message || '알 수 없는 오류'}`);
+      }
     } catch (error) {
-      console.error("리뷰 저장 실패:", error);
-      alert("리뷰 저장 중 오류가 발생했습니다.");
+      console.error("갤러리 저장 실패:", error);
+
+      if (error.message.includes('토큰') || error.message.includes('인증')) {
+        alert(`${error.message}\n\n개발자에게 새로운 토큰 발급을 요청하세요.`);
+      } else {
+        alert(`갤러리 등록 중 오류가 발생했습니다.\n오류: ${error.message}`);
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // 새로 추가한 함수: /api/reading 에 독서 시작/끝 날짜 POST 요청
-  const postReadingDates = async (readingStart, readingEnd) => {
-    try {
-      const response = await fetch("/api/reading", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ readingStart, readingEnd }),
-      });
-      if (!response.ok) {
-        throw new Error("독서 날짜 저장 서버 오류");
-      }
-      const result = await response.json();
-      console.log("독서 날짜 저장 서버 응답:", result);
-    } catch (error) {
-      console.error("독서 날짜 저장 실패:", error);
-      alert("독서 날짜 저장 중 오류가 발생했습니다.");
+  const validateForm = () => {
+    if (rating === 0) {
+      alert("평점을 선택해주세요.");
+      return false;
     }
+    if (!formData.readingStart) {
+      alert("독서 시작 날짜를 선택해주세요.");
+      return false;
+    }
+    if (!formData.readingEnd) {
+      alert("독서 완료 날짜를 선택해주세요.");
+      return false;
+    }
+
+    if (new Date(formData.readingStart) > new Date(formData.readingEnd)) {
+      alert("시작 날짜는 완료 날짜보다 이전이어야 합니다.");
+      return false;
+    }
+
+    return true;
   };
 
   const handleSave = async () => {
-    const saveData = {
-      book: book.title,
-      author: book.author,
-      rating: rating,
-      ...formData,
-    };
+    if (!validateForm()) return;
 
-    console.log("저장할 데이터:", saveData);
-    alert(`"${book.title}"에 대한 정보가 저장되었습니다!\n평점: ${rating}점`);
-
-    const quoteData = {
-      bookTitle: book.title,
-      quote: formData.quote,
-      writer: formData.writer,
-    };
-    await postQuote(quoteData);
-
-    const reviewData = {
-      bookTitle: book.title,
+    const galleryData = {
+      title: book.title,
+      cover: book.image,
+      isbn: formData.isbn,
+      publicDate: formatPublishDate(formData.publishDate),
+      period: `${formatDateKR(formData.readingStart)} ~ ${formatDateKR(formData.readingEnd)}`,
       rating: rating,
       review: formData.shortReview,
+      quote: formData.quote,
+      pages: book?.pages || 0,
       writer: formData.writer,
     };
-    await postReview(reviewData);
 
-    // 여기서 독서 시작/끝 날짜 서버에 보냄
-    await postReadingDates(formData.readingStart, formData.readingEnd);
+    console.log("보낼 데이터:", galleryData);
+    await postGallery(galleryData);
   };
 
-  if (!book) return <div>책 정보를 불러오는 중입니다...</div>;
+  if (!book) {
+    return (
+      <div className={styles.container}>
+        <div style={{ color: 'white', textAlign: 'center', marginTop: '50px' }}>
+          책 정보를 불러오는 중입니다...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -175,7 +223,7 @@ const BookInputPage = () => {
                 <input
                   type="text"
                   className={styles["info-input"]}
-                  placeholder="____________"
+                  placeholder="ISBN을 입력해주세요"
                   value={formData.isbn}
                   onChange={(e) => handleInputChange("isbn", e.target.value)}
                 />
@@ -185,7 +233,7 @@ const BookInputPage = () => {
                 <input
                   type="text"
                   className={styles["info-input"]}
-                  placeholder="__년__월__일"
+                  placeholder="YYYYMMDD 또는 YYYY-MM-DD"
                   value={formData.publishDate}
                   onChange={(e) => handleInputChange("publishDate", e.target.value)}
                 />
@@ -205,31 +253,40 @@ const BookInputPage = () => {
             <div className={styles["section-title"]}>독서</div>
             <div className={styles["section-block"]}>
               <div className={styles["info-item"]}>
-                <span className={styles["info-label"]}>시작 날짜</span>
+                <span className={styles["info-label"]}>시작 날짜 *</span>
                 {!readingStartSelected ? (
                   <input
                     type="date"
                     className={styles["info-input"]}
                     value={formData.readingStart}
                     onChange={(e) => handleInputChange("readingStart", e.target.value)}
+                    required
                   />
                 ) : (
-                  <span className={styles["info-input"]} style={{ pointerEvents: "none" }}>
+                  <span 
+                    className={styles["info-input"]} 
+                    style={{ pointerEvents: "none", backgroundColor: "#f0f0f0" }}
+                  >
                     {formatDateKR(formData.readingStart)}
                   </span>
                 )}
               </div>
               <div className={styles["info-item"]}>
-                <span className={styles["info-label"]}>끝난 날짜</span>
+                <span className={styles["info-label"]}>끝난 날짜 *</span>
                 {!readingEndSelected ? (
                   <input
                     type="date"
                     className={styles["info-input"]}
                     value={formData.readingEnd}
                     onChange={(e) => handleInputChange("readingEnd", e.target.value)}
+                    min={formData.readingStart}
+                    required
                   />
                 ) : (
-                  <span className={styles["info-input"]} style={{ pointerEvents: "none" }}>
+                  <span 
+                    className={styles["info-input"]} 
+                    style={{ pointerEvents: "none", backgroundColor: "#f0f0f0" }}
+                  >
                     {formatDateKR(formData.readingEnd)}
                   </span>
                 )}
@@ -239,7 +296,7 @@ const BookInputPage = () => {
                 <input
                   type="text"
                   className={styles["info-input"]}
-                  placeholder="작성자를 입력해주세요"
+                  placeholder="작성자를 입력해주세요 (선택사항)"
                   value={formData.writer}
                   onChange={(e) => handleInputChange("writer", e.target.value)}
                 />
@@ -248,7 +305,7 @@ const BookInputPage = () => {
 
             <div className={styles["section-title"]}>리뷰</div>
             <div className={styles["rating-section"]}>
-              <div className={styles["rating-title"]}>이책바의 평점</div>
+              <div className={styles["rating-title"]}>이책바의 평점 *</div>
               <div className={styles["rating-stars"]}>
                 {[1, 2, 3, 4, 5].map((value) => (
                   <img
@@ -271,8 +328,16 @@ const BookInputPage = () => {
               </div>
             </div>
 
-            <button onClick={handleSave} className={styles["save-button"]}>
-              저장하기
+            <button 
+              onClick={handleSave} 
+              className={styles["save-button"]}
+              disabled={isLoading}
+              style={{ 
+                opacity: isLoading ? 0.6 : 1,
+                cursor: isLoading ? 'not-allowed' : 'pointer'
+              }}
+            >
+              {isLoading ? "저장중..." : "저장하기"}
             </button>
           </div>
         </div>
@@ -282,9 +347,10 @@ const BookInputPage = () => {
           <div className={styles["quote-input-area"]}>
             <textarea
               className={styles["quote-input"]}
-              placeholder="'간직하고 싶은 인상 깊은 구절을 작성해 보세요'"
+              placeholder="간직하고 싶은 인상 깊은 구절을 작성해 보세요"
               value={formData.quote}
               onChange={(e) => handleInputChange("quote", e.target.value)}
+              rows={6}
             />
           </div>
         </div>
