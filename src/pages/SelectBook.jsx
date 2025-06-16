@@ -1,25 +1,63 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "../styles/selectbook.module.css";
 import Nav from "../components/Nav";
 
 const SelectBook = () => {
+  const navigate = useNavigate();
   const [books, setBooks] = useState([]);
   const [centerIndex, setCenterIndex] = useState(0);
   const [canScroll, setCanScroll] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const apiBaseUrl = "http://3.38.185.232:8080";
+
+  // 🔥 동적 토큰 가져오기 함수
+  const getAuthToken = () => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      throw new Error("로그인이 필요합니다. 토큰이 없습니다.");
+    }
+
+    // Bearer 접두사가 없으면 추가
+    return token.startsWith("Bearer ") ? token : `Bearer ${token}`;
+  };
 
   useEffect(() => {
-    const apiBaseUrl = "http://3.38.185.232:8080";
+    const fetchBooks = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
 
-    fetch(`${apiBaseUrl}/api/gallery/mylist`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYW5nbWkxQG5hdmVyLmNvbSIsImlhdCI6MTc1MDA1MDE0NiwiZXhwIjoxNzUwOTE0MTQ2fQ.FhtjUlih_FPC6kcKdgkdD-23h6GJvrAu38tqW5VuZS0",
-      },
-    })
-      .then((res) => res.json())
-      .then((json) => {
+        // 🔥 동적으로 토큰 가져오기
+        const authToken = getAuthToken();
+
+        const response = await fetch(`${apiBaseUrl}/api/gallery/mylist`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: authToken,
+          },
+        });
+
+        // 🔥 토큰 에러 처리
+        if (response.status === 403) {
+          localStorage.removeItem("authToken");
+          throw new Error("인증이 만료되었습니다. 다시 로그인해주세요.");
+        }
+
+        if (response.status === 401) {
+          localStorage.removeItem("authToken");
+          throw new Error("인증에 실패했습니다. 다시 로그인해주세요.");
+        }
+
+        if (!response.ok) {
+          throw new Error(`서버 응답 실패 (${response.status})`);
+        }
+
+        const json = await response.json();
         const newPageBook = {
           title: "뉴페이지",
           cover: "/assets/images/newpage.png",
@@ -34,9 +72,15 @@ const SelectBook = () => {
 
         setBooks(allBooks);
         setCenterIndex(0); // 항상 뉴페이지가 중앙
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("📕 책 커버 로딩 실패", err);
+        setError(err.message);
+
+        // 토큰 관련 에러인 경우 로그인 페이지로 리다이렉트
+        if (err.message.includes("로그인") || err.message.includes("인증")) {
+          navigate("/login");
+          return;
+        }
 
         // 실패해도 뉴페이지는 항상 표시
         setBooks([
@@ -46,8 +90,13 @@ const SelectBook = () => {
           },
         ]);
         setCenterIndex(0);
-      });
-  }, []);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBooks();
+  }, [navigate]);
 
   const isNewPageCenter = books[centerIndex]?.title?.trim() === "뉴페이지";
 
@@ -91,6 +140,66 @@ const SelectBook = () => {
       window.removeEventListener("wheel", handleWheel);
     };
   }, [canScroll, books]);
+
+  // 로딩 상태 표시
+  if (isLoading) {
+    return (
+      <div className={styles.pageContainer}>
+        <Nav />
+        <div
+          className={styles.loadingContainer}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "70vh",
+            fontSize: "18px",
+            color: "#666",
+          }}
+        >
+          책 목록을 불러오는 중...
+        </div>
+      </div>
+    );
+  }
+
+  // 에러 상태 표시 (토큰 에러가 아닌 경우만)
+  if (error && !error.includes("로그인") && !error.includes("인증")) {
+    return (
+      <div className={styles.pageContainer}>
+        <Nav />
+        <div
+          className={styles.errorContainer}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "70vh",
+            fontSize: "16px",
+            color: "#e74c3c",
+          }}
+        >
+          <p>오류: {error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            style={{
+              marginTop: "20px",
+              padding: "10px 20px",
+              backgroundColor: "#3498db",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+              fontSize: "14px",
+            }}
+          >
+            다시 시도
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.pageContainer}>
