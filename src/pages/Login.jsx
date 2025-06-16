@@ -7,8 +7,9 @@ import eyeoffImg from "../assets/images/eyeoff.png";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const [form, setForm] = useState({ email: "", password: "" }); // username → email
+  const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -17,6 +18,7 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       const response = await fetch("http://3.38.185.232:8080/api/auth/login", {
@@ -31,19 +33,28 @@ function Login() {
       });
 
       if (!response.ok) {
-        throw new Error("로그인 실패");
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.message || "로그인에 실패했습니다.");
       }
 
       const data = await response.json();
       console.log("로그인 성공", data);
 
-      // 예: 토큰 저장 - 이 부분을 제거했습니다.
-      // localStorage.setItem("token", data.token); // <--- 이 줄을 제거했습니다.
+      // 🔥 토큰 저장 (authToken으로 키 이름 통일)
+      if (data.code === 200 && data.data?.token) {
+        localStorage.setItem("authToken", data.data.token);
+        console.log("토큰 저장 완료:", data.data.token);
 
-      alert("로그인 완료!");
-      navigate("/Home"); // 로그인 성공 후 이동할 페이지 경로
+        alert("로그인 완료!");
+        navigate("/Home"); // MyPage로 이동 (또는 원하는 페이지)
+      } else {
+        throw new Error("서버에서 토큰을 받지 못했습니다.");
+      }
     } catch (error) {
+      console.error("로그인 오류:", error);
       alert(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -65,6 +76,7 @@ function Login() {
             value={form.email}
             onChange={handleChange}
             required
+            disabled={isLoading}
           />
         </div>
 
@@ -77,6 +89,7 @@ function Login() {
             value={form.password}
             onChange={handleChange}
             required
+            disabled={isLoading}
           />
           <img
             src={showPassword ? eyeoffImg : eyeonImg}
@@ -87,8 +100,12 @@ function Login() {
         </div>
       </div>
 
-      <button className={styles.signupButton} type="submit">
-        로그인
+      <button
+        className={styles.signupButton}
+        type="submit"
+        disabled={isLoading}
+      >
+        {isLoading ? "로그인 중..." : "로그인"}
       </button>
 
       <div className={styles.loginPrompt}>

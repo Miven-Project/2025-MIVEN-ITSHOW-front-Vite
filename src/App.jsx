@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import './styles/fonts.css';
+import "./styles/fonts.css";
 import MyPageHeader from "./components/MyPageHeader";
 import { CoverColorProvider } from "./contexts/CoverColorContext";
 import SelectBook from "./pages/SelectBook";
 import SignUp from "./pages/SignUp";
-import Login from "./pages/Login";  //수정
+import Login from "./pages/Login"; //수정
 import MyPage from "./pages/MyPage";
 import BookDetailPage from "./pages/BookDetailPage";
 import "./global.css";
@@ -24,8 +24,9 @@ function App() {
           <Route path="/Home" element={<Home />} />
           <Route path="/BookGallery" element={<BookGallery />} />
           <Route path="/BookGalleryTest" element={<BookGalleryTest />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />  {/* ★ 여기 login 경로 추가 */}
+          <Route path="/" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />{" "}
+          {/* ★ 여기 login 경로 추가 */}
           <Route path="/booksearch" element={<BookSearch />} />
           <Route path="/bookinput" element={<BookInputPage />} />
           <Route path="/scroll" element={<BookDetailPage />} />

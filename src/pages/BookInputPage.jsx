@@ -26,6 +26,32 @@ const BookInputPage = () => {
   const [readingStartSelected, setReadingStartSelected] = useState(false);
   const [readingEndSelected, setReadingEndSelected] = useState(false);
 
+  const apiBaseUrl = "http://3.38.185.232:8080";
+
+  // 🔥 동적 토큰 가져오기 함수
+  const getAuthToken = () => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      throw new Error("로그인이 필요합니다. 토큰이 없습니다.");
+    }
+
+    // Bearer 접두사가 없으면 추가
+    return token.startsWith("Bearer ") ? token : `Bearer ${token}`;
+  };
+
+  // 순수 토큰 (Bearer 없이) 가져오기 함수
+  const getPureToken = () => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      throw new Error("로그인이 필요합니다. 토큰이 없습니다.");
+    }
+
+    // Bearer 접두사가 있으면 제거
+    return token.startsWith("Bearer ") ? token.slice(7) : token;
+  };
+
   const formatDateKR = (dateString) => {
     if (!dateString) return "";
     const [year, month, day] = dateString.split("-");
@@ -58,18 +84,15 @@ const BookInputPage = () => {
     setRating(value);
   };
 
-  const apiBaseUrl = "http://3.38.185.232:8080";
-  const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYW5nbWlAbmF2ZXIuY29tIiwiaWF0IjoxNzUwMDQyMzc2LCJleHAiOjE3NTA5MDYzNzZ9.FI-cRWO5cGioOZ00AQsVPMOZPRTXUTLO5zYHcjoey0w";
-
   const getUserInfoFromToken = (token) => {
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      const payload = JSON.parse(atob(token.split(".")[1]));
       return {
         email: payload.sub,
         userId: payload.userId || payload.sub,
       };
     } catch (error) {
-      console.error('토큰 파싱 실패:', error);
+      console.error("토큰 파싱 실패:", error);
       return null;
     }
   };
@@ -77,7 +100,11 @@ const BookInputPage = () => {
   const postGallery = async (galleryData) => {
     setIsLoading(true);
     try {
-      const userInfo = getUserInfoFromToken(token);
+      // 🔥 동적으로 토큰 가져오기
+      const authToken = getAuthToken(); // Bearer 포함
+      const pureToken = getPureToken(); // Bearer 없는 순수 토큰
+
+      const userInfo = getUserInfoFromToken(pureToken);
       if (!userInfo) {
         throw new Error("사용자 정보를 토큰에서 추출할 수 없습니다.");
       }
@@ -94,15 +121,21 @@ const BookInputPage = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: authToken, // Bearer 포함된 토큰 사용
         },
         body: JSON.stringify(dataWithUser),
       });
 
       if (!response.ok) {
         if (response.status === 403) {
-          throw new Error("인증 토큰이 만료되었거나 유효하지 않습니다. 다시 로그인해주세요.");
+          // 토큰 만료 시 localStorage에서 제거
+          localStorage.removeItem("authToken");
+          throw new Error(
+            "인증 토큰이 만료되었거나 유효하지 않습니다. 다시 로그인해주세요."
+          );
         } else if (response.status === 401) {
+          // 인증 실패 시 localStorage에서 제거
+          localStorage.removeItem("authToken");
           throw new Error("인증이 필요합니다. 로그인해주세요.");
         }
 
@@ -114,26 +147,33 @@ const BookInputPage = () => {
       console.log("갤러리 저장 서버 응답:", result);
 
       if (result.code === 200) {
-        const savedBook = result.data?.books?.find(b => b.title === book.title) || {};
+        const savedBook =
+          result.data?.books?.find((b) => b.title === book.title) || {};
         const bookId = savedBook.bookId;
 
         alert(
           `"${book.title}"이(가) 성공적으로 저장되었습니다!\n` +
-          `평점: ${rating}점\n` +
-          `등록 시간: ${savedBook.regTime || '방금 전'}\n` +
-          (bookId ? `도서 ID: ${bookId}` : '')
+            `평점: ${rating}점\n` +
+            `등록 시간: ${savedBook.regTime || "방금 전"}\n` +
+            (bookId ? `도서 ID: ${bookId}` : "")
         );
 
-        // navigate('/gallery'); 
+        // navigate('/gallery');
         // navigate(-1);
       } else {
-        throw new Error(`응답 오류: ${result.message || '알 수 없는 오류'}`);
+        throw new Error(`응답 오류: ${result.message || "알 수 없는 오류"}`);
       }
     } catch (error) {
       console.error("갤러리 저장 실패:", error);
 
-      if (error.message.includes('토큰') || error.message.includes('인증')) {
-        alert(`${error.message}\n\n개발자에게 새로운 토큰 발급을 요청하세요.`);
+      if (
+        error.message.includes("토큰") ||
+        error.message.includes("인증") ||
+        error.message.includes("로그인")
+      ) {
+        alert(`${error.message}`);
+        // 토큰 관련 에러인 경우 로그인 페이지로 리다이렉트
+        // navigate('/login');
       } else {
         alert(`갤러리 등록 중 오류가 발생했습니다.\n오류: ${error.message}`);
       }
@@ -165,6 +205,15 @@ const BookInputPage = () => {
   };
 
   const handleSave = async () => {
+    // 🔥 토큰 체크를 먼저 수행
+    try {
+      getAuthToken(); // 토큰이 있는지 미리 확인
+    } catch (error) {
+      alert(error.message);
+      // navigate('/login'); // 토큰이 없으면 로그인 페이지로 이동
+      return;
+    }
+
     if (!validateForm()) return;
 
     const galleryData = {
@@ -172,7 +221,9 @@ const BookInputPage = () => {
       cover: book.image,
       isbn: formData.isbn,
       publicDate: formatPublishDate(formData.publishDate),
-      period: `${formatDateKR(formData.readingStart)} ~ ${formatDateKR(formData.readingEnd)}`,
+      period: `${formatDateKR(formData.readingStart)} ~ ${formatDateKR(
+        formData.readingEnd
+      )}`,
       rating: rating,
       review: formData.shortReview,
       quote: formData.quote,
@@ -187,7 +238,7 @@ const BookInputPage = () => {
   if (!book) {
     return (
       <div className={styles.container}>
-        <div style={{ color: 'white', textAlign: 'center', marginTop: '50px' }}>
+        <div style={{ color: "white", textAlign: "center", marginTop: "50px" }}>
           책 정보를 불러오는 중입니다...
         </div>
       </div>
@@ -212,7 +263,11 @@ const BookInputPage = () => {
         <div className={styles["blur-background"]}></div>
         <div className={styles["content-wrapper"]}>
           <div className={styles["book-cover-section"]}>
-            <img src={book.image} alt={book.title} className={styles["book-cover"]} />
+            <img
+              src={book.image}
+              alt={book.title}
+              className={styles["book-cover"]}
+            />
           </div>
 
           <div className={styles["info-panel"]}>
@@ -235,7 +290,9 @@ const BookInputPage = () => {
                   className={styles["info-input"]}
                   placeholder="YYYYMMDD 또는 YYYY-MM-DD"
                   value={formData.publishDate}
-                  onChange={(e) => handleInputChange("publishDate", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("publishDate", e.target.value)
+                  }
                 />
               </div>
               <div className={styles["info-item"]}>
@@ -245,7 +302,9 @@ const BookInputPage = () => {
                   className={styles["info-input"]}
                   placeholder="출판사를 입력해주세요"
                   value={formData.publisher}
-                  onChange={(e) => handleInputChange("publisher", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("publisher", e.target.value)
+                  }
                 />
               </div>
             </div>
@@ -259,13 +318,18 @@ const BookInputPage = () => {
                     type="date"
                     className={styles["info-input"]}
                     value={formData.readingStart}
-                    onChange={(e) => handleInputChange("readingStart", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("readingStart", e.target.value)
+                    }
                     required
                   />
                 ) : (
-                  <span 
-                    className={styles["info-input"]} 
-                    style={{ pointerEvents: "none", backgroundColor: "#f0f0f0" }}
+                  <span
+                    className={styles["info-input"]}
+                    style={{
+                      pointerEvents: "none",
+                      backgroundColor: "#f0f0f0",
+                    }}
                   >
                     {formatDateKR(formData.readingStart)}
                   </span>
@@ -278,14 +342,19 @@ const BookInputPage = () => {
                     type="date"
                     className={styles["info-input"]}
                     value={formData.readingEnd}
-                    onChange={(e) => handleInputChange("readingEnd", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("readingEnd", e.target.value)
+                    }
                     min={formData.readingStart}
                     required
                   />
                 ) : (
-                  <span 
-                    className={styles["info-input"]} 
-                    style={{ pointerEvents: "none", backgroundColor: "#f0f0f0" }}
+                  <span
+                    className={styles["info-input"]}
+                    style={{
+                      pointerEvents: "none",
+                      backgroundColor: "#f0f0f0",
+                    }}
                   >
                     {formatDateKR(formData.readingEnd)}
                   </span>
@@ -312,7 +381,9 @@ const BookInputPage = () => {
                     key={value}
                     src={bookIcon}
                     alt="book rating"
-                    className={`${styles.star} ${rating >= value ? styles.active : ""}`}
+                    className={`${styles.star} ${
+                      rating >= value ? styles.active : ""
+                    }`}
                     onClick={() => handleRating(value)}
                   />
                 ))}
@@ -322,19 +393,21 @@ const BookInputPage = () => {
                   className={styles["info-input"]}
                   placeholder="한줄 소감을 작성해 주세요"
                   value={formData.shortReview}
-                  onChange={(e) => handleInputChange("shortReview", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("shortReview", e.target.value)
+                  }
                   style={{ marginLeft: "10px", width: "180px" }}
                 />
               </div>
             </div>
 
-            <button 
-              onClick={handleSave} 
+            <button
+              onClick={handleSave}
               className={styles["save-button"]}
               disabled={isLoading}
-              style={{ 
+              style={{
                 opacity: isLoading ? 0.6 : 1,
-                cursor: isLoading ? 'not-allowed' : 'pointer'
+                cursor: isLoading ? "not-allowed" : "pointer",
               }}
             >
               {isLoading ? "저장중..." : "저장하기"}
