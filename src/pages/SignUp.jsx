@@ -1,3 +1,4 @@
+//test
 import React, { useState } from "react";
 import styles from "../styles/SignUp.module.css";
 import personImg from "../assets/images/person.png";
@@ -7,12 +8,13 @@ import eyeoffImg from "../assets/images/eyeoff.png";
 import mailImg from "../assets/images/mail.png";
 import { useNavigate } from "react-router-dom";
 
+
 function SignUp() {
   const [form, setForm] = useState({ name: "", password: "", email: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [nameError, setNameError] = useState(""); // ✅ 추가
+  const [nameError, setNameError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -90,7 +92,6 @@ function SignUp() {
         throw new Error(data.message || "회원가입 실패");
       }
 
-      // ✅ 에러 초기화 (선택)
       setNameError("");
       setEmailError("");
       setPasswordError("");
@@ -123,9 +124,6 @@ function SignUp() {
             required
           />
         </div>
-        {nameError && (
-          <div className={styles.errorMessage}>{nameError}</div>
-        )}
 
         <div className={styles.inputLine}>
           <img src={mailImg} alt="이메일" />
@@ -138,9 +136,6 @@ function SignUp() {
             required
           />
         </div>
-        {emailError && (
-          <div className={styles.errorMessage}>{emailError}</div>
-        )}
 
         <div className={styles.inputLine}>
           <img src={lockImg} alt="비밀번호" />
@@ -159,14 +154,20 @@ function SignUp() {
             onClick={() => setShowPassword(!showPassword)}
           />
         </div>
-        {passwordError && (
-          <div className={styles.errorMessage}>{passwordError}</div>
-        )}
       </div>
 
       <button className={styles.signupButton} type="submit">
         회원가입
       </button>
+
+      {/* ✅ 에러 메시지 묶어서 버튼 아래로 이동 */}
+      <div className={styles.errorGroup}>
+        {nameError && <div className={styles.errorMessage}>{nameError}</div>}
+        {emailError && <div className={styles.errorMessage}>{emailError}</div>}
+        {passwordError && (
+          <div className={styles.errorMessage}>{passwordError}</div>
+        )}
+      </div>
 
       <div className={styles.loginPrompt}>
         이미 회원이신가요?
