@@ -12,8 +12,8 @@ const BackButton = ({ label = "책 다시 검색" }) => {
       <style>
         {`
           @font-face {
-            font-family: 'Pretendard-Light';
-            src: url(${PretendardLight}) format('truetype');
+            font-family: "Pretendard-Light";
+            src: url(${PretendardLight}) format("truetype");
             font-weight: 100;
             font-style: normal;
           }

@@ -53,7 +53,7 @@ export default function Nav({ showBackGradient = true }) {
           <div className={styles.Navsecondline}>
             <p
               className={`${styles.Clickwrite} ${styles.Clicknav}`}
-              onClick={() => handleNavigation("/booksearch")}
+              onClick={() => handleNavigation("/selectbook")}
               style={{ cursor: "pointer" }}
             >
               Write

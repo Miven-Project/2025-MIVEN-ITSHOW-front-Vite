@@ -22,9 +22,6 @@ const checkBookExistsOnServer = async (bookTitle) => {
 
     const formattedToken = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
 
-    // 🔥 바뫐 부분 : API 엔드포인트를 /api/gallery/list로 수정
-    // 바뫐 부분 : keyword 파라미터에 공백 문자 대신 실제 검색어 전달
-    // 되야하는 동작 : 서버의 모든 책 목록을 가져와서 제목 비교
     const response = await axios.get("http://3.38.185.232:8080/api/gallery/list", {
       params: { keyword: " " }, // 전체 목록을 가져오기 위해 공백 사용
       headers: { Authorization: formattedToken }

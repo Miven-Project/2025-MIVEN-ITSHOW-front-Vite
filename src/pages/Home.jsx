@@ -48,7 +48,7 @@ export function Nav() {
           <div className={Homestyles.Navsecondline}>
             <p
               className={`${Homestyles.Clickwrite} ${Homestyles.Clicknav}`}
-              onClick={() => navigate("/bookinput")}
+              onClick={() => navigate("/selectbook")}
             >
               Write
             </p>

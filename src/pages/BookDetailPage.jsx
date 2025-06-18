@@ -1,4 +1,4 @@
-// BookDetailPage.jsx - 수정된 버전 (사용자별 리뷰 구분)
+// BookDetailPage.jsx - 에러 수정 버전
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
@@ -12,6 +12,8 @@ import BlurredBackground from "../components/BookDetail/BlurredBackground";
 import { BookDetailRightPanel } from "../components/BookDetail/BookDetailRightPanel";
 import bookDetailReview from "../styles/BookDetailReview.module.css"
 
+const apiBaseUrl = "https://leafin.mirim-it-show.site";
+
 const HeartIcon = ({ filled, onClick }) => {
     return (
         <div onClick={onClick} style={{ cursor: 'pointer' }}>
@@ -24,30 +26,46 @@ const HeartIcon = ({ filled, onClick }) => {
     );
 };
 
-const ReviewCard = ({ quote, comment, writer, className, style, sectionType, likeCount = 0, onLikeClick }) => {
-    const [isLiked, setIsLiked] = useState(false);
+const ReviewCard = ({ quote, comment, writer, className, style, sectionType, likeCount = 0, onLikeClick, reviewId, isLiked: initialLiked = false }) => {
+    const [isLiked, setIsLiked] = useState(initialLiked);
     const [currentLikeCount, setCurrentLikeCount] = useState(likeCount);
+
     const quoteSectionStyle = {
         height: sectionType === 'my-review' ? '335px' : '500px',
         padding: sectionType === 'my-review' ? '100px' : '50px'
     };
 
-    const handleHeartClick = () => {
+    const handleHeartClick = async () => {
         if (sectionType === 'reviews') {
             const newLikedState = !isLiked;
-            setIsLiked(newLikedState);
-            setCurrentLikeCount(prev => newLikedState ? prev + 1 : prev - 1);
 
-            if (onLikeClick) {
-                onLikeClick(newLikedState);
+            try {
+                // 🔥 서버에 좋아요 상태 저장
+                const success = await updateLikeOnServer(reviewId, newLikedState);
+
+                if (success) {
+                    // 서버 저장 성공 시에만 UI 업데이트
+                    setIsLiked(newLikedState);
+                    setCurrentLikeCount(prev => newLikedState ? prev + 1 : prev - 1);
+
+                    if (onLikeClick) {
+                        onLikeClick(newLikedState, reviewId, newLikedState ? currentLikeCount + 1 : currentLikeCount - 1);
+                    }
+                } else {
+                    // 서버 저장 실패 시 에러 메시지 표시
+                    console.error("좋아요 저장에 실패했습니다.");
+                    alert("좋아요 저장에 실패했습니다. 다시 시도해주세요.");
+                }
+            } catch (error) {
+                console.error("좋아요 처리 중 오류:", error);
+                alert("네트워크 오류가 발생했습니다. 다시 시도해주세요.");
             }
         }
     };
-
-    const quotedHtml = `&quot;${quote || ''}&quot;`;
+    const quotedHtml = `&quot;${quote || ""}&quot;`;
     return (
         <div className={className} style={style}>
-            {quote && quote !== '' ? (
+            {quote && quote !== "" ? (
                 <div className={bookDetailReview["quote-section"]} style={quoteSectionStyle}>
                     <p dangerouslySetInnerHTML={{ __html: quotedHtml }} className={bookDetailReview["quote-text"]} />
                 </div>
@@ -102,7 +120,8 @@ const ReviewCard = ({ quote, comment, writer, className, style, sectionType, lik
     )
 };
 
-const ReviewSection = ({ title, reviews, isScrollable, sectionType }) => {
+// 🔥 수정: ReviewSection 컴포넌트의 onLikeClick 파라미터 수정
+const ReviewSection = ({ title, reviews, isScrollable, sectionType, onLikeClick, likedReviews }) => {
     const sectionClass = sectionType === 'my-review'
         ? bookDetailReview["my-review"] : bookDetailReview["reviews"];
 
@@ -129,18 +148,19 @@ const ReviewSection = ({ title, reviews, isScrollable, sectionType }) => {
                                 writer={review.writer}
                                 className={bookDetailReview["review-box"]}
                                 sectionType={sectionType}
-                                onLikeClick={(liked) => {
-                                    console.log(`Review ${index} ${liked ? 'liked' : 'unliked'}`);
-                                }}
+                                likeCount={review.likeCount || 0} // 🔥 수정: 리뷰별 좋아요 수 전달
+                                reviewId={review.reviewId || `${review.writer}-${index}`}
+                                isLiked={likedReviews?.includes(review.reviewId || `${review.writer}-${index}`) || false}
+                                onLikeClick={onLikeClick} // 🔥
                             />
                         ))}
                     </div>
                 )
             ) : (
                 <ReviewCard
-                    quote={reviews[0]?.quote || ''}
-                    comment={reviews[0]?.comment || ''}
-                    writer={reviews[0]?.writer || ''}
+                    quote={reviews[0]?.quote || ""}
+                    comment={reviews[0]?.comment || ""}
+                    writer={reviews[0]?.writer || ""}
                     className={bookDetailReview["my-review-box"]}
                     sectionType={sectionType}
                 />
@@ -149,27 +169,53 @@ const ReviewSection = ({ title, reviews, isScrollable, sectionType }) => {
     );
 };
 
-const stripHtml = (text) => text?.replace(/<[^>]*>/g, '') || '';
+const stripHtml = (text) => text?.replace(/<[^>]*>/g, "") || "";
 
-// 🔥 새로 추가: 현재 로그인한 사용자 정보 가져오기
-const getCurrentUser = () => {
-    // localStorage에서 사용자 정보를 가져오는 로직
-    // 실제 구현에서는 토큰을 디코딩하거나 별도 API 호출이 필요할 수 있음
-    const userInfo = localStorage.getItem("userInfo");
-    if (userInfo) {
-        try {
-            return JSON.parse(userInfo);
-        } catch (e) {
-            console.error("사용자 정보 파싱 실패:", e);
-        }
+// 🔥 수정된 부분: 서버 API에서 현재 로그인한 사용자 정보 가져오기
+const getCurrentUser = async (reviewId, isLiked) => {
+    const token = getAuthToken();
+    if (!token) {
+        console.error("인증 토큰이 없습니다.");
+        return { username: "guest" }; // 토큰이 없으면 기본값 반환
     }
 
-    // 만약 userInfo가 없다면 임시로 토큰에서 추출하거나 다른 방법 사용
-    // 지금은 gahyun으로 가정 (실제로는 API 호출이나 토큰 디코딩 필요)
-    return { username: "gahyun" }; // 실제 구현에서는 동적으로 가져와야 함
+    try {
+        const response = await axios.get(`${apiBaseUrl}/api/profile`, {
+            headers: { Authorization: token }
+        });
+
+        if (response.data.code === 200 && response.data.data) {
+            console.log("사용자 프로필 API 응답:", response.data);
+            return {
+                username: response.data.data.name,
+                profileImg: response.data.data.profileImg,
+                coverColor: response.data.data.coverColor,
+                quoteCount: response.data.data.quoteCount,
+                quote: response.data.data.quote,
+                music: response.data.data.music
+            };
+        } else {
+            console.error("프로필 API 에러:", response.data.message);
+            return { username: "unknown" };
+        }
+    } catch (error) {
+        console.error("사용자 프로필 가져오기 실패:", error);
+        // API 호출 실패 시 localStorage에서 백업 정보 시도
+        const userInfo = localStorage.getItem("userInfo");
+        if (userInfo) {
+            try {
+                const parsed = JSON.parse(userInfo);
+                return { username: parsed.username || "unknown" };
+            } catch (e) {
+                console.error("localStorage 사용자 정보 파싱 실패:", e);
+            }
+        }
+        return { username: "unknown" };
+    }
 };
 
-// 🔥 수정: 리뷰 데이터를 현재 사용자 기준으로 분리하는 함수
+
+// 리뷰 데이터를 현재 사용자 기준으로 분리하는 함수
 const separateReviewsByUser = (allReviews, currentUsername) => {
     const myReviews = [];
     const othersReviews = [];
@@ -185,17 +231,20 @@ const separateReviewsByUser = (allReviews, currentUsername) => {
     return { myReviews, othersReviews };
 };
 
-const mapToBookData = (data, originalBook = {}) => {
+const mapToBookData = (data, originalBook = {}, allReviews = []) => {
     const title = stripHtml(data.title) || stripHtml(originalBook.title);
     const author = data.author || stripHtml(originalBook.author);
     const isbn = data.isbn || originalBook.isbn;
-    const publisher = data.publisher || originalBook.publisher || '';
+    const publisher = data.publisher || originalBook.publisher || "";
     const publishDate = data.publicDate || originalBook.pubdate;
-    const reviewText = data.reviewText || '';
-    const quote = data.quote || '';
-    const writer = data.writer || '';
+    const reviewText = data.reviewText || "";
+    const quote = data.quote || "";
+    const writer = data.writer || "";
     const likeCount = data.likeCount || 0;
     const comments = Array.isArray(data.comments?.comments) ? data.comments.comments : [];
+
+    // 전체 리뷰 수 계산 (내 리뷰 + 다른 사용자 리뷰)
+    const totalReviewCount = allReviews.length;
 
     return {
         title,
@@ -206,24 +255,24 @@ const mapToBookData = (data, originalBook = {}) => {
         writer,
         comments,
         author,
-        subtitle: isbn || '',
+        subtitle: isbn || "",
         info: {
             isbn,
             publishDate,
             publisher,
             pages: data.pages || 0,
-            period: data.period || ''
+            period: data.period || ""
         },
         reading: {
             regTime: data.regTime || new Date().toISOString(),
-            period: data.period || ''
+            period: data.period || ""
         },
         summary: {
             quote
         },
         review: {
             like: likeCount,
-            reviewCount: comments.length,
+            reviewCount: totalReviewCount,
             writer,
             reviewMent: reviewText
         },
@@ -232,11 +281,10 @@ const mapToBookData = (data, originalBook = {}) => {
             text: reviewText,
             comment: reviewText
         },
-        // 🔥 새로 추가: 모든 리뷰 데이터를 포함
         allReviews: comments.map(comment => ({
-            quote: comment.quote || '',
-            comment: comment.text || comment.comment || '',
-            writer: comment.writer || '',
+            quote: comment.quote || "",
+            comment: comment.text || comment.comment || "",
+            writer: comment.writer || "",
             likeCount: comment.likeCount || 0
         }))
     };
@@ -249,13 +297,13 @@ const getAuthToken = () => {
     return token.startsWith("Bearer ") ? token : `Bearer ${token}`;
 };
 
-// 🔥 수정: 같은 제목의 모든 리뷰 데이터 가져오기
+// 같은 제목의 모든 리뷰 데이터 가져오기
 const fetchAllReviewsForBook = async (bookTitle) => {
     const token = getAuthToken();
     if (!token) return [];
 
     try {
-        const res = await axios.get("http://3.38.185.232:8080/api/gallery/list", {
+        const res = await axios.get(`${apiBaseUrl}/api/gallery/list`, {
             params: { keyword: " " },
             headers: { Authorization: token }
         });
@@ -276,18 +324,19 @@ const fetchAllReviewsForBook = async (bookTitle) => {
             const allReviews = [];
             for (const book of matchingBooks) {
                 try {
-                    const detailRes = await axios.get(`http://3.38.185.232:8080/api/gallery/detail/${book.bookId}`, {
+                    const detailRes = await axios.get(`${apiBaseUrl}/api/gallery/detail/${book.bookId}`, {
                         headers: { Authorization: token }
                     });
 
                     if (detailRes.data.code === 200 && detailRes.data.data) {
                         const detailData = detailRes.data.data;
                         allReviews.push({
-                            quote: detailData.quote || '',
-                            comment: detailData.reviewText || '',
-                            writer: detailData.writer || '',
+                            quote: detailData.quote || "",
+                            comment: detailData.reviewText || "",
+                            writer: detailData.writer || "",
                             likeCount: detailData.likeCount || 0,
-                            bookId: book.bookId
+                            bookId: book.bookId,
+                            reviewId: `${detailData.writer || 'unknown'}-${book.bookId}`
                         });
                     }
                 } catch (error) {
@@ -311,7 +360,7 @@ const fetchServerBookDetail = async (gNo) => {
     if (!token) throw new Error("인증 토큰이 없습니다.");
 
     try {
-        const res = await axios.get(`http://3.38.185.232:8080/api/gallery/detail/${gNo}`, {
+        const res = await axios.get(`${apiBaseUrl}/api/gallery/detail/${gNo}`, {
             headers: { Authorization: token }
         });
 
@@ -332,7 +381,7 @@ const fetchBookIdByISBN = async (targetIsbn) => {
     if (!token) return null;
 
     try {
-        const res = await axios.get("http://3.38.185.232:8080/api/gallery/list", {
+        const res = await axios.get(`${apiBaseUrl}/api/gallery/list`, {
             params: { keyword: " " },
             headers: { Authorization: token }
         });
@@ -355,7 +404,7 @@ const fetchBookIdByTitle = async (title) => {
     if (!token) return null;
 
     try {
-        const res = await axios.get("http://3.38.185.232:8080/api/gallery/list", {
+        const res = await axios.get(`${apiBaseUrl}/api/gallery/list`, {
             params: { keyword: " " },
             headers: { Authorization: token }
         });
@@ -385,12 +434,41 @@ const BookDetailPage = () => {
     const [error, setError] = useState(null);
     const [backgroundFixed, setBackgroundFixed] = useState(true);
     const [gradientOpacity, setGradientOpacity] = useState(0.3);
-    // 🔥 새로 추가: 사용자별 리뷰 상태
     const [myReviews, setMyReviews] = useState([]);
     const [othersReviews, setOthersReviews] = useState([]);
+    // 하트를 누른 리뷰들과 총 하트 수 상태 관리
+    const [likedReviews, setLikedReviews] = useState([]);
+    const [totalLikeCount, setTotalLikeCount] = useState(0);
+    const [allReviews, setAllReviews] = useState([]);
 
     console.log("URL 파라미터 - bookId:", bookId, "gNo:", gNo, "isbn:", isbn);
     console.log("state로 전달받은 book:", bookFromState);
+
+    // 🔥 하트 클릭 핸들러
+    const handleLikeUpdate = (isLiked, reviewId, newLikeCount) => {
+        console.log(`리뷰 ${reviewId} 하트 상태 변경: ${isLiked ? '좋아요' : '좋아요 취소'}, 새 하트 수: ${newLikeCount}`);
+
+        // 좋아요한 리뷰 목록 업데이트
+        setLikedReviews(prev => {
+            if (isLiked) {
+                return [...prev, reviewId];
+            } else {
+                return prev.filter(id => id !== reviewId);
+            }
+        });
+
+        // 전체 하트 수 업데이트
+        setTotalLikeCount(prev => isLiked ? prev + 1 : prev - 1);
+
+        // bookData의 review.like 값도 실시간 업데이트
+        setBookData(prevData => ({
+            ...prevData,
+            review: {
+                ...prevData.review,
+                like: isLiked ? prevData.review.like + 1 : prevData.review.like - 1
+            }
+        }));
+    };
 
     useEffect(() => {
         const loadBookDetail = async () => {
@@ -427,21 +505,27 @@ const BookDetailPage = () => {
 
                     if (detailData) {
                         console.log("서버에서 받은 상세 데이터:", detailData);
-                        const mapped = mapToBookData(detailData, bookFromState);
+
+                        bookTitle = stripHtml(detailData.title) || stripHtml(bookFromState?.title);
+                        const allReviewsData = await fetchAllReviewsForBook(bookTitle);
+
+                        const mapped = mapToBookData(detailData, bookFromState, allReviewsData);
                         console.log("매핑된 최종 데이터:", mapped);
 
-                        // 🔥 새로 추가: 같은 제목의 모든 리뷰 가져오기
-                        bookTitle = mapped.title;
-                        const allReviews = await fetchAllReviewsForBook(bookTitle);
+                        // 🔥 수정: 변수명 통일 (allReviewsData -> allReviews)
+                        const currentUser = await getCurrentUser();
+                        console.log("현재 사용자 정보:", currentUser);
 
-                        // 🔥 새로 추가: 현재 사용자 기준으로 리뷰 분리
-                        const currentUser = getCurrentUser();
                         const { myReviews: userReviews, othersReviews: otherReviews } =
-                            separateReviewsByUser(allReviews, currentUser.username);
+                            separateReviewsByUser(allReviewsData, currentUser.username);
 
                         console.log("내 리뷰:", userReviews);
                         console.log("다른 사용자 리뷰:", otherReviews);
 
+                        // 전체 하트 수 계산
+                        const initialTotalLikes = allReviewsData.reduce((sum, review) => sum + (review.likeCount || 0), 0);
+                        setTotalLikeCount(initialTotalLikes);
+                        setAllReviews(allReviewsData);
                         setMyReviews(userReviews);
                         setOthersReviews(otherReviews);
                         setBookData(mapped);
@@ -452,20 +536,30 @@ const BookDetailPage = () => {
                     // gNo를 찾을 수 없는 경우 기본 데이터 사용
                     console.log("gNo를 찾을 수 없어 기본 데이터 사용");
                     if (bookFromState) {
-                        const mapped = mapToBookData({}, bookFromState);
-                        setBookData(mapped);
-
-                        // 🔥 새로 추가: 기본 데이터의 경우에도 같은 제목의 리뷰 검색
+                        // 기본 데이터의 경우에도 같은 제목의 리뷰 검색
                         if (bookFromState.title) {
-                            const allReviews = await fetchAllReviewsForBook(bookFromState.title);
-                            const currentUser = getCurrentUser();
-                            const { myReviews: userReviews, othersReviews: otherReviews } =
-                                separateReviewsByUser(allReviews, currentUser.username);
+                            const allReviewsData = await fetchAllReviewsForBook(bookFromState.title); // 🔥 수정: 올바른 변수명 사용
+                            const mapped = mapToBookData({}, bookFromState, allReviewsData);
 
+                            const currentUser = await getCurrentUser();
+
+                            const { myReviews: userReviews, othersReviews: otherReviews } =
+                                separateReviewsByUser(allReviewsData, currentUser.username); // 🔥 수정: 올바른 변수명 사용
+
+                            // 전체 하트 수 계산
+                            const initialTotalLikes = allReviewsData.reduce((sum, review) => sum + (review.likeCount || 0), 0);
+                            setTotalLikeCount(initialTotalLikes);
+                            setAllReviews(allReviewsData);
                             setMyReviews(userReviews);
                             setOthersReviews(otherReviews);
+                            setBookData(mapped);
+                        } else {
+                            const mapped = mapToBookData({}, bookFromState, []);
+                            setBookData(mapped);
                         }
                     } else {
+                        const mapped = mapToBookData({}, bookFromState, []);
+                        setBookData(mapped);
                         throw new Error("책 정보를 찾을 수 없습니다.");
                     }
                 }
@@ -475,7 +569,8 @@ const BookDetailPage = () => {
 
                 // 에러 발생 시에도 기본 데이터가 있으면 표시
                 if (bookFromState) {
-                    setBookData(mapToBookData({}, bookFromState));
+                    const mapped = mapToBookData({}, bookFromState, []);
+                    setBookData(mapped);
                     setError(null);
                 }
             } finally {
@@ -486,11 +581,12 @@ const BookDetailPage = () => {
         loadBookDetail();
     }, [bookId, gNo, isbn, bookFromState]);
 
+    // 🔥 수정: 스크롤 이벤트 핸들러를 별도 useEffect로 분리
     useEffect(() => {
         const handleScroll = () => {
             const scrollY = window.scrollY;
             const windowHeight = window.innerHeight;
-            const reviewSection = document.querySelector(`.${bookDetailReview["book-detail-review"]}`)
+            const reviewSection = document.querySelector(`.${bookDetailReview["book-detail-review"]}`);
 
             if (reviewSection) {
                 const reviewSectionTop = reviewSection.offsetTop;
@@ -560,16 +656,18 @@ const BookDetailPage = () => {
     console.log("렌더링할 최종 bookData:", bookData);
     console.log("내 리뷰:", myReviews);
     console.log("다른 사용자 리뷰:", othersReviews);
+    console.log("전체 하트 수:", totalLikeCount);
 
+    // 🔥 수정: 스타일 객체 정의 수정
     const backgroundLayerStyle = {
         position: backgroundFixed ? 'fixed' : 'absolute'
     };
 
     const gradientLayerStyle = {
         background: `linear-gradient(180deg,
-            rgba(96, 96, 96, 0.00) 0%,
-            rgba(250, 241, 241, ${gradientOpacity}) 70%,
-            rgba(250, 241, 241, ${Math.min(gradientOpacity + 0.2, 1)}) 90%)`
+        rgba(96, 96, 96, 0.00) 0%,
+        rgba(250, 241, 241, ${gradientOpacity}) 70%,
+        rgba(250, 241, 241, ${Math.min(gradientOpacity + 0.2, 1)}) 90%)`
     };
 
     return (
@@ -611,10 +709,10 @@ const BookDetailPage = () => {
                         </div>
                     </div>
                     <div className={bookDetailReview["review-content"]}>
-                        {/* 🔥 수정: 사용자별로 분리된 리뷰 사용 */}
+                        {/* 사용자별로 분리된 리뷰 사용 */}
                         <ReviewSection
                             title="My Review"
-                            reviews={myReviews.length > 0 ? myReviews : [{ quote: '', comment: '', writer: '' }]}
+                            reviews={myReviews.length > 0 ? myReviews : [{ quote: "", comment: "", writer: "" }]}
                             isScrollable={false}
                             sectionType="my-review"
                         />
@@ -623,6 +721,8 @@ const BookDetailPage = () => {
                             reviews={othersReviews}
                             isScrollable={true}
                             sectionType="reviews"
+                            onLikeClick={handleLikeUpdate} // 🔥 수정: 올바른 핸들러 전달
+                            likedReviews={likedReviews}
                         />
                     </div>
                 </section>
