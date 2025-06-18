@@ -426,8 +426,6 @@ const fetchAllReviewsForBook = async (bookTitle) => {
                 return serverTitle === searchTitle;
             });
 
-            console.log(`"${bookTitle}" 제목의 모든 책들:`, matchingBooks);
-
             // 각 책에 대해 상세 정보 가져와서 리뷰 수집
             const allReviews = [];
             for (const book of matchingBooks) {
@@ -618,11 +616,9 @@ const BookDetailPage = () => {
                         const allReviewsData = await fetchAllReviewsForBook(bookTitle);
 
                         const mapped = mapToBookData(detailData, bookFromState, allReviewsData);
-                        console.log("매핑된 최종 데이터:", mapped);
 
                         // 🔥 수정: 변수명 통일 (allReviewsData -> allReviews)
                         const currentUser = await getCurrentUser();
-                        console.log("현재 사용자 정보:", currentUser);
 
                         // 🔥 추가: 사용자가 좋아요한 리뷰 목록 가져오기
                         const userLikedReviews = await fetchUserLikedReviews();

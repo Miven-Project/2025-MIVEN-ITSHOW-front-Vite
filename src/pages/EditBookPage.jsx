@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 
 const apiBaseUrl = "https://leafin.mirim-it-show.site";
 
-const EditBookPage = () => {
+const EditBookPage = ({ initialQuote }) => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const { gNo } = useParams();
@@ -29,7 +29,7 @@ const EditBookPage = () => {
     readingStart: "",
     readingEnd: "",
     writer: "",
-    quote: "",
+    quote: initialQuote || "",  // 여기서 사용
     shortReview: "",
   });
 
@@ -495,7 +495,11 @@ const EditBookPage = () => {
 }
 
 EditBookPage.propTypes = {
-  initialQuote: PropTypes.string.isRequired,
+  initialQuote: PropTypes.string,
+};
+
+EditBookPage.defaultProps = {
+  initialQuote: "",
 };
 
 export default EditBookPage
