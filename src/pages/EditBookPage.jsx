@@ -5,7 +5,7 @@ import BackButton from "../components/BackButton";
 import bookIcon from "../assets/images/bookicon.png";
 import PropTypes from 'prop-types';
 
-const apiBaseUrl = "http://3.38.185.232:8080";
+const apiBaseUrl = "https://leafin.mirim-it-show.site";
 
 const EditBookPage = () => {
   const { state } = useLocation();

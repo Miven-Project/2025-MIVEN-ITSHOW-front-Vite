@@ -8,6 +8,7 @@ import styles from "../styles/BookSearch.module.css";
 import Nav from "../pages/Home.jsx";
 import { DebounceInput } from "react-debounce-input";
 
+const apiBaseUrl = "https://leafin.mirim-it-show.site";
 // 🔥 바뫐 부분 : 서버에서 책 존재 여부 확인하는 함수 추가
 // 바뫐 부분 : 제목으로 서버에 등록된 책인지 확인하여 gNo를 반환하는 함수
 // 되야하는 동작 : 네이버 API 책이 서버에도 등록되어 있으면 gNo를 반환, 없으면 null 반환
@@ -21,7 +22,7 @@ const checkBookExistsOnServer = async (bookTitle) => {
 
     const formattedToken = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
 
-    const response = await axios.get("http://3.38.185.232:8080/api/gallery/list", {
+    const response = await axios.get(`${apiBaseUrl}/api/gallery/list`, {
       params: { keyword: " " }, // 전체 목록을 가져오기 위해 공백 사용
       headers: { Authorization: formattedToken }
     });
