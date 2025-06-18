@@ -123,7 +123,7 @@ function Login() {
 
       if (isSuccess && finalToken) {
         alert("로그인 완료!");
-        navigate("/mypage"); // MyPage로 이동
+        navigate("/home"); // MyPage로 이동
       } else {
         console.warn("⚠️ 성공 조건을 만족하지 않음:");
         console.log("- data.code:", data.code);
