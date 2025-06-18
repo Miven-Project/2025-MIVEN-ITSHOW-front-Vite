@@ -13,6 +13,7 @@ import BookGallery from "./pages/BookGallery";
 import BookGalleryTest from "./pages/BookGalleryTest";
 import BookSearch from "./pages/BookSearch";
 import BookInputPage from "./pages/BookInputPage";
+import EditBookPage from "./pages/EditBookPage";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="/booksearch" element={<BookSearch />} />
           <Route path="/bookinput" element={<BookInputPage />} />
           <Route path="/scroll" element={<BookDetailPage />} />
+          <Route path="/editbookpage" element={<EditBookPage />} />
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
           {/* <Route path="/scroll" element={<BookDetailPage />} /> */}
           

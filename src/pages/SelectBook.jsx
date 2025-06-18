@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCoverColor } from "../contexts/CoverColorContext";
 import styles from "../styles/selectbook.module.css";
-import BookDetail from "../pages/BookDetailPage";
 import Nav from "../components/Nav";
 
 const SelectBook = () => {
@@ -15,15 +13,11 @@ const SelectBook = () => {
 
   const apiBaseUrl = "http://3.38.185.232:8080";
 
-  // 🔥 동적 토큰 가져오기 함수
   const getAuthToken = () => {
     const token = localStorage.getItem("authToken");
-
     if (!token) {
       throw new Error("로그인이 필요합니다. 토큰이 없습니다.");
     }
-
-    // Bearer 접두사가 없으면 추가
     return token.startsWith("Bearer ") ? token : `Bearer ${token}`;
   };
 
@@ -33,7 +27,6 @@ const SelectBook = () => {
         setIsLoading(true);
         setError(null);
 
-        // 🔥 동적으로 토큰 가져오기
         const authToken = getAuthToken();
 
         const response = await fetch(`${apiBaseUrl}/api/gallery/mylist`, {
@@ -44,15 +37,9 @@ const SelectBook = () => {
           },
         });
 
-        // 🔥 토큰 에러 처리
-        if (response.status === 403) {
+        if (response.status === 403 || response.status === 401) {
           localStorage.removeItem("authToken");
           throw new Error("인증이 만료되었습니다. 다시 로그인해주세요.");
-        }
-
-        if (response.status === 401) {
-          localStorage.removeItem("authToken");
-          throw new Error("인증에 실패했습니다. 다시 로그인해주세요.");
         }
 
         if (!response.ok) {
@@ -60,35 +47,44 @@ const SelectBook = () => {
         }
 
         const json = await response.json();
+
+        // API에서 받은 책 리스트에 bookId 포함되어 있다고 가정
+        const booksFromServer = json.data?.books || [];
+
+        // 새 페이지용 책 (추가 버튼 역할)
         const newPageBook = {
           title: "뉴페이지",
           cover: "/assets/images/newpage.png",
+          bookId: null,
         };
-        const booksFromServer = json.data?.books || [];
-        const bookCovers = booksFromServer.map((book) => ({
-          title: book.title,
-          cover: book.cover,
-        }));
 
-        const allBooks = [newPageBook, ...bookCovers];
+        // 책 리스트를 bookId 포함하여 저장
+        const allBooks = [
+          newPageBook,
+          ...booksFromServer.map((book) => ({
+            title: book.title,
+            cover: book.cover,
+            bookId: book.bookId || book.gNo || null, // bookId 혹은 gNo 확인
+            ...book, // 필요시 원본 데이터도 포함
+          })),
+        ];
 
         setBooks(allBooks);
-        setCenterIndex(0); // 항상 뉴페이지가 중앙
+        setCenterIndex(0);
       } catch (err) {
         console.error("📕 책 커버 로딩 실패", err);
         setError(err.message);
 
-        // 토큰 관련 에러인 경우 로그인 페이지로 리다이렉트
         if (err.message.includes("로그인") || err.message.includes("인증")) {
           navigate("/login");
           return;
         }
 
-        // 실패해도 뉴페이지는 항상 표시
         setBooks([
           {
             title: "뉴페이지",
             cover: "/assets/images/newpage.png",
+            bookId: null,
           },
         ]);
         setCenterIndex(0);
@@ -143,7 +139,6 @@ const SelectBook = () => {
     };
   }, [canScroll, books]);
 
-  // 로딩 상태 표시
   if (isLoading) {
     return (
       <div className={styles.pageContainer}>
@@ -165,7 +160,6 @@ const SelectBook = () => {
     );
   }
 
-  // 에러 상태 표시 (토큰 에러가 아닌 경우만)
   if (error && !error.includes("로그인") && !error.includes("인증")) {
     return (
       <div className={styles.pageContainer}>
@@ -231,8 +225,7 @@ const SelectBook = () => {
               key={index}
               className={styles.book}
               style={{
-                transform: `translateX(${offset * baseX
-                  }px) translateY(${translateY}px) scale(${scale})`,
+                transform: `translateX(${offset * baseX}px) translateY(${translateY}px) scale(${scale})`,
                 zIndex,
                 opacity,
               }}
@@ -244,17 +237,38 @@ const SelectBook = () => {
 
         <div className={styles.iconContainer}>
           {isNewPageCenter ? (
-            <div className={styles.plusIconCenter}
+            <div
+              className={styles.plusIconCenter}
               onClick={() => navigate("/booksearch", { state: { from: "selectBook" } })}
-              style={{ cursor: "pointer" }}>＋</div>
+              style={{ cursor: "pointer" }}
+            >
+              ＋
+            </div>
           ) : (
-            <div className={styles.editIconCenter}>✎</div>
+            <div
+              className={styles.editIconCenter}
+              onClick={() =>
+                navigate("/editbookpage", {
+                  state: {
+                    book: books[centerIndex],
+                    existingData: books[centerIndex], // 필요하면 분리해서 다르게 넘겨도 됨
+                  },
+                })
+              }
+              style={{ cursor: "pointer" }}
+            >
+              ✎
+            </div>
           )}
 
           {!isNewPageCenter && (
-            <div className={styles.plusIconBottomRight}
+            <div
+              className={styles.plusIconBottomRight}
               onClick={() => navigate("/booksearch", { state: { from: "selectBook" } })}
-              style={{ cursor: "pointer" }}>＋</div>
+              style={{ cursor: "pointer" }}
+            >
+              ＋
+            </div>
           )}
         </div>
       </div>
