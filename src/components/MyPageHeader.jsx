@@ -630,7 +630,7 @@ export default function MyPageHeader() {
 
   return (
     <div className={styles.wrapper}>
-      <Nav />
+      <Nav size="default" />
       {isEditing && <div className={styles.overlay}></div>}
 
       <div className={styles.container}>
@@ -751,9 +751,8 @@ export default function MyPageHeader() {
 
           <div className={styles.lowerSection}>
             <div
-              className={`${styles.quoteBox} ${
-                isEditing ? styles.editingQuoteBox : ""
-              }`}
+              className={`${styles.quoteBox} ${isEditing ? styles.editingQuoteBox : ""
+                }`}
             >
               {isEditing ? (
                 <>

@@ -22,12 +22,8 @@
   height: 416px;
 }
 
-.Logo {
-  color: #15719e;
-  font-family: Pretendard;
-  cursor: pointer;
-  font-size: 29px;
-  font-weight: 800;
+.logo {
+  width: 90px;
 }
 
 .Navdetail {

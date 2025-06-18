@@ -14,6 +14,16 @@ const BookIcon = ({ fill = "#B7C2C8", ...props }) => (
 export const BookDetailRightPanel = ({ summary, rating, review, info, writer, reading, reviewDetail }) => {
     const [panelType, setPanelType] = useState("summary"); // or "info" ( 상태에 따라 다름 )
 
+    // 디버깅을 위한 콘솔 로그 추가
+    console.log("BookDetailRightPanel에서 받은 props:");
+    console.log("summary:", summary);
+    console.log("rating:", rating);
+    console.log("review:", review);
+    console.log("info:", info);
+    console.log("writer:", writer);
+    console.log("reading:", reading);
+    console.log("reviewDetail:", reviewDetail);
+
     return (
         <div className="book-detail-right-panel">
             {panelType === "summary" ? (

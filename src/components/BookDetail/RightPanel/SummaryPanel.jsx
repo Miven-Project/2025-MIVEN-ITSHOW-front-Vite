@@ -20,11 +20,13 @@ const CommentIcon = (props) => {
     )
 }
 const SummaryPanel = ({ summary = {}, rating = 0, review = {}, onDetailClick, BookIcon }) => {
+    const quotedHtml = `&quot;${summary.quote || ''}&quot;`;
     return (
         <div className="summary-panel">
             <div className={styles["summary-blur-block"]}></div>
             <div className={styles['summary-quote-section']}>
-                <div className={styles["summary-quote"]}>"{summary.quote || ''}"</div>
+                <div dangerouslySetInnerHTML={{ __html: quotedHtml || '' }} className={styles["summary-quote"]} />
+                {/* <div className={styles["summary-quote"]}>"{summary.quote || ''}"</div> */}
                 <div className={styles['summary-row']}>
                     <div className={styles["summary-rating"]}>
                         {[...Array(MAX_RATING)].map((_, idx) => (

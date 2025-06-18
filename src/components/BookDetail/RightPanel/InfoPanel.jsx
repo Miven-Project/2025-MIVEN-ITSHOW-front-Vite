@@ -28,8 +28,8 @@ const InfoPanel = ({
           <span className={styles["info-value"]}>{info.publishDate || '-'}</span>
         </div>
         <div className={styles["info-item"]}>
-          <span className={styles["info-label"]}>쪽수</span>
-          <span className={styles["info-value"]}>{info.pages || '-'}</span>
+          <span className={styles["info-label"]}>출판사</span>
+          <span className={styles["info-value"]}>{info.publisher || '-'}</span>
         </div>
       </div>
 
@@ -69,13 +69,13 @@ const InfoPanel = ({
               <span className={styles["summary-rating-max"]}> / 5</span>
             </div>
             <span className={styles["review-comment"]}>
-              {reviewDetail.comment || '리뷰가 없습니다.'}
+              {reviewDetail.comment || reviewDetail.text || '아직 리뷰가 작성되지 않았습니다.'}
             </span>
           </div>
         </div>
       </div>
 
-      <button className="info-back-button" onClick={onBackClick}>← 뒤로가기</button>
+      <button className={styles["info-back-button"]} onClick={onBackClick}>← 뒤로가기</button>
     </div>
   );
 };

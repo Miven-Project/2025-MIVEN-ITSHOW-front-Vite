@@ -1,5 +1,6 @@
 import MyPageHeader from "../components/MyPageHeader";
 import MyPageBody from "../components/MyPageBody";
+import { useCoverColor } from "../contexts/CoverColorContext";
 
 export default function MyPage() {
   return (

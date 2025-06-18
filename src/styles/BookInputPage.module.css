@@ -11,18 +11,24 @@
 /* 배경 이미지 블러 처리를 위한 가상 요소 */
 .container::before {
   content: '';
-  position: fixed; /* absolute에서 fixed로 변경 */
-  top: -20px; /* 여유 공간 추가 */
+  position: fixed;
+  /* absolute에서 fixed로 변경 */
+  top: -20px;
+  /* 여유 공간 추가 */
   left: -20px;
   right: -20px;
   bottom: -20px;
-  width: calc(100% + 40px); /* 너비 확장 */
-  height: calc(100% + 40px); /* 높이 확장 */
-  background-image: inherit; /* 부모의 배경 이미지 상속 */
+  width: calc(100% + 40px);
+  /* 너비 확장 */
+  height: calc(100% + 40px);
+  /* 높이 확장 */
+  background-image: inherit;
+  /* 부모의 배경 이미지 상속 */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  filter: blur(15px); /* 이미지 블러 처리 */
+  filter: blur(15px);
+  /* 이미지 블러 처리 */
   z-index: 0;
 }
 
@@ -33,13 +39,21 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.4); /* 어두운 오버레이로 가독성 향상 */
+  background: rgba(0, 0, 0, 0.4);
+  /* 어두운 오버레이로 가독성 향상 */
   z-index: 1;
+}
+
+.page-content-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .modal-content {
   position: relative;
-  width: 1200px; /* 840px에서 1200px로 증가 */
+  width: 1200px;
+  /* 840px에서 1200px로 증가 */
   height: 550px;
   display: flex;
   margin-left: 40px;
@@ -47,12 +61,12 @@
 }
 
 .blur-background {
-  width: 1040px;
+  width: 950px;
   height: 690px;
   border-radius: 30px;
   position: absolute;
   top: -50px;
-  left: 0;
+  left: 97px;
   right: 0;
   bottom: -40px;
   background: rgba(255, 255, 255, 0.7);
@@ -75,9 +89,11 @@
 .book-cover-section {
   margin: 10px;
   width: 300px;
-  height: 700px; /* 530px에서 700px로 증가 */
+  height: 700px;
+  /* 530px에서 700px로 증가 */
   /* 또는 height: auto; */
-  overflow: visible; /* 이것도 추가 */
+  overflow: visible;
+  /* 이것도 추가 */
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -91,8 +107,9 @@
   height: 650px;
   object-fit: cover;
   border-radius: 30px;
-  margin-top: 35px; /* 원하는 위치로 조정 */
-  margin-left: 150px;
+  margin-top: 35px;
+  /* 원하는 위치로 조정 */
+  margin-left: 275px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
@@ -136,11 +153,11 @@
 }
 
 .section-block {
-  width: 380px;
+  width: 433px;
   min-height: 90px;
   flex-shrink: 0;
   border-radius: 15px;
-  padding: 16px;
+  padding: 23px 23px 26px 44px;
   margin-bottom: 16px;
   position: relative;
   display: flex;
@@ -200,6 +217,7 @@
 .info-input::placeholder {
   color: #999;
   font-style: italic;
+  padding: 23px 23px 26px 20px;
 }
 
 .info-value {
@@ -210,18 +228,18 @@
 }
 
 .rating-section {
-  width: 380px;
-  min-height: 100px;
+  width: 433px;
+  min-height: 130px;
   flex-shrink: 0;
   border-radius: 15px;
-  padding: 16px;
+  padding: 20px 16px 20px 20px;
   margin-bottom: 16px;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 12px;
+  gap: 8px;
   background: rgba(255, 255, 255, 0.9);
 }
 
@@ -232,7 +250,7 @@
   font-family: Pretendard-Light;
   font-size: 14px;
   font-weight: 500;
-  margin-bottom: 8px;
+  margin-top: 10px;
 }
 
 .rating-stars {
@@ -249,15 +267,18 @@
   height: 20px;
   cursor: pointer;
   transition: all 0.2s ease;
-  filter: brightness(0) saturate(100%) invert(76%) sepia(8%) saturate(394%) hue-rotate(167deg) brightness(92%) contrast(86%); /* #B7C2C8 색상 */
+  filter: brightness(0) saturate(100%) invert(76%) sepia(8%) saturate(394%) hue-rotate(167deg) brightness(92%) contrast(86%);
+  /* #B7C2C8 색상 */
 }
 
 .star.active {
-  filter: brightness(0) saturate(100%) invert(26%) sepia(99%) saturate(1324%) hue-rotate(192deg) brightness(93%) contrast(80%); /* #15719E 색상 */
+  filter: brightness(0) saturate(100%) invert(26%) sepia(99%) saturate(1324%) hue-rotate(192deg) brightness(93%) contrast(80%);
+  /* #15719E 색상 */
 }
 
 .star:hover {
-  filter: brightness(0) saturate(100%) invert(40%) sepia(60%) saturate(800%) hue-rotate(180deg) brightness(90%) contrast(85%); /* 호버 시 중간 색상 */
+  filter: brightness(0) saturate(100%) invert(40%) sepia(60%) saturate(800%) hue-rotate(180deg) brightness(90%) contrast(85%);
+  /* 호버 시 중간 색상 */
   transform: scale(1.1);
 }
 
@@ -295,7 +316,7 @@
   display: block;
   font-family: Pretendard;
   width: 120px;
-  margin-left: 255px;
+  margin-left: 312px;
 }
 
 .save-button:hover {
@@ -344,7 +365,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-left: -200px;
+  margin-left: -159px;
 }
 
 .quote-input {
@@ -367,8 +388,8 @@
   padding: 40px;
   box-sizing: border-box;
   margin-left: 120px;
-  text-align: center; 
-  height: 120px;            
+  text-align: center;
+  height: 120px;
   box-sizing: border-box;
 }
 
@@ -415,20 +436,20 @@
 .page-title {
   position: absolute;
   height: 50px;
-  top: 90px;
+  top: 115px;
   left: 50%;
   transform: translateX(-50%);
   color: white;
   font-size: 40px;
   font-family: Pretendard-Light;
   z-index: 100;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* 가독성을 위한 텍스트 그림자 추가 */
+  /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);  */
 }
 
 .info-input::placeholder,
 .quote-input::placeholder {
   font-style: normal;
-  color: gray; 
+  color: gray;
 }
 
 .count {
@@ -438,4 +459,3 @@
   font-size: 18px;
   font-family: Pretendard;
 }
-

@@ -1,6 +1,8 @@
-// App.jsx
+// BookDetailPage.jsx - 수정된 버전 (사용자별 리뷰 구분)
 import React, { useEffect, useState } from "react";
+import axios from 'axios';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
+import { useParams, useLocation } from "react-router-dom";
 import BackButton from "../components/BackButton";
 import ModalContent from "../components/BookDetail/ModalContent";
 import BoldText from "../components/BoldText";
@@ -9,30 +11,9 @@ import styles from "../styles/BookDetailPage.module.css";
 import BlurredBackground from "../components/BookDetail/BlurredBackground";
 import { BookDetailRightPanel } from "../components/BookDetail/BookDetailRightPanel";
 import bookDetailReview from "../styles/BookDetailReview.module.css"
-// import { ReactComponent as FillHeartIcon } from '../assets/images/fillHeartIcon.svg';
-// import BlurredBackground from "../components/BookDetail/BlurredBackground";
 
 const HeartIcon = ({ filled, onClick }) => {
-
-    // const handleClick = () => {
-    //     setIsFilled(!isFilled);
-    // };
-
     return (
-        // <div onClick={onClick} style={{ cursor: 'pointer' }}>
-        //     {isFilled ? (
-        //         <FillHeartIcon width="26" height="25" />
-        //     ) : (
-        //         <svg width="26" height="25" viewBox="0 0 25 25">
-        //             <path
-        //                 d="M10.605 16.9482L10.5 17.0572L10.3845 16.9482C5.397 12.2507 2.1 9.14441 2.1 5.99455C2.1 3.81471 3.675 2.17984 5.775 2.17984C7.392 2.17984 8.967 3.26975 9.5235 4.75204H11.4765C12.033 3.26975 13.608 2.17984 15.225 2.17984C17.325 2.17984 18.9 3.81471 18.9 5.99455C18.9 9.14441 15.603 12.2507 10.605 16.9482ZM15.225 0C13.398 0 11.6445 0.882834 10.5 2.26703C9.3555 0.882834 7.602 0 5.775 0C2.541 0 0 2.6267 0 5.99455C0 10.1035 3.57 13.4714 8.9775 18.5613L10.5 20L12.0225 18.5613C17.43 13.4714 21 10.1035 21 5.99455C21 2.6267 18.459 0 15.225 0Z"
-        //                 fill="white"
-        //                 stroke="white"
-        //                 strokeWidth="1"
-        //             />
-        //         </svg>
-        //     )}
-        // </div>
         <div onClick={onClick} style={{ cursor: 'pointer' }}>
             {filled ? (
                 <AiFillHeart style={{ color: 'red', fontSize: '26px', fill: 'white' }} />
@@ -42,27 +23,15 @@ const HeartIcon = ({ filled, onClick }) => {
         </div>
     );
 };
+
 const ReviewCard = ({ quote, comment, writer, className, style, sectionType, likeCount = 0, onLikeClick }) => {
     const [isLiked, setIsLiked] = useState(false);
     const [currentLikeCount, setCurrentLikeCount] = useState(likeCount);
-
-    // const getQuoteSectionHeight = () => {
-    //     switch (sectionType) {
-    //         case 'reviews':
-    //             return '500px'; // 다른 사람들 리뷰 높이 (원하는 값으로 변경)
-    //         case 'my-review':
-    //             return '335px'; // 내 리뷰 높이 (기본값)
-    //         default:
-    //             return '335px';
-    //     }
-    // };
-
     const quoteSectionStyle = {
         height: sectionType === 'my-review' ? '335px' : '500px',
         padding: sectionType === 'my-review' ? '100px' : '50px'
     };
 
-    // const quoteSectionStyle = { height: getQuoteSectionHeight() };
     const handleHeartClick = () => {
         if (sectionType === 'reviews') {
             const newLikedState = !isLiked;
@@ -75,15 +44,20 @@ const ReviewCard = ({ quote, comment, writer, className, style, sectionType, lik
         }
     };
 
+    const quotedHtml = `&quot;${quote || ''}&quot;`;
     return (
         <div className={className} style={style}>
-            {quote && (
+            {quote && quote !== '' ? (
                 <div className={bookDetailReview["quote-section"]} style={quoteSectionStyle}>
-                    <p className={bookDetailReview["quote-text"]}>"{quote}"</p>
+                    <p dangerouslySetInnerHTML={{ __html: quotedHtml }} className={bookDetailReview["quote-text"]} />
+                </div>
+            ) : (
+                <div className={bookDetailReview["quote-section"]} style={quoteSectionStyle}>
+                    <p className={bookDetailReview["quote-text"]}>아직 등록된 구절이 없습니다.</p>
                 </div>
             )}
 
-            {comment && writer && (
+            {comment && writer ? (
                 <div className={bookDetailReview["comment-section"]}>
                     <p className={bookDetailReview["comment-text"]}>{comment}</p>
                     <div className={bookDetailReview["like-writer-wrapper"]}>
@@ -102,6 +76,25 @@ const ReviewCard = ({ quote, comment, writer, className, style, sectionType, lik
                             </span>
                         </div>
                         <span className={bookDetailReview["writer-name"]}>작성자 {writer}</span>
+                    </div>
+                </div>
+            ) : (
+                <div className={bookDetailReview["comment-section"]}>
+                    <p className={bookDetailReview["comment-text"]}>아직 리뷰가 작성되지 않았습니다.</p>
+                    <div className={bookDetailReview["like-writer-wrapper"]}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                            <HeartIcon
+                                filled={false}
+                                onClick={() => { }}
+                                style={{
+                                    cursor: 'default',
+                                    transition: 'all 0.2s ease',
+                                    fill: 'white'
+                                }}
+                            />
+                            <span style={{ fontSize: '14px' }}>0</span>
+                        </div>
+                        <span className={bookDetailReview["writer-name"]}>작성자 -</span>
                     </div>
                 </div>
             )}
@@ -124,26 +117,30 @@ const ReviewSection = ({ title, reviews, isScrollable, sectionType }) => {
                 )}
             </div>
             {isScrollable ? (
-                <div className={bookDetailReview["reviews-container"]}>
-                    {reviews.map((review, index) => (
-                        <ReviewCard
-                            key={index}
-                            quote={review.quote}
-                            comment={review.comment}
-                            writer={review.writer}
-                            className={bookDetailReview["review-box"]}
-                            sectionType={sectionType}
-                            onLikeClick={(liked) => {
-                                console.log(`Review ${index} ${liked ? 'liked' : 'unliked'}`)
-                            }}
-                        />
-                    ))}
-                </div>
+                reviews.length === 0 ? (
+                    <p className={bookDetailReview["no-review"]}>아직 등록된 리뷰가 없어요.</p>
+                ) : (
+                    <div className={bookDetailReview["reviews-container"]}>
+                        {reviews.map((review, index) => (
+                            <ReviewCard
+                                key={index}
+                                quote={review.quote}
+                                comment={review.comment}
+                                writer={review.writer}
+                                className={bookDetailReview["review-box"]}
+                                sectionType={sectionType}
+                                onLikeClick={(liked) => {
+                                    console.log(`Review ${index} ${liked ? 'liked' : 'unliked'}`);
+                                }}
+                            />
+                        ))}
+                    </div>
+                )
             ) : (
                 <ReviewCard
-                    quote={reviews[0]?.quote}
-                    comment={reviews[0]?.comment}
-                    writer={reviews[0]?.writer}
+                    quote={reviews[0]?.quote || ''}
+                    comment={reviews[0]?.comment || ''}
+                    writer={reviews[0]?.writer || ''}
                     className={bookDetailReview["my-review-box"]}
                     sectionType={sectionType}
                 />
@@ -152,20 +149,342 @@ const ReviewSection = ({ title, reviews, isScrollable, sectionType }) => {
     );
 };
 
+const stripHtml = (text) => text?.replace(/<[^>]*>/g, '') || '';
+
+// 🔥 새로 추가: 현재 로그인한 사용자 정보 가져오기
+const getCurrentUser = () => {
+    // localStorage에서 사용자 정보를 가져오는 로직
+    // 실제 구현에서는 토큰을 디코딩하거나 별도 API 호출이 필요할 수 있음
+    const userInfo = localStorage.getItem("userInfo");
+    if (userInfo) {
+        try {
+            return JSON.parse(userInfo);
+        } catch (e) {
+            console.error("사용자 정보 파싱 실패:", e);
+        }
+    }
+
+    // 만약 userInfo가 없다면 임시로 토큰에서 추출하거나 다른 방법 사용
+    // 지금은 gahyun으로 가정 (실제로는 API 호출이나 토큰 디코딩 필요)
+    return { username: "gahyun" }; // 실제 구현에서는 동적으로 가져와야 함
+};
+
+// 🔥 수정: 리뷰 데이터를 현재 사용자 기준으로 분리하는 함수
+const separateReviewsByUser = (allReviews, currentUsername) => {
+    const myReviews = [];
+    const othersReviews = [];
+
+    allReviews.forEach(review => {
+        if (review.writer === currentUsername) {
+            myReviews.push(review);
+        } else {
+            othersReviews.push(review);
+        }
+    });
+
+    return { myReviews, othersReviews };
+};
+
+const mapToBookData = (data, originalBook = {}) => {
+    const title = stripHtml(data.title) || stripHtml(originalBook.title);
+    const author = data.author || stripHtml(originalBook.author);
+    const isbn = data.isbn || originalBook.isbn;
+    const publisher = data.publisher || originalBook.publisher || '';
+    const publishDate = data.publicDate || originalBook.pubdate;
+    const reviewText = data.reviewText || '';
+    const quote = data.quote || '';
+    const writer = data.writer || '';
+    const likeCount = data.likeCount || 0;
+    const comments = Array.isArray(data.comments?.comments) ? data.comments.comments : [];
+
+    return {
+        title,
+        cover: data.cover || originalBook.image,
+        rating: data.rating || 0,
+        reviewText,
+        quote,
+        writer,
+        comments,
+        author,
+        subtitle: isbn || '',
+        info: {
+            isbn,
+            publishDate,
+            publisher,
+            pages: data.pages || 0,
+            period: data.period || ''
+        },
+        reading: {
+            regTime: data.regTime || new Date().toISOString(),
+            period: data.period || ''
+        },
+        summary: {
+            quote
+        },
+        review: {
+            like: likeCount,
+            reviewCount: comments.length,
+            writer,
+            reviewMent: reviewText
+        },
+        reviewDetail: {
+            likeCount,
+            text: reviewText,
+            comment: reviewText
+        },
+        // 🔥 새로 추가: 모든 리뷰 데이터를 포함
+        allReviews: comments.map(comment => ({
+            quote: comment.quote || '',
+            comment: comment.text || comment.comment || '',
+            writer: comment.writer || '',
+            likeCount: comment.likeCount || 0
+        }))
+    };
+};
+
+// 인증 토큰 가져오기 함수
+const getAuthToken = () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) return null;
+    return token.startsWith("Bearer ") ? token : `Bearer ${token}`;
+};
+
+// 🔥 수정: 같은 제목의 모든 리뷰 데이터 가져오기
+const fetchAllReviewsForBook = async (bookTitle) => {
+    const token = getAuthToken();
+    if (!token) return [];
+
+    try {
+        const res = await axios.get("http://3.38.185.232:8080/api/gallery/list", {
+            params: { keyword: " " },
+            headers: { Authorization: token }
+        });
+
+        if (res.data.code === 200 && res.data.data?.books) {
+            const books = res.data.data.books;
+
+            // 같은 제목의 모든 책 찾기
+            const matchingBooks = books.filter(book => {
+                const serverTitle = stripHtml(book.title).trim();
+                const searchTitle = stripHtml(bookTitle).trim();
+                return serverTitle === searchTitle;
+            });
+
+            console.log(`"${bookTitle}" 제목의 모든 책들:`, matchingBooks);
+
+            // 각 책에 대해 상세 정보 가져와서 리뷰 수집
+            const allReviews = [];
+            for (const book of matchingBooks) {
+                try {
+                    const detailRes = await axios.get(`http://3.38.185.232:8080/api/gallery/detail/${book.bookId}`, {
+                        headers: { Authorization: token }
+                    });
+
+                    if (detailRes.data.code === 200 && detailRes.data.data) {
+                        const detailData = detailRes.data.data;
+                        allReviews.push({
+                            quote: detailData.quote || '',
+                            comment: detailData.reviewText || '',
+                            writer: detailData.writer || '',
+                            likeCount: detailData.likeCount || 0,
+                            bookId: book.bookId
+                        });
+                    }
+                } catch (error) {
+                    console.error(`책 ID ${book.bookId} 상세 정보 가져오기 실패:`, error);
+                }
+            }
+
+            console.log(`수집된 모든 리뷰:`, allReviews);
+            return allReviews;
+        }
+        return [];
+    } catch (error) {
+        console.error("모든 리뷰 가져오기 실패:", error);
+        return [];
+    }
+};
+
+// 서버에서 책 상세 정보 가져오기
+const fetchServerBookDetail = async (gNo) => {
+    const token = getAuthToken();
+    if (!token) throw new Error("인증 토큰이 없습니다.");
+
+    try {
+        const res = await axios.get(`http://3.38.185.232:8080/api/gallery/detail/${gNo}`, {
+            headers: { Authorization: token }
+        });
+
+        if (res.data.code === 200) {
+            return res.data.data;
+        } else {
+            throw new Error(`API 에러: ${res.data.message}`);
+        }
+    } catch (error) {
+        console.error("상세 정보 요청 실패:", error);
+        throw error;
+    }
+};
+
+// ISBN으로 bookId(gNo) 찾기
+const fetchBookIdByISBN = async (targetIsbn) => {
+    const token = getAuthToken();
+    if (!token) return null;
+
+    try {
+        const res = await axios.get("http://3.38.185.232:8080/api/gallery/list", {
+            params: { keyword: " " },
+            headers: { Authorization: token }
+        });
+
+        if (res.data.code === 200 && res.data.data?.books) {
+            const books = res.data.data.books;
+            const matching = books.find(book => book.isbn === targetIsbn);
+            return matching?.bookId || null;
+        }
+        return null;
+    } catch (err) {
+        console.error("bookId 찾기 실패:", err);
+        return null;
+    }
+};
+
+// 제목으로 bookId(gNo) 찾기
+const fetchBookIdByTitle = async (title) => {
+    const token = getAuthToken();
+    if (!token) return null;
+
+    try {
+        const res = await axios.get("http://3.38.185.232:8080/api/gallery/list", {
+            params: { keyword: " " },
+            headers: { Authorization: token }
+        });
+
+        if (res.data.code === 200 && res.data.data?.books) {
+            const books = res.data.data.books;
+            const matching = books.find(book => {
+                const serverTitle = stripHtml(book.title).trim();
+                const searchTitle = stripHtml(title).trim();
+                return serverTitle === searchTitle;
+            });
+            return matching?.bookId || null;
+        }
+        return null;
+    } catch (err) {
+        console.error("제목으로 bookId 찾기 실패:", err);
+        return null;
+    }
+};
+
 const BookDetailPage = () => {
+    const { bookId, gNo, isbn } = useParams();
+    const location = useLocation();
+    const bookFromState = location.state?.book;
     const [bookData, setBookData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [backgroundFixed, setBackgroundFixed] = useState(true);
-    const [gradientOpacity, setGradientOpacity] = useState(0.3); // 초기 투명도 낮게
+    const [gradientOpacity, setGradientOpacity] = useState(0.3);
+    // 🔥 새로 추가: 사용자별 리뷰 상태
+    const [myReviews, setMyReviews] = useState([]);
+    const [othersReviews, setOthersReviews] = useState([]);
+
+    console.log("URL 파라미터 - bookId:", bookId, "gNo:", gNo, "isbn:", isbn);
+    console.log("state로 전달받은 book:", bookFromState);
 
     useEffect(() => {
-        fetch("/data/bookdetailmodal.json")
-            .then(res => {
-                if (!res.ok) throw new Error("네트워크 응답 오류");
-                return res.json();
-            })
-            .then(data => setBookData(data))
-            .catch(err => console.error("JSON fetch 실패:", err));
-    }, []);
+        const loadBookDetail = async () => {
+            setLoading(true);
+            setError(null);
+
+            try {
+                let finalGNo = null;
+                let bookTitle = null;
+
+                // 경우별 gNo 결정 로직
+                if (gNo) {
+                    finalGNo = gNo;
+                    console.log("gNo로 직접 접근:", finalGNo);
+                } else if (bookId) {
+                    finalGNo = bookId;
+                    console.log("bookId로 접근:", finalGNo);
+                } else if (isbn) {
+                    if (isbn.startsWith('temp-')) {
+                        if (bookFromState?.title) {
+                            finalGNo = await fetchBookIdByTitle(bookFromState.title);
+                            console.log("제목으로 찾은 gNo:", finalGNo);
+                        }
+                    } else {
+                        finalGNo = await fetchBookIdByISBN(isbn);
+                        console.log("ISBN으로 찾은 gNo:", finalGNo);
+                    }
+                }
+
+                if (finalGNo) {
+                    // 서버에서 상세 정보 가져오기
+                    console.log("서버에서 상세 정보 조회 시작, gNo:", finalGNo);
+                    const detailData = await fetchServerBookDetail(finalGNo);
+
+                    if (detailData) {
+                        console.log("서버에서 받은 상세 데이터:", detailData);
+                        const mapped = mapToBookData(detailData, bookFromState);
+                        console.log("매핑된 최종 데이터:", mapped);
+
+                        // 🔥 새로 추가: 같은 제목의 모든 리뷰 가져오기
+                        bookTitle = mapped.title;
+                        const allReviews = await fetchAllReviewsForBook(bookTitle);
+
+                        // 🔥 새로 추가: 현재 사용자 기준으로 리뷰 분리
+                        const currentUser = getCurrentUser();
+                        const { myReviews: userReviews, othersReviews: otherReviews } =
+                            separateReviewsByUser(allReviews, currentUser.username);
+
+                        console.log("내 리뷰:", userReviews);
+                        console.log("다른 사용자 리뷰:", otherReviews);
+
+                        setMyReviews(userReviews);
+                        setOthersReviews(otherReviews);
+                        setBookData(mapped);
+                    } else {
+                        throw new Error("서버에서 상세 정보를 가져올 수 없습니다.");
+                    }
+                } else {
+                    // gNo를 찾을 수 없는 경우 기본 데이터 사용
+                    console.log("gNo를 찾을 수 없어 기본 데이터 사용");
+                    if (bookFromState) {
+                        const mapped = mapToBookData({}, bookFromState);
+                        setBookData(mapped);
+
+                        // 🔥 새로 추가: 기본 데이터의 경우에도 같은 제목의 리뷰 검색
+                        if (bookFromState.title) {
+                            const allReviews = await fetchAllReviewsForBook(bookFromState.title);
+                            const currentUser = getCurrentUser();
+                            const { myReviews: userReviews, othersReviews: otherReviews } =
+                                separateReviewsByUser(allReviews, currentUser.username);
+
+                            setMyReviews(userReviews);
+                            setOthersReviews(otherReviews);
+                        }
+                    } else {
+                        throw new Error("책 정보를 찾을 수 없습니다.");
+                    }
+                }
+            } catch (err) {
+                console.error("책 상세 정보 불러오기 실패:", err);
+                setError(err.message || "서버 요청 중 문제가 발생했습니다.");
+
+                // 에러 발생 시에도 기본 데이터가 있으면 표시
+                if (bookFromState) {
+                    setBookData(mapToBookData({}, bookFromState));
+                    setError(null);
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadBookDetail();
+    }, [bookId, gNo, isbn, bookFromState]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -192,50 +511,55 @@ const BookDetailPage = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    if (!bookData) return <div>로딩 중...</div>;
+    // 로딩 상태 처리
+    if (loading) {
+        return (
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+                fontSize: '18px'
+            }}>
+                로딩 중...
+            </div>
+        );
+    }
 
-    const myReviews = [
-        {
-            quote: bookData.summary.quote,
-            comment: bookData.reviewDetail.comment,
-            writer: bookData.writer,
-            likeCount: 0
-        }
-    ];
+    // 에러 상태 처리
+    if (error) {
+        return (
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+                fontSize: '18px',
+                color: 'red'
+            }}>
+                에러 발생: {error}
+            </div>
+        );
+    }
 
-    // 다른 사람들 리뷰 (임시 데이터 - 실제로는 API에서 가져와야 함)
-    const othersReviews = [
-        {
-            quote: "우리 집에는 곰팡이조차 사랑스럽다는 듯이 오래 공들여 바라보는 아이들이 넷이나 있다. 아이들이 곧잘 그림을 그려냈고 그 그림들은 내게 위로를 건네주었다. 세상을 살아가는 올바른 방식을 상상할 수 있도록 해주었다. 이 책은 그런 아이들의 그림에 빚지고 있다. 아주 작은 인간들이 말하는 연민과 사랑같은 것.",
-            comment: "이 책을 읽으면서 일상의 소중함을 다시 느꼈습니다.",
-            writer: "독서가A",
-            likeCount: 12
-        },
-        {
-            quote: "우리 집에는 곰팡이조차 사랑스럽다는 듯이 오래 공들여 바라보는 아이들이 넷이나 있다. 아이들이 곧잘 그림을 그려냈고 그 그림들은 내게 위로를 건네주었다. 세상을 살아가는 올바른 방식을 상상할 수 있도록 해주었다. 이 책은 그런 아이들의 그림에 빚지고 있다. 아주 작은 인간들이 말하는 연민과 사랑같은 것.",
-            comment: "아이들의 순수한 시선이 감동적이었습니다.",
-            writer: "독서가B",
-            likeCount: 12
-        },
-        {
-            quote: "우리 집에는 곰팡이조차 사랑스럽다는 듯이 오래 공들여 바라보는 아이들이 넷이나 있다. 아이들이 곧잘 그림을 그려냈고 그 그림들은 내게 위로를 건네주었다. 세상을 살아가는 올바른 방식을 상상할 수 있도록 해주었다. 이 책은 그런 아이들의 그림에 빚지고 있다. 아주 작은 인간들이 말하는 연민과 사랑같은 것.",
-            comment: "깊이 있는 사유를 담고 있어요.",
-            writer: "독서가C",
-            likeCount: 12
-        },
-        {
-            quote: "우리 집에는 곰팡이조차 사랑스럽다는 듯이 오래 공들여 바라보는 아이들이 넷이나 있다. 아이들이 곧잘 그림을 그려냈고 그 그림들은 내게 위로를 건네주었다. 세상을 살아가는 올바른 방식을 상상할 수 있도록 해주었다. 이 책은 그런 아이들의 그림에 빚지고 있다. 아주 작은 인간들이 말하는 연민과 사랑같은 것.",
-            comment: "아이들의 순수한 시선이 감동적이었습니다.",
-            writer: "독서가D",
-            likeCount: 12
-        },
-        {
-            quote: "우리 집에는 곰팡이조차 사랑스럽다는 듯이 오래 공들여 바라보는 아이들이 넷이나 있다. 아이들이 곧잘 그림을 그려냈고 그 그림들은 내게 위로를 건네주었다. 세상을 살아가는 올바른 방식을 상상할 수 있도록 해주었다. 이 책은 그런 아이들의 그림에 빚지고 있다. 아주 작은 인간들이 말하는 연민과 사랑같은 것.",
-            comment: "깊이 있는 사유를 담고 있어요.",
-            writer: "독서가E",
-            likeCount: 12
-        },
-    ];
+    // 데이터 없음 처리
+    if (!bookData) {
+        return (
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+                fontSize: '18px'
+            }}>
+                책 정보를 찾을 수 없습니다.
+            </div>
+        );
+    }
+
+    console.log("렌더링할 최종 bookData:", bookData);
+    console.log("내 리뷰:", myReviews);
+    console.log("다른 사용자 리뷰:", othersReviews);
 
     const backgroundLayerStyle = {
         position: backgroundFixed ? 'fixed' : 'absolute'
@@ -246,14 +570,15 @@ const BookDetailPage = () => {
             rgba(96, 96, 96, 0.00) 0%,
             rgba(250, 241, 241, ${gradientOpacity}) 70%,
             rgba(250, 241, 241, ${Math.min(gradientOpacity + 0.2, 1)}) 90%)`
-    }
+    };
+
     return (
         <div>
             <BlurredBackground cover={bookData.cover}>
                 <BackButton />
                 <section className={styles["book-detail"]}>
                     <BoldText title={bookData.title} className={styles["heading-primary"]} />
-                    <ModalContent book={bookData} >
+                    <ModalContent book={bookData}>
                         <BookDetailRightPanel
                             summary={bookData.summary}
                             rating={bookData.rating}
@@ -266,9 +591,8 @@ const BookDetailPage = () => {
                     </ModalContent>
                 </section>
             </BlurredBackground>
-            <section className={styles["book-detail-review"]}>
+            <section>
                 <BackButton />
-                {/* </BlurredBackground> */}
                 <section className={bookDetailReview["book-detail-review"]}>
                     <div className={bookDetailReview["review-background-layer"]}>
                         <BookCover cover={bookData.cover} className={bookDetailReview["review-book-cover-bg"]} style={backgroundLayerStyle} />
@@ -282,25 +606,28 @@ const BookDetailPage = () => {
                         <h1 className={bookDetailReview["heading-primary-review"]}>{bookData.title}</h1>
                         <BookCover cover={bookData.cover} className={bookDetailReview["review-book-cover"]} />
                         <div className={bookDetailReview["book-sub-info"]}>
-                            <p className={bookDetailReview["author"]}>{bookData.author}</p>
-                            <p className={bookDetailReview["sub-title"]}>{bookData.subtitle}</p>
+                            <p className={bookDetailReview["author"]}>저자 : {bookData.author}</p>
+                            {/* <p className={bookDetailReview["sub-title"]}>{bookData.subtitle}</p> */}
                         </div>
                     </div>
                     <div className={bookDetailReview["review-content"]}>
+                        {/* 🔥 수정: 사용자별로 분리된 리뷰 사용 */}
                         <ReviewSection
                             title="My Review"
-                            reviews={myReviews}
+                            reviews={myReviews.length > 0 ? myReviews : [{ quote: '', comment: '', writer: '' }]}
                             isScrollable={false}
-                            sectionType="my-review" />
+                            sectionType="my-review"
+                        />
                         <ReviewSection
                             title="Review"
                             reviews={othersReviews}
                             isScrollable={true}
-                            sectionType="reviews" />
+                            sectionType="reviews"
+                        />
                     </div>
-                </section >
-            </section >
-        </div >
+                </section>
+            </section>
+        </div>
     );
 };
 
