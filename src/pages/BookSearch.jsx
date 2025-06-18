@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import BookCard from "../components/BookCard";
 import booksData from "../data/book.json";
 import styles from "../styles/BookSearch.module.css";
-import { Nav } from "../pages/Home.jsx";
+import Nav from "../pages/Home.jsx";
 import { DebounceInput } from "react-debounce-input";
 
 // 🔥 바뫐 부분 : 서버에서 책 존재 여부 확인하는 함수 추가
