@@ -5,7 +5,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import BookCard from "../components/BookCard";
 import booksData from "../data/book.json";
 import styles from "../styles/BookSearch.module.css";
-import BookDetail from "../pages/BookDetailPage";
 import { Nav } from "../pages/Home.jsx";
 import { DebounceInput } from "react-debounce-input";
 

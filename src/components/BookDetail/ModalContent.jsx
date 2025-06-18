@@ -1,6 +1,5 @@
 import React from "react";
 import BookCover from "../BookCover";
-import { BookDetailRightPanel } from "./BookDetailRightPanel";
 import styles from "./ModalContent.module.css";
 
 const ModalContent = ({ book, children }) => {

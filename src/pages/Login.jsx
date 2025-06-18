@@ -142,25 +142,6 @@ function Login() {
     navigate("/signup");
   };
 
-  // 🔧 개발용 디버깅 함수들
-  const testTokenStorage = () => {
-    console.log("=== 토큰 저장 테스트 ===");
-    localStorage.setItem("authToken", "test-token-123");
-    console.log("저장된 토큰:", localStorage.getItem("authToken"));
-
-    // Bearer 접두사 추가 테스트
-    const token = localStorage.getItem("authToken");
-    const formattedToken = token.startsWith("Bearer ")
-      ? token
-      : `Bearer ${token}`;
-    console.log("Bearer 처리된 토큰:", formattedToken);
-  };
-
-  const clearStorage = () => {
-    localStorage.clear();
-    console.log("localStorage 전체 삭제됨");
-  };
-
   return (
     <div>
       <form className={styles.signupContainer} onSubmit={handleSubmit}>

@@ -181,7 +181,7 @@ export default function MyPageBody({ authToken = null }) {
       {filteredData.length === 0 && searchQuery.trim() !== "" && (
         <div className={styles.noResultsContainer}>
           <div className={styles.noResultsText}>
-            '{searchQuery}'에 대한 검색 결과가 없습니다.
+            &#39;{searchQuery}&#39;에 대한 검색 결과가 없습니다.
           </div>
         </div>
       )}

@@ -3,21 +3,19 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styles from "../styles/BookInputPage.module.css";
 import BackButton from "../components/BackButton";
 import bookIcon from "../assets/images/bookicon.png";
+import PropTypes from 'prop-types';
 
 const apiBaseUrl = "http://3.38.185.232:8080";
 
-export default function ({ initialQuote }) {
+const EditBookPage = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const { gNo } = useParams();
 
   const book = state?.book;
   const existing = state?.existingData;
-  const [quote, setQuote] = useState(
-    initialQuote ? initialQuote.replace(/<br\s*\/?>/gi, "\n") : ""
-  );
+
   const [isEditing, setIsEditing] = useState(false);
-  const formattedQuote = quote.replace(/\n/g, "<br />");
 
   const [rating, setRating] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -331,7 +329,7 @@ export default function ({ initialQuote }) {
   const bookImage = currentBook?.image || currentBook?.cover;
   const bookTitle = currentBook?.title || "제목 없음";
   const quotedHtml = `&quot;${formData.quote || ""}&quot;`;
-  const cleanQuote = formData.quote?.replace(/<br\s*\/?>/gi, "\n") || "";
+  // const cleanQuote = formData.quote?.replace(/<br\s*\/?>/gi, "\n") || "";
 
   return (
     <div
@@ -495,3 +493,9 @@ export default function ({ initialQuote }) {
     </div>
   );
 }
+
+EditBookPage.propTypes = {
+  initialQuote: PropTypes.string.isRequired,
+};
+
+export default EditBookPage

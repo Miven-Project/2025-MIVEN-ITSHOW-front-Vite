@@ -80,4 +80,5 @@ const InfoPanel = ({
   );
 };
 
+
 export default InfoPanel;

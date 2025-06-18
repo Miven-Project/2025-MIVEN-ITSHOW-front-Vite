@@ -5,7 +5,7 @@ import React, { useEffect, useState, useRef } from "react";
 import searchIcon from "/assets/images/search-icon.png";
 
 function BookGallery() {
-  const [bookData, setBookData] = useState([]);
+  const [setBookData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [bookDetails, setBookDetails] = useState({}); // bookId를 key로 하는 상세 정보 저장소
