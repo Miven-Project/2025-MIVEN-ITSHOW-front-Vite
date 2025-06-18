@@ -1,4 +1,5 @@
 import { Nav } from "../pages/Home.jsx";
+import { useNavigate } from "react-router-dom";
 import "../styles/BookGallery.css";
 import React, { useEffect, useState, useRef } from "react";
 import searchIcon from "/assets/images/search-icon.png";
@@ -260,7 +261,10 @@ function BookGallery() {
                       마우스를 올려 상세 정보를 확인하세요
                     </p>
                   )}
-                  <button className="view-button">View</button>
+                  <button
+                    className="view-button"
+                    onClick={() => navigate(`/bookdetail/${book.bookId}`)}
+                  >View</button>
                 </div>
               </div>
               <p className="book-title">{book.title}</p>

@@ -14,7 +14,8 @@
   flex-direction: column;
   row-gap: 10px;
   margin-left: 70px;
-  margin-top: 55px; /* 위로 올리기 */
+  margin-top: 55px;
+  /* 위로 올리기 */
   position: absolute;
   top: 0;
   left: 0;
@@ -25,12 +26,8 @@
   height: 86px;
 }
 
-.Logo {
-  color: #15719e;
-  font-family: Pretendard;
-  cursor: pointer;
-  font-size: 29px;
-  font-weight: 800;
+.logo {
+  width: 90px;
 }
 
 .Navdetail {

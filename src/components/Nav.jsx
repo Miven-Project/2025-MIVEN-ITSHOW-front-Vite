@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../styles/Nav.module.css";
 import { useCoverColor } from "../contexts/CoverColorContext";
+import LeafInLogo from "../assets/images/LeafInLogo.svg"
 
 export default function Nav({ showBackGradient = true }) {
   const { coverColor } = useCoverColor();
@@ -18,8 +19,8 @@ export default function Nav({ showBackGradient = true }) {
         style={
           showBackGradient
             ? {
-                background: `linear-gradient(180deg, ${coverColor} 0%, #fff 100%)`,
-              }
+              background: `linear-gradient(180deg, ${coverColor} 0%, #fff 100%)`,
+            }
             : null
         }
       ></div>
@@ -28,9 +29,8 @@ export default function Nav({ showBackGradient = true }) {
           <p
             className={styles.Clicklogo}
             onClick={() => handleNavigation("/")}
-            style={{ cursor: "pointer" }}
           >
-            LOGO
+            <img src={LeafInLogo} alt="" className={styles.logo} style={{ cursor: "pointer" }} />
           </p>
         </div>
         <div className={styles.Navdetail}>
@@ -66,6 +66,11 @@ export default function Nav({ showBackGradient = true }) {
               My Page
             </p>
           </div>
+          <p
+            className={`${styles.ClickbookSearch} ${styles.Clicknav}`}
+            onClick={() => navigate("/booksearch", { state: { from: "nav" } })}>
+            Book Search
+          </p>
         </div>
       </div>
     </div>

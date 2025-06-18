@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Homestyles from "../styles/Home.module.css";
 import HomeImgContainer from "../assets/images/HomeImgContainer.png";
+import LeafInLogo from "../assets/images/LeafInLogo.svg"
 
 function Home() {
   return (
@@ -26,9 +27,9 @@ export function Nav() {
     <div>
       <div className={Homestyles.Gradation}></div>
       <div className={Homestyles.Allnavcontainer}>
-        <div className={Homestyles.Logo}>
-          <p className={Homestyles.Clicklogo}>LOGO</p>
-        </div>
+        {/* <div className={Homestyles.Logo}> */}
+        <img src={LeafInLogo} alt="" className={Homestyles.logo} />
+        {/* </div> */}
         <div className={Homestyles.Navdetail}>
           <div className={Homestyles.Navfirstline}>
             <p
@@ -47,7 +48,7 @@ export function Nav() {
           <div className={Homestyles.Navsecondline}>
             <p
               className={`${Homestyles.Clickwrite} ${Homestyles.Clicknav}`}
-              onClick={() => navigate("/booksearch")}
+              onClick={() => navigate("/bookinput")}
             >
               Write
             </p>
@@ -58,6 +59,12 @@ export function Nav() {
               MyPage
             </p>
           </div>
+          <p
+            className={`${Homestyles.ClickbookSearch} ${Homestyles.Clicknav}`}
+            onClick={() => navigate("/booksearch", { state: { from: "nav" } })}>
+            Book Search
+          </p>
+
         </div>
       </div>
     </div>

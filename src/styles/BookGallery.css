@@ -19,14 +19,16 @@ Nav {
   height: 350px;
   margin: 0;
   padding: 0;
+  display: flex;
+  justify-content: right;
 }
 
 .GalleryMark-1,
 .GalleryMark-2 {
   position: absolute;
-  top: 0;
+  /* top: 0;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%); */
 }
 
 .GalleryMark-1 {
@@ -37,7 +39,7 @@ Nav {
 
 .GalleryMark-2 {
   z-index: -1;
-  width: 130x;
+  width: 1360px;
   height: 350px;
 }
 
@@ -132,19 +134,24 @@ Nav {
 .search-bar-section {
   display: flex;
   justify-content: center;
-  position: absolute; /* relative에서 absolute로 변경 */
-  top: 560px; /* 원하는 위치로 조정 (예: 300px) */
+  position: absolute;
+  /* relative에서 absolute로 변경 */
+  top: 560px;
+  /* 원하는 위치로 조정 (예: 300px) */
   left: 50%;
-  transform: translateX(-50%); /* 가운데 정렬 */
+  transform: translateX(-50%);
+  /* 가운데 정렬 */
   z-index: 3;
-  width: 100%; /* 전체 너비 확보 */
+  width: 100%;
+  /* 전체 너비 확보 */
 }
 
 /* 검색창 안쪽 구조 */
 .search-input-container {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.8); /* 약간 투명한 흰색 */
+  background: rgba(255, 255, 255, 0.8);
+  /* 약간 투명한 흰색 */
   border-radius: 0px;
   padding: 30px 32px;
   width: 800px;
@@ -205,7 +212,8 @@ Nav {
   max-height: 130px;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-align: center; /* 가운데 정렬 추가 */
+  text-align: center;
+  /* 가운데 정렬 추가 */
   color: white;
   font-style: normal !important;
 }
@@ -219,7 +227,8 @@ Nav {
   cursor: pointer;
   font-size: 15px;
   transition: background 0.3s, color 0.3s;
-  margin-top: 10px; /* 써머리와 간격 */
+  margin-top: 10px;
+  /* 써머리와 간격 */
 
   position: relative;
   top: 40px;

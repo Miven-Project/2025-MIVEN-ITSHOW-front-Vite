@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCoverColor } from "../contexts/CoverColorContext";
 import styles from "../styles/selectbook.module.css";
+import BookDetail from "../pages/BookDetailPage";
 import Nav from "../components/Nav";
 
 const SelectBook = () => {
@@ -229,9 +231,8 @@ const SelectBook = () => {
               key={index}
               className={styles.book}
               style={{
-                transform: `translateX(${
-                  offset * baseX
-                }px) translateY(${translateY}px) scale(${scale})`,
+                transform: `translateX(${offset * baseX
+                  }px) translateY(${translateY}px) scale(${scale})`,
                 zIndex,
                 opacity,
               }}
@@ -243,13 +244,17 @@ const SelectBook = () => {
 
         <div className={styles.iconContainer}>
           {isNewPageCenter ? (
-            <div className={styles.plusIconCenter}>＋</div>
+            <div className={styles.plusIconCenter}
+              onClick={() => navigate("/booksearch", { state: { from: "selectBook" } })}
+              style={{ cursor: "pointer" }}>＋</div>
           ) : (
             <div className={styles.editIconCenter}>✎</div>
           )}
 
           {!isNewPageCenter && (
-            <div className={styles.plusIconBottomRight}>＋</div>
+            <div className={styles.plusIconBottomRight}
+              onClick={() => navigate("/booksearch", { state: { from: "selectBook" } })}
+              style={{ cursor: "pointer" }}>＋</div>
           )}
         </div>
       </div>

@@ -31,6 +31,12 @@ function App() {
           <Route path="/bookinput" element={<BookInputPage />} />
           <Route path="/scroll" element={<BookDetailPage />} />
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+          {/* <Route path="/scroll" element={<BookDetailPage />} /> */}
+          
+          {/* 되야하는 동작 : gNo로 접근, ISBN으로 접근, 기본 bookId로 접근하는 세 가지 경로 지원 */}
+          <Route path="/bookdetail/:bookId" element={<BookDetailPage />} />
+          <Route path="/bookdetail/gno/:gNo" element={<BookDetailPage />} />
+          <Route path="/bookdetail/isbn/:isbn" element={<BookDetailPage />} />
         </Routes>
       </Router>
     </CoverColorProvider>
