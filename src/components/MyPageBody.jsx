@@ -28,7 +28,7 @@ export default function MyPageBody({ authToken = null }) {
   };
 
   useEffect(() => {
-    const apiBaseUrl = "http://3.38.185.232:8080";
+    const apiBaseUrl = "https://leafin.mirim-it-show.site";
 
     const fetchData = async () => {
       try {

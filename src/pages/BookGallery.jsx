@@ -14,7 +14,11 @@ function BookGallery() {
   const [isLoading, setIsLoading] = useState(true);
   const searchInputRef = useRef(null);
 
-  const apiBaseUrl = "http://3.38.185.232:8080";
+  // 🔥 바꾼 부분: navigate 변수 추가
+  // 되야하는 동작: View 버튼 클릭 시 해당 책의 상세 페이지로 이동
+  const navigate = useNavigate();
+
+  const apiBaseUrl = "https://leafin.mirim-it-show.site";
 
   // 🔥 동적 토큰 가져오기 함수
   const getAuthToken = () => {
@@ -213,6 +217,7 @@ function BookGallery() {
         <div className="search-input-container">
           <img src={searchIcon} alt="Search" className="search-icon" />
           <input
+            className="book-search-input"
             ref={searchInputRef}
             type="text"
             placeholder="책 제목을 입력해주세요"
@@ -221,76 +226,87 @@ function BookGallery() {
           />
         </div>
       </div>
+
       <div className="book-gallery-container">
         {filteredBooks.length === 0 ? (
           <div
             className="no-books-message"
             style={{ textAlign: "center", padding: "50px", color: "#999" }}
           >
-            {searchTerm ? `"${searchTerm}"에 대한 검색 결과가 없습니다.` : ""}
+            <p style={{ fontSize: "0.9rem", marginTop: "0.5rem", color: "#999" }}>
+              {searchTerm ? `"${searchTerm}"에 대한 검색 결과가 없습니다.` : ""}
+            </p>
           </div>
         ) : (
-          filteredBooks.map((book, index) => (
-            <div className="book-card" key={index}>
-              <div
-                className="book-cover-wrapper"
-                onMouseEnter={() => fetchBookDetails(book.bookId)}
-              >
-                <img src={book.cover} alt={book.title} className="book-cover" />
-                <div className="hover-overlay">
-                  {loadingDetails[book.bookId] ? (
-                    <div>
-                      <p className="book-quote">상세 정보를 불러오는 중...</p>
-                    </div>
-                  ) : bookDetails[book.bookId] ? (
-                    <div>
-                      <h3 className="detailed-title">
-                        {bookDetails[book.bookId].title || book.title}
-                      </h3>
-                      {bookDetails[book.bookId].author && (
-                        <p className="book-author">
-                          저자: {bookDetails[book.bookId].author}
-                        </p>
-                      )}
+          filteredBooks.map((book, index) => {
+            const quote = bookDetails[book.bookId]?.quote || "";
+            const quotedHtml = quote ? `&quot;${quote}&quot;` : "명언이 없습니다";
+
+            return (
+              <div className="book-card" key={index}>
+                <div
+                  className="book-cover-wrapper"
+                  onMouseEnter={() => fetchBookDetails(book.bookId)}
+                >
+                  <img src={book.cover} alt={book.title} className="book-cover" />
+                  <div className="hover-overlay">
+                    {loadingDetails[book.bookId] ? (
+                      <div>
+                        <p className="book-quote">상세 정보를 불러오는 중...</p>
+                      </div>
+                    ) : bookDetails[book.bookId] ? (
+                      <div>
+                        <h3 className="detailed-title">
+                          {bookDetails[book.bookId].title || book.title}
+                        </h3>
+                        {bookDetails[book.bookId].author && (
+                          <p className="book-author">
+                            저자: {bookDetails[book.bookId].author}
+                          </p>
+                        )}
+                        <p
+                          className="book-quote"
+                          dangerouslySetInnerHTML={{ __html: quotedHtml }}
+                        ></p>
+                      </div>
+                    ) : (
                       <p className="book-quote">
-                        {bookDetails[book.bookId].quote || "명언이 없습니다"}
+                        마우스를 올려 상세 정보를 확인하세요
                       </p>
-                    </div>
-                  ) : (
-                    <p className="book-quote">
-                      마우스를 올려 상세 정보를 확인하세요
-                    </p>
-                  )}
-                  <button
-                    className="view-button"
-                    onClick={() => navigate(`/bookdetail/${book.bookId}`)}
-                  >View</button>
+                    )}
+                    <button
+                      className="view-button"
+                      onClick={() => navigate(`/bookdetail/${book.bookId}`)}
+                    >
+                      View
+                    </button>
+                  </div>
                 </div>
+                <p className="book-title">{book.title}</p>
               </div>
-              <p className="book-title">{book.title}</p>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
   );
-}
 
-function GalleryMark() {
-  return (
-    <div className="GalleryMark">
-      <img
-        className="GalleryMark-1"
-        src="/assets/images/Gallery-1.png"
-        alt="Gallery-1"
-      />
-      <img
-        className="GalleryMark-2"
-        src="/assets/images/Gallery.png"
-        alt="Gallery-2"
-      />
-    </div>
-  );
+  function GalleryMark() {
+    return (
+      <div className="GalleryMark">
+        <img
+          className="GalleryMark-1"
+          src="/assets/images/Gallery-1.png"
+          alt="Gallery-1"
+        />
+        <img
+          className="GalleryMark-2"
+          src="/assets/images/Gallery.png"
+          alt="Gallery-2"
+        />
+      </div>
+    );
+  }
 }
 
 export default BookGallery;

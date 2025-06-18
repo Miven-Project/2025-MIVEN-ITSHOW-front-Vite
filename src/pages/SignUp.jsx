@@ -8,6 +8,7 @@ import eyeoffImg from "../assets/images/eyeoff.png";
 import mailImg from "../assets/images/mail.png";
 import { useNavigate } from "react-router-dom";
 
+const apiBaseUrl = "https://leafin.mirim-it-show.site";
 
 function SignUp() {
   const [form, setForm] = useState({ name: "", password: "", email: "" });
@@ -47,7 +48,7 @@ function SignUp() {
     }
 
     try {
-      const emailCheckResponse = await fetch(`http://3.38.185.232:8080/api/members/signup`);
+      const emailCheckResponse = await fetch(`${apiBaseUrl}/api/members/signup`);
       const emailCheckData = await emailCheckResponse.json();
 
       if (emailCheckData.isDuplicate) {
@@ -59,7 +60,7 @@ function SignUp() {
     }
 
     try {
-      const response = await fetch("http://3.38.185.232:8080/api/members/signup", {
+      const response = await fetch(`${apiBaseUrl}/api/members/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

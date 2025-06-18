@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import Nav from "../components/Nav";
+import Nav from "./Nav";
 import styles from "../styles/MyPageHeader.module.css";
 import { FiSettings, FiCamera } from "react-icons/fi";
 import { FaPlay, FaPause } from "react-icons/fa";
@@ -65,7 +65,7 @@ export default function MyPageHeader({ authToken = null }) {
   const { setCoverColor } = useCoverColor();
 
   // API 설정
-  const apiBaseUrl = "http://3.38.185.232:8080";
+ const apiBaseUrl = "https://leafin.mirim-it-show.site";
 
   // 🔥 MyPageBody와 동일한 토큰 가져오기 함수
   const getAuthToken = () => {
@@ -719,9 +719,8 @@ export default function MyPageHeader({ authToken = null }) {
 
           <div className={styles.lowerSection}>
             <div
-              className={`${styles.quoteBox} ${
-                isEditing ? styles.editingQuoteBox : ""
-              }`}
+              className={`${styles.quoteBox} ${isEditing ? styles.editingQuoteBox : ""
+                }`}
             >
               {isEditing ? (
                 <>

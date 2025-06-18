@@ -8,7 +8,7 @@ export default function EditBookPage() {
   const { state } = useLocation();
   const navigate = useNavigate();
   const { gNo } = useParams(); // URL 파라미터에서 gNo 추출 (실제로는 bookId)
-  
+
   // state에서 받은 데이터 (기존 방식)
   const book = state?.book;
   const existing = state?.existingData;
@@ -56,12 +56,12 @@ export default function EditBookPage() {
   // publicDate 형식을 YYYY-MM-DD로 변환하는 함수 수정
   const formatPublishDate = (rawDate) => {
     if (!rawDate) return "";
-    
+
     // 이미 YYYY-MM-DD 형식이면 그대로 반환
     if (rawDate.includes("-") && rawDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
       return rawDate;
     }
-    
+
     // YYYYMMDD 형식을 YYYY-MM-DD로 변환
     if (rawDate.length === 8 && /^\d{8}$/.test(rawDate)) {
       const year = rawDate.slice(0, 4);
@@ -69,24 +69,24 @@ export default function EditBookPage() {
       const day = rawDate.slice(6, 8);
       return `${year}-${month}-${day}`;
     }
-    
+
     // "YYYY년 MM월 DD일" 형식을 YYYY-MM-DD로 변환
     const koreanDateMatch = rawDate.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/);
     if (koreanDateMatch) {
       const [, year, month, day] = koreanDateMatch;
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
     }
-    
+
     // 그 외의 경우 원본 반환
     return rawDate;
   };
 
   const parsePeriodToDateRange = (period) => {
     if (!period) return { start: "", end: "" };
-    
+
     const parts = period.split(" ~ ");
     if (parts.length !== 2) return { start: "", end: "" };
-    
+
     const parseKoreanDate = (koreanDate) => {
       // "2025년 06월 10일" 형식을 "2025-06-10" 형식으로 변환
       const match = koreanDate.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/);
@@ -96,7 +96,7 @@ export default function EditBookPage() {
       }
       return "";
     };
-    
+
     return {
       start: parseKoreanDate(parts[0]),
       end: parseKoreanDate(parts[1])
@@ -109,7 +109,7 @@ export default function EditBookPage() {
     try {
       const authToken = getAuthToken();
       console.log(`API 호출: ${apiBaseUrl}/api/gallery/detail/${bookId}`);
-      
+
       const response = await fetch(`${apiBaseUrl}/api/gallery/detail/${bookId}`, {
         method: "GET",
         headers: {
@@ -128,11 +128,11 @@ export default function EditBookPage() {
 
       const result = await response.json();
       console.log("API 응답:", result);
-      
+
       if (result.code === 200 && result.data) {
         setBookDetail(result.data);
         console.log("도서 상세 정보:", result.data);
-        
+
         // 폼 데이터 초기화 - API 응답 구조에 맞게 수정
         const dateRange = parsePeriodToDateRange(result.data.period);
         setFormData({
@@ -145,11 +145,11 @@ export default function EditBookPage() {
           quote: result.data.quote || "",
           shortReview: result.data.reviewText || "",
         });
-        
+
         setRating(result.data.rating || 0);
         setReadingStartSelected(!!dateRange.start);
         setReadingEndSelected(!!dateRange.end);
-        
+
       } else {
         throw new Error(`응답 오류: ${result.message || "도서 정보를 불러올 수 없습니다."}`);
       }
@@ -175,7 +175,7 @@ export default function EditBookPage() {
         quote: existing.quote || "",
         shortReview: existing.review || existing.reviewText || "",
       });
-      
+
       setRating(existing.rating || 0);
       setReadingStartSelected(!!dateRange.start);
       setReadingEndSelected(!!dateRange.end);
@@ -260,11 +260,11 @@ export default function EditBookPage() {
       // bookId는 gNo 파라미터나 기존 데이터에서 가져옴
       const bookId = gNo || existing?.bookId || bookDetail?.id;
       console.log("업데이트할 bookId:", bookId);
-      
+
       if (!bookId) {
         throw new Error("업데이트할 도서 ID를 찾을 수 없습니다.");
       }
-      
+
       const response = await fetch(`${apiBaseUrl}/api/gallery/update/${bookId}`, {
         method: "PATCH",
         headers: {
@@ -345,11 +345,11 @@ export default function EditBookPage() {
   // 컴포넌트 마운트 시 실행
   useEffect(() => {
     console.log("컴포넌트 마운트 - gNo:", gNo, "existing:", existing);
-    
-    
+
+
     // 내 도서 목록 가져오기
     fetchMyBooks();
-    
+
     // gNo가 있으면 API에서 상세 정보 가져오기, 없으면 기존 데이터 사용
     if (gNo) {
       console.log("gNo로 도서 상세 정보 가져오기:", gNo);

@@ -33,14 +33,14 @@ Nav {
 
 .GalleryMark-1 {
   z-index: 2;
-  width: 1300px;
-  height: 350px;
+  width: 1467px;
+  height: 364px;
 }
 
 .GalleryMark-2 {
   z-index: -1;
-  width: 1360px;
-  height: 350px;
+  width: 1500px;
+  height: 367px;
 }
 
 /* 책 데이터 이미지*/
@@ -59,6 +59,22 @@ Nav {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.book-search-input {
+  text-align: center;
+  width: 100%;
+  padding: 1rem 1.5rem 1rem 3rem;
+  border-radius: 8px;
+  border: 2px solid #ffffff;
+  background-color: rgba(255, 255, 255, 0.721);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(15px);
+  /* -webkit-backdrop-filter: blur(15px); */
+  outline: none;
+  font-size: 1rem;
+  color: #333;
+  transition: all 0.3s ease;
 }
 
 .book-cover-wrapper {
@@ -132,38 +148,35 @@ Nav {
 /* 서치바 */
 /* 서치바 */
 .search-bar-section {
-  display: flex;
-  justify-content: center;
   position: absolute;
-  /* relative에서 absolute로 변경 */
-  top: 560px;
-  /* 원하는 위치로 조정 (예: 300px) */
+  top: 500px;
   left: 50%;
   transform: translateX(-50%);
-  /* 가운데 정렬 */
-  z-index: 3;
-  width: 100%;
-  /* 전체 너비 확보 */
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* 검색창 안쪽 구조 */
 .search-input-container {
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.8);
-  /* 약간 투명한 흰색 */
-  border-radius: 0px;
-  padding: 30px 32px;
-  width: 800px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  position: relative;
+  width: 32rem;
+  bottom: 50px;
+
 }
 
 /* 돋보기 아이콘 */
 .search-icon {
-  width: 40px;
-  height: 40px;
-  margin-left: 15px;
-  margin-right: 0px;
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  z-index: 10;
   opacity: 0.6;
 }
 
@@ -180,6 +193,15 @@ Nav {
 
 .search-input-container input::placeholder {
   color: #888;
+}
+
+.no-books-message {
+  grid-column: span 5;
+  text-align: center;
+  color: #666;
+  font-size: 1.1rem;
+  margin-top: 3rem;
+  padding: 2rem;
 }
 
 /* 책 제 */
