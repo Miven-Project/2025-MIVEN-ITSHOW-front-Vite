@@ -1,7 +1,7 @@
 // BookDetailPage.jsx - 에러 수정 버전
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
-import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { useParams, useLocation } from "react-router-dom";
 import BackButton from "../components/BackButton";
 import ModalContent from "../components/BookDetail/ModalContent";
@@ -11,8 +11,10 @@ import styles from "../styles/BookDetailPage.module.css";
 import BlurredBackground from "../components/BookDetail/BlurredBackground";
 import { BookDetailRightPanel } from "../components/BookDetail/BookDetailRightPanel";
 import bookDetailReview from "../styles/BookDetailReview.module.css"
+import PropTypes from 'prop-types';
 
 const apiBaseUrl = "https://leafin.mirim-it-show.site";
+
 
 const HeartIcon = ({ filled, onClick }) => {
     return (
@@ -25,6 +27,92 @@ const HeartIcon = ({ filled, onClick }) => {
         </div>
     );
 };
+HeartIcon.propTypes = {
+    filled: PropTypes.bool,
+    onClick: PropTypes.func.isRequired,
+};
+
+// 🔥 추가: 서버에 좋아요 상태 저장하는 함수
+const updateLikeOnServer = async (reviewId, isLiked) => {
+    const token = getAuthToken();
+    if (!token) {
+        console.error("인증 토큰이 없습니다.");
+        return false;
+    }
+
+    try {
+        // reviewId에서 bookId 추출 (형식: "작성자-bookId")
+        const bookId = reviewId.split('-').pop();
+
+        console.log(`서버에 좋아요 ${isLiked ? '추가' : '제거'} 요청:`, {
+            bookId,
+            reviewId,
+            isLiked
+        });
+
+        // 좋아요 추가/제거 API 호출
+        const response = await axios.post(
+            `${apiBaseUrl}/api/gallery/${bookId}/like`,
+            {
+                liked: isLiked // 좋아요 상태
+            },
+            {
+                headers: {
+                    Authorization: token,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        console.log("서버 응답:", response.data);
+
+        if (response.data.code === 200) {
+            console.log(`좋아요 ${isLiked ? '추가' : '제거'} 성공`);
+            return true;
+        } else {
+            console.error("서버 응답 에러:", response.data.message);
+            return false;
+        }
+    } catch (error) {
+        console.error("좋아요 서버 저장 실패:", error);
+
+        // 에러 상세 정보 출력
+        if (error.response) {
+            console.error("응답 에러:", error.response.data);
+            console.error("상태 코드:", error.response.status);
+        } else if (error.request) {
+            console.error("요청 에러:", error.request);
+        } else {
+            console.error("설정 에러:", error.message);
+        }
+
+        return false;
+    }
+};
+
+// 🔥 추가: 사용자별 좋아요한 리뷰 목록 조회
+const fetchUserLikedReviews = async () => {
+    const token = getAuthToken();
+    if (!token) return [];
+
+    try {
+        const response = await axios.get(
+            `${apiBaseUrl}/api/user/liked-reviews`,
+            {
+                headers: { Authorization: token }
+            }
+        );
+
+        if (response.data.code === 200 && response.data.data) {
+            return response.data.data.likedReviews || [];
+        }
+        return [];
+    } catch (error) {
+        console.error("좋아요한 리뷰 목록 조회 실패:", error);
+        return [];
+    }
+};
+
 
 const ReviewCard = ({ quote, comment, writer, className, style, sectionType, likeCount = 0, onLikeClick, reviewId, isLiked: initialLiked = false }) => {
     const [isLiked, setIsLiked] = useState(initialLiked);
@@ -120,6 +208,19 @@ const ReviewCard = ({ quote, comment, writer, className, style, sectionType, lik
     )
 };
 
+ReviewCard.propTypes = {
+    quote: PropTypes.string,
+    comment: PropTypes.string,
+    writer: PropTypes.string,
+    className: PropTypes.string,
+    style: PropTypes.object,
+    sectionType: PropTypes.oneOf(['my-review', 'reviews']),
+    likeCount: PropTypes.number,
+    onLikeClick: PropTypes.func,
+    reviewId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    isLiked: PropTypes.bool,
+};
+
 // 🔥 수정: ReviewSection 컴포넌트의 onLikeClick 파라미터 수정
 const ReviewSection = ({ title, reviews, isScrollable, sectionType, onLikeClick, likedReviews }) => {
     const sectionClass = sectionType === 'my-review'
@@ -168,11 +269,18 @@ const ReviewSection = ({ title, reviews, isScrollable, sectionType, onLikeClick,
         </div>
     );
 };
-
+ReviewSection.propTypes = {
+    title: PropTypes.string,
+    reviews: PropTypes.array,
+    isScrollable: PropTypes.bool,
+    sectionType: PropTypes.string,
+    onLikeClick: PropTypes.func,
+    likedReviews: PropTypes.array.isRequired,
+};
 const stripHtml = (text) => text?.replace(/<[^>]*>/g, "") || "";
 
 // 🔥 수정된 부분: 서버 API에서 현재 로그인한 사용자 정보 가져오기
-const getCurrentUser = async (reviewId, isLiked) => {
+const getCurrentUser = async () => {
     const token = getAuthToken();
     if (!token) {
         console.error("인증 토큰이 없습니다.");
@@ -439,7 +547,7 @@ const BookDetailPage = () => {
     // 하트를 누른 리뷰들과 총 하트 수 상태 관리
     const [likedReviews, setLikedReviews] = useState([]);
     const [totalLikeCount, setTotalLikeCount] = useState(0);
-    const [allReviews, setAllReviews] = useState([]);
+    const [setAllReviews] = useState([]);
 
     console.log("URL 파라미터 - bookId:", bookId, "gNo:", gNo, "isbn:", isbn);
     console.log("state로 전달받은 book:", bookFromState);
@@ -516,6 +624,11 @@ const BookDetailPage = () => {
                         const currentUser = await getCurrentUser();
                         console.log("현재 사용자 정보:", currentUser);
 
+                        // 🔥 추가: 사용자가 좋아요한 리뷰 목록 가져오기
+                        const userLikedReviews = await fetchUserLikedReviews();
+                        console.log("사용자가 좋아요한 리뷰 목록:", userLikedReviews);
+                        setLikedReviews(userLikedReviews);
+
                         const { myReviews: userReviews, othersReviews: otherReviews } =
                             separateReviewsByUser(allReviewsData, currentUser.username);
 
@@ -542,6 +655,11 @@ const BookDetailPage = () => {
                             const mapped = mapToBookData({}, bookFromState, allReviewsData);
 
                             const currentUser = await getCurrentUser();
+
+                            // 🔥 추가: 사용자가 좋아요한 리뷰 목록 가져오기
+                            const userLikedReviews = await fetchUserLikedReviews();
+                            console.log("사용자가 좋아요한 리뷰 목록:", userLikedReviews);
+                            setLikedReviews(userLikedReviews);
 
                             const { myReviews: userReviews, othersReviews: otherReviews } =
                                 separateReviewsByUser(allReviewsData, currentUser.username); // 🔥 수정: 올바른 변수명 사용

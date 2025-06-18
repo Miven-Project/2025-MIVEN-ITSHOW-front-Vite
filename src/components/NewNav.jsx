@@ -51,7 +51,7 @@ const Nav = ({ showBackGradient = false, coverColor = "#6b9bd8", onNavigate }) =
                 </nav>
             </div>
 
-            <style jsx>{`
+            <style>{`
         .nav-container {
           position: fixed;
           left: 0;

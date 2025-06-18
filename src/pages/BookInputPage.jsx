@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import styles from "../styles/BookInputPage.module.css";
 import BackButton from "../components/BackButton";
 import bookIcon from "../assets/images/bookicon.png";
 
 const BookInputPage = () => {
   const { state } = useLocation();
-  const navigate = useNavigate();
   const book = state?.book;
 
   const [rating, setRating] = useState(0);
