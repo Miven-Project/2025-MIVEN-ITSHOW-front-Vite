@@ -8,6 +8,10 @@ import styles from "../styles/BookSearch.module.css";
 import Nav from "../pages/Home.jsx";
 import { DebounceInput } from "react-debounce-input";
 
+import bookSearchImg from "../assets/images/Book Search.png";
+import bookSearchImg2 from "../assets/images/Book Search2.png";
+import searchIcon from "../assets/images/search-icon.png";
+
 const apiBaseUrl = "https://leafin.mirim-it-show.site";
 // 🔥 바뫐 부분 : 서버에서 책 존재 여부 확인하는 함수 추가
 // 바뫐 부분 : 제목으로 서버에 등록된 책인지 확인하여 gNo를 반환하는 함수
@@ -62,7 +66,7 @@ const BookSearch = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await axios.get("/naver-api/v1/search/book.json", {
+        const response = await axios.get("https://openapi.naver.com/v1/search/book.json", {
           params: { query },
           headers: {
             "X-Naver-Client-Id": "4gzXh5h99U1wXPgELMhm",
@@ -148,21 +152,22 @@ const BookSearch = () => {
       <div className={styles.booksearchContainer}>
         {/* 상단 이미지들 */}
         <img
-          src="/assets/images/Book Search.png"
+          src={bookSearchImg}
           alt="Book Search"
           className={styles.booksearchTopImage}
         />
         <img
-          src="/assets/images/Book Search2.png"
+          src={bookSearchImg2}
           alt="Book Search 2"
           className={styles.booksearchTopImage2}
         />
+
 
         {/* 검색창 */}
         <div className={styles.booksearchInputContainer}>
           <div className={styles.searchInputWrapper}>
             <img
-              src="/assets/images/search-icon.png"
+              src={searchIcon}
               alt="Search Icon"
               className={styles.searchIcon}
             />
