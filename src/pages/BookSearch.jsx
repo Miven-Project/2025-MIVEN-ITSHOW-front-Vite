@@ -7,12 +7,12 @@ import booksData from "../data/book.json";
 import styles from "../styles/BookSearch.module.css";
 import Nav from "../pages/Home.jsx";
 import { DebounceInput } from "react-debounce-input";
-
 import bookSearchImg from "../assets/images/Book Search.png";
 import bookSearchImg2 from "../assets/images/Book Search2.png";
 import searchIcon from "../assets/images/search-icon.png";
 
 const apiBaseUrl = "https://leafin.mirim-it-show.site";
+
 // 🔥 바뫐 부분 : 서버에서 책 존재 여부 확인하는 함수 추가
 // 바뫐 부분 : 제목으로 서버에 등록된 책인지 확인하여 gNo를 반환하는 함수
 // 되야하는 동작 : 네이버 API 책이 서버에도 등록되어 있으면 gNo를 반환, 없으면 null 반환
@@ -62,22 +62,18 @@ const BookSearch = () => {
   const navigate = useNavigate();
   const from = location.state?.from || "nav"; // 기본은 nav
 
-  // 검색 기능 (Naver API)
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await axios.get("https://openapi.naver.com/v1/search/book.json", {
+        const response = await axios.get(`${apiBaseUrl}/api/naver/book`, {
           params: { query },
-          headers: {
-            "X-Naver-Client-Id": "4gzXh5h99U1wXPgELMhm",
-            "X-Naver-Client-Secret": "eu8bsRmFqh",
-          },
         });
         setSearchResults(response.data.items);
       } catch (error) {
         console.error("도서 검색 실패:", error);
       }
     };
+
     if (query.trim().length > 0) {
       fetchBooks();
     }
@@ -151,6 +147,7 @@ const BookSearch = () => {
 
       <div className={styles.booksearchContainer}>
         {/* 상단 이미지들 */}
+
         <img
           src={bookSearchImg}
           alt="Book Search"

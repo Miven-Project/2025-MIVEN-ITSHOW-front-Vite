@@ -30,7 +30,7 @@ function App() {
           <Route path="/booksearch" element={<BookSearch />} />
           <Route path="/bookinput" element={<BookInputPage />} />
           <Route path="/scroll" element={<BookDetailPage />} />
-          <Route path="/editbookpage" element={<EditBookPage />} />
+          <Route path="/editbookpage" element={<EditBookPage initialQuote="" />} />
           <Route path="/bookdetail/:bookId" element={<BookDetailPage />} />
           <Route path="/bookdetail/gno/:gNo" element={<BookDetailPage />} />
           <Route path="/bookdetail/isbn/:isbn" element={<BookDetailPage />} />
