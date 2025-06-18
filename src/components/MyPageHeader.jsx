@@ -8,7 +8,7 @@ import { HexColorPicker } from "react-colorful";
 import mypageHeaderData from "../data/mypageheaderData.json";
 import "../global.css";
 
-export default function MyPageHeader() {
+export default function MyPageHeader({ authToken = null }) {
   const [data, setData] = useState({
     ...mypageHeaderData,
     quote: {
@@ -67,9 +67,15 @@ export default function MyPageHeader() {
   // API 설정
   const apiBaseUrl = "http://3.38.185.232:8080";
 
-  // 🔥 동적 토큰 가져오기 함수
+  // 🔥 MyPageBody와 동일한 토큰 가져오기 함수
   const getAuthToken = () => {
-    const token = localStorage.getItem("authToken");
+    // 1. props로 받은 토큰 우선 사용
+    let token = authToken;
+
+    // 2. props에 없으면 localStorage에서 읽기
+    if (!token) {
+      token = localStorage.getItem("authToken");
+    }
 
     if (!token) {
       throw new Error("로그인이 필요합니다. 토큰이 없습니다.");
@@ -79,6 +85,57 @@ export default function MyPageHeader() {
     return token.startsWith("Bearer ") ? token : `Bearer ${token}`;
   };
 
+  // 🔥 간단한 프로필 업데이트 함수
+  const updateProfile = async (profileData) => {
+    try {
+      setIsSaving(true);
+      setSaveError(null);
+
+      const token = getAuthToken();
+
+      const response = await fetch(`${apiBaseUrl}/api/profile`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+        body: JSON.stringify(profileData),
+      });
+
+      // 🔥 403 에러 체크
+      if (response.status === 403) {
+        localStorage.removeItem("authToken");
+        throw new Error("인증이 만료되었습니다. 다시 로그인해주세요.");
+      }
+
+      if (response.status === 401) {
+        localStorage.removeItem("authToken");
+        throw new Error("인증에 실패했습니다. 다시 로그인해주세요.");
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("✅ 프로필 업데이트 성공:", result);
+      return result;
+    } catch (error) {
+      console.error("❌ 프로필 업데이트 실패:", error);
+      setSaveError(error.message);
+
+      // 토큰 관련 에러인 경우 로그인 페이지로 리다이렉트
+      if (error.message.includes("로그인") || error.message.includes("인증")) {
+        window.location.href = "/login";
+      }
+
+      throw error;
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // 🔥 간단한 이미지 업로드 함수
   const uploadProfileImage = async (imageFile) => {
     try {
       setIsUploadingImage(true);
@@ -86,7 +143,6 @@ export default function MyPageHeader() {
       const formData = new FormData();
       formData.append("file", imageFile);
 
-      // 🔥 동적으로 토큰 가져오기
       const token = getAuthToken();
 
       const response = await fetch(`${apiBaseUrl}/api/profile`, {
@@ -108,25 +164,17 @@ export default function MyPageHeader() {
       }
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `HTTP error! status: ${response.status}, message: ${errorText}`
-        );
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const result = await response.json();
-      console.log("이미지 업로드 응답 전체:", result);
-
       const imageUrl = result.data?.url || result.url;
-      console.log("최종 이미지 URL:", imageUrl);
-
       return imageUrl;
     } catch (error) {
-      console.error("이미지 업로드 실패:", error);
+      console.error("❌ 이미지 업로드 실패:", error);
 
-      // 토큰 관련 에러인 경우 로그인 페이지로 리다이렉트
       if (error.message.includes("로그인") || error.message.includes("인증")) {
-        // window.location.href = '/login';
+        window.location.href = "/login";
       }
 
       throw error;
@@ -135,58 +183,169 @@ export default function MyPageHeader() {
     }
   };
 
-  // 프로필 업데이트 함수
-  const updateProfile = async (profileData) => {
-    try {
-      setIsSaving(true);
-      setSaveError(null);
+  // 🔥 MyPageBody와 동일한 스타일의 프로필 로드
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setIsImageLoading(true);
+        setIsMusicDataLoading(true);
+        setSaveError(null);
 
-      // 🔥 동적으로 토큰 가져오기
-      const token = getAuthToken();
+        // 동적으로 토큰 가져오기
+        const token = getAuthToken();
 
-      const response = await fetch(`${apiBaseUrl}/api/profile`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-        body: JSON.stringify(profileData),
-      });
+        const response = await fetch(`${apiBaseUrl}/api/profile`, {
+          method: "GET",
+          headers: {
+            Authorization: token,
+          },
+        });
 
-      if (response.status === 403) {
-        localStorage.removeItem("authToken");
-        throw new Error("인증이 만료되었습니다. 다시 로그인해주세요.");
+        // 🔥 상태 코드 체크
+        if (response.status === 403) {
+          localStorage.removeItem("authToken");
+          throw new Error("인증이 만료되었습니다. 다시 로그인해주세요.");
+        }
+
+        if (response.status === 401) {
+          localStorage.removeItem("authToken");
+          throw new Error("인증에 실패했습니다. 다시 로그인해주세요.");
+        }
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // 🔥 빈 응답 체크
+        const text = await response.text();
+        if (!text || text.trim() === "") {
+          console.log("서버에서 빈 응답을 받았습니다.");
+          setIsImageLoading(false);
+          setIsMusicDataLoading(false);
+          return;
+        }
+
+        // 🔥 안전한 JSON 파싱
+        const responseData = JSON.parse(text);
+        console.log("✅ 프로필 데이터 로드 성공:", responseData);
+
+        const profileData = responseData.data;
+        if (!profileData) {
+          console.warn("⚠️ profileData가 없습니다:", responseData);
+          setIsImageLoading(false);
+          setIsMusicDataLoading(false);
+          return;
+        }
+
+        // 기본 정보 설정
+        setUserName(profileData.name || "");
+        setQuoteCount(profileData.quoteCount || 0);
+
+        // 커버 색상 설정
+        if (profileData.coverColor) {
+          const colorWithHash = profileData.coverColor.startsWith("#")
+            ? profileData.coverColor
+            : `#${profileData.coverColor}`;
+          setSelectedColor(colorWithHash);
+          setCoverColor(colorWithHash);
+        }
+
+        // 인용구 정보 설정
+        if (profileData.quote) {
+          setData((prev) => ({
+            ...prev,
+            quote: {
+              title: profileData.quote.title,
+              text: profileData.quote.text,
+            },
+          }));
+          setEditedQuoteTitle(profileData.quote.title);
+          setEditedQuoteText(profileData.quote.text);
+        }
+
+        // 편집용 이름 업데이트
+        setEditedUsername(profileData.name || mypageHeaderData.user.username);
+
+        // 이미지 로딩
+        if (profileData.profileImg) {
+          const img = new Image();
+          img.onload = () => {
+            setSelectedImage(profileData.profileImg);
+            setIsImageLoading(false);
+          };
+          img.onerror = () => {
+            setIsImageLoading(false);
+          };
+          img.src = profileData.profileImg;
+        } else {
+          setIsImageLoading(false);
+        }
+
+        // 음악 정보 로딩
+        if (profileData.music) {
+          try {
+            const musicResponse = await fetch(
+              `https://deezerdevs-deezer.p.rapidapi.com/search?q=${encodeURIComponent(
+                `${profileData.music.song} ${profileData.music.artist}`
+              )}`,
+              {
+                method: "GET",
+                headers: {
+                  "x-rapidapi-key":
+                    "7138ae1e3cmsh63d4fa598445c5dp183b4ajsn1c9c5bdd5a48",
+                  "x-rapidapi-host": "deezerdevs-deezer.p.rapidapi.com",
+                },
+              }
+            );
+            const musicResult = await musicResponse.json();
+
+            if (musicResult.data?.[0]) {
+              const foundMusic = musicResult.data[0];
+              setMusicData({
+                id: profileData.music.musicId || foundMusic.id,
+                song: profileData.music.song,
+                artist: profileData.music.artist,
+                album: foundMusic.album.title,
+                image: foundMusic.album.cover_medium || foundMusic.album.cover,
+                preview: foundMusic.preview,
+              });
+            } else {
+              setMusicData((prev) => ({
+                ...prev,
+                id: profileData.music.musicId,
+                song: profileData.music.song,
+                artist: profileData.music.artist,
+              }));
+            }
+          } catch (error) {
+            console.error("음악 재검색 오류:", error);
+            setMusicData((prev) => ({
+              ...prev,
+              id: profileData.music.musicId,
+              song: profileData.music.song,
+              artist: profileData.music.artist,
+            }));
+          } finally {
+            setIsMusicDataLoading(false);
+          }
+        } else {
+          setIsMusicDataLoading(false);
+        }
+      } catch (err) {
+        console.error("❌ 프로필 로딩 실패:", err);
+        setSaveError(err.message);
+        setIsImageLoading(false);
+        setIsMusicDataLoading(false);
+
+        // 토큰 관련 에러인 경우 로그인 페이지로 리다이렉트
+        if (err.message.includes("로그인") || err.message.includes("인증")) {
+          window.location.href = "/login";
+        }
       }
+    };
 
-      if (response.status === 401) {
-        localStorage.removeItem("authToken");
-        throw new Error("인증에 실패했습니다. 다시 로그인해주세요.");
-      }
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `HTTP error! status: ${response.status}, message: ${errorText}`
-        );
-      }
-
-      const result = await response.json();
-      console.log("프로필 업데이트 성공:", result);
-      return result;
-    } catch (error) {
-      console.error("프로필 업데이트 실패:", error);
-      setSaveError(error.message);
-
-      // 토큰 관련 에러인 경우 로그인 페이지로 리다이렉트
-      if (error.message.includes("로그인") || error.message.includes("인증")) {
-        // window.location.href = '/login';
-      }
-
-      throw error;
-    } finally {
-      setIsSaving(false);
-    }
-  };
+    fetchProfile();
+  }, []);
 
   // 텍스트 오버플로우 체크 및 애니메이션 적용
   useEffect(() => {
@@ -290,7 +449,7 @@ export default function MyPageHeader() {
     }
   };
 
-  // 음악 선택 (musicId 저장 추가)
+  // 음악 선택
   const selectMusic = (selectedMusic) => {
     setMusicData({
       id: selectedMusic.id,
@@ -351,201 +510,21 @@ export default function MyPageHeader() {
     }
   }, []);
 
-  // 🔥 프로필 정보 가져오기 (동적 토큰 사용)
-  useEffect(() => {
-    const loadProfile = async () => {
-      try {
-        setIsImageLoading(true);
-        setIsMusicDataLoading(true);
-
-        // 🔥 동적으로 토큰 가져오기
-        const token = getAuthToken();
-
-        const response = await fetch(`${apiBaseUrl}/api/profile`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-        });
-
-        // ✅ 403 에러 체크
-        if (response.status === 403) {
-          console.log("🔒 인증 만료 - 로그인이 필요합니다");
-          localStorage.removeItem("authToken");
-          setSaveError("인증이 만료되었습니다. 다시 로그인해주세요.");
-          setIsImageLoading(false);
-          setIsMusicDataLoading(false);
-          return;
-        }
-
-        // ✅ 401 에러 체크
-        if (response.status === 401) {
-          console.log("🔒 인증 실패 - 로그인이 필요합니다");
-          localStorage.removeItem("authToken");
-          setSaveError("인증에 실패했습니다. 다시 로그인해주세요.");
-          setIsImageLoading(false);
-          setIsMusicDataLoading(false);
-          return;
-        }
-
-        // ✅ 다른 에러 체크
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        // ✅ 빈 응답 체크
-        const text = await response.text();
-        if (!text || text.trim() === "") {
-          console.log("📭 서버에서 빈 응답을 받았습니다");
-          setIsImageLoading(false);
-          setIsMusicDataLoading(false);
-          return;
-        }
-
-        // ✅ JSON 파싱
-        const responseData = JSON.parse(text);
-        console.log("✅ 프로필 데이터 로드 성공:", responseData);
-
-        // 데이터 구조 확인
-        const profileData = responseData.data;
-        if (!profileData) {
-          console.warn("⚠️ profileData가 없습니다:", responseData);
-          setIsImageLoading(false);
-          setIsMusicDataLoading(false);
-          return;
-        }
-
-        // 기본 정보 즉시 설정 (텍스트 정보)
-        setUserName(profileData.name || "");
-        setQuoteCount(profileData.quoteCount || 0);
-
-        // 커버 색상 즉시 설정
-        if (profileData.coverColor) {
-          const colorWithHash = profileData.coverColor.startsWith("#")
-            ? profileData.coverColor
-            : `#${profileData.coverColor}`;
-          setSelectedColor(colorWithHash);
-          setCoverColor(colorWithHash);
-        }
-
-        // 인용구 정보 즉시 설정
-        if (profileData.quote) {
-          setData((prev) => ({
-            ...prev,
-            quote: {
-              title: profileData.quote.title,
-              text: profileData.quote.text,
-            },
-          }));
-          setEditedQuoteTitle(profileData.quote.title);
-          setEditedQuoteText(profileData.quote.text);
-        }
-
-        // 편집용 이름 즉시 업데이트
-        setEditedUsername(profileData.name || mypageHeaderData.user.username);
-
-        // 이미지 로딩 (별도 처리)
-        if (profileData.profileImg) {
-          const img = new Image();
-          img.onload = () => {
-            setSelectedImage(profileData.profileImg);
-            setIsImageLoading(false);
-          };
-          img.onerror = () => {
-            setIsImageLoading(false);
-          };
-          img.src = profileData.profileImg;
-        } else {
-          setIsImageLoading(false);
-        }
-
-        // 음악 정보 로딩 (별도 처리)
-        if (profileData.music) {
-          try {
-            const musicResponse = await fetch(
-              `https://deezerdevs-deezer.p.rapidapi.com/search?q=${encodeURIComponent(
-                `${profileData.music.song} ${profileData.music.artist}`
-              )}`,
-              {
-                method: "GET",
-                headers: {
-                  "x-rapidapi-key":
-                    "7138ae1e3cmsh63d4fa598445c5dp183b4ajsn1c9c5bdd5a48",
-                  "x-rapidapi-host": "deezerdevs-deezer.p.rapidapi.com",
-                },
-              }
-            );
-            const musicResult = await musicResponse.json();
-
-            if (musicResult.data?.[0]) {
-              const foundMusic = musicResult.data[0];
-              setMusicData({
-                id: profileData.music.musicId || foundMusic.id,
-                song: profileData.music.song,
-                artist: profileData.music.artist,
-                album: foundMusic.album.title,
-                image: foundMusic.album.cover_medium || foundMusic.album.cover,
-                preview: foundMusic.preview,
-              });
-            } else {
-              setMusicData((prev) => ({
-                ...prev,
-                id: profileData.music.musicId,
-                song: profileData.music.song,
-                artist: profileData.music.artist,
-              }));
-            }
-          } catch (error) {
-            console.error("음악 재검색 오류:", error);
-            setMusicData((prev) => ({
-              ...prev,
-              id: profileData.music.musicId,
-              song: profileData.music.song,
-              artist: profileData.music.artist,
-            }));
-          } finally {
-            setIsMusicDataLoading(false);
-          }
-        } else {
-          setIsMusicDataLoading(false);
-        }
-      } catch (error) {
-        console.error("❌ 프로필 로딩 에러:", error);
-        setSaveError(error.message);
-        setIsImageLoading(false);
-        setIsMusicDataLoading(false);
-
-        // 토큰 관련 에러인 경우 로그인 페이지로 리다이렉트
-        if (
-          error.message.includes("로그인") ||
-          error.message.includes("인증")
-        ) {
-          // window.location.href = '/login';
-        }
-      }
-    };
-
-    loadProfile();
-  }, []);
-
   // 편집 시작 함수
   const startEditing = () => {
-    // 현재 저장된 값들로 편집 폼 초기화
     setEditedUsername(userName);
     setEditedQuoteTitle(data.quote.title);
     setEditedQuoteText(data.quote.text);
-    setSaveError(null); // 에러 초기화
+    setSaveError(null);
     setIsEditing(true);
   };
 
-  // 저장 함수 (백엔드 연결)
+  // 저장 함수
   const handleSave = async () => {
     try {
-      // 요청 데이터 구성
       const profileData = {
         name: editedUsername,
-        coverColor: selectedColor.replace("#", ""), // # 제거
+        coverColor: selectedColor.replace("#", ""),
         music: {
           musicId: musicData.id ? musicData.id.toString() : "unknown",
           song: musicData.song,
@@ -559,7 +538,6 @@ export default function MyPageHeader() {
 
       console.log("전송할 데이터:", profileData);
 
-      // 백엔드에 업데이트 요청
       await updateProfile(profileData);
 
       // 성공시 로컬 상태 업데이트
@@ -573,10 +551,7 @@ export default function MyPageHeader() {
         },
       }));
 
-      // 실제 userName도 업데이트
       setUserName(editedUsername);
-
-      // 편집 모드 종료
       setIsEditing(false);
     } catch (error) {
       alert(`프로필 저장에 실패했습니다: ${error.message}`);
@@ -593,11 +568,9 @@ export default function MyPageHeader() {
     const file = e.target.files[0];
     if (file) {
       try {
-        // 먼저 미리보기용으로 로컬 URL 설정
         const localImageUrl = URL.createObjectURL(file);
         setSelectedImage(localImageUrl);
 
-        // 편집 모드일 때만 서버에 업로드
         if (isEditing) {
           const uploadedImageUrl = await uploadProfileImage(file);
           console.log("업로드 결과 URL:", uploadedImageUrl);
@@ -605,16 +578,11 @@ export default function MyPageHeader() {
           if (uploadedImageUrl) {
             setSelectedImage(uploadedImageUrl);
             alert("프로필 이미지가 업로드되었습니다!");
-          } else {
-            console.warn(
-              "서버에서 이미지 URL을 반환하지 않았지만 업로드는 성공한 것 같습니다."
-            );
           }
         }
       } catch (error) {
         console.error("이미지 업로드 오류:", error);
         alert(`이미지 업로드에 실패했습니다: ${error.message}`);
-        console.log("미리보기는 유지됩니다.");
       }
     }
   };
@@ -751,8 +719,9 @@ export default function MyPageHeader() {
 
           <div className={styles.lowerSection}>
             <div
-              className={`${styles.quoteBox} ${isEditing ? styles.editingQuoteBox : ""
-                }`}
+              className={`${styles.quoteBox} ${
+                isEditing ? styles.editingQuoteBox : ""
+              }`}
             >
               {isEditing ? (
                 <>
