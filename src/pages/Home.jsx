@@ -29,9 +29,9 @@ export function Nav() {
       <div className={Homestyles.Gradation}></div>
       <div className={Homestyles.Allnavcontainer}>
         <div className={Homestyles.Logo}>
-          <img 
-            src={LeafInLogo} 
-            alt="LeafIn Logo" 
+          <img
+            src={LeafInLogo}
+            alt="LeafIn Logo"
             className={Homestyles.logo}
             onClick={() => navigate("/Home")}
             style={{ cursor: 'pointer' }}

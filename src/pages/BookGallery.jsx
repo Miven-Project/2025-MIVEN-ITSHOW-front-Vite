@@ -1,10 +1,10 @@
-import Nav from "../components/Nav.jsx";
+import { Nav } from "../pages/Home.jsx";
 import { useNavigate } from "react-router-dom";
 import styles from "../styles/BookGallery.module.css";
 
 import React, { useEffect, useState, useRef } from "react";
 import searchIcon from "/assets/images/search-icon.png";
-import NavStyles from "../styles/Nav.module.css";
+// import Navtyles from "../styles/Nav.module.css";
 
 function BookGallery() {
   const [bookData, setBookData] = useState([]);
@@ -172,6 +172,7 @@ function BookGallery() {
       <div>
         <div className="">
           <Nav showBackGradient={false} />
+
         </div>
         <GalleryMark />
         <div
@@ -217,7 +218,6 @@ function BookGallery() {
   return (
     <div>
       <Nav showBackGradient={false} />
-
       <GalleryMark />
       <div className={styles["search-bar-section"]}>
         <div className={styles["search-input-container"]}>
