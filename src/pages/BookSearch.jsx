@@ -66,7 +66,7 @@ const BookSearch = () => {
     const fetchBooks = async () => {
       try {
         const encodedQuery = encodeURIComponent(query);
-        const response = await axios.get(`${apiBaseUrl}/api/naver/book?query=`, {
+        const response = await axios.get(`${apiBaseUrl}/api/naver/book?`, {
           params: { query: encodedQuery },
         });
         setSearchResults(response.data.items);
