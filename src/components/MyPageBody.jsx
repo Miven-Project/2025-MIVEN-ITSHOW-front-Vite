@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // 🔥 추가
 import styles from "../styles/MyPageBody.module.css";
 import "../global.css";
 
@@ -8,6 +9,7 @@ export default function MyPageBody({ authToken = null }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); // 🔥 추가
 
   // 토큰 가져오기 함수
   const getAuthToken = () => {
@@ -25,6 +27,24 @@ export default function MyPageBody({ authToken = null }) {
 
     // Bearer 접두사가 없으면 추가
     return token.startsWith("Bearer ") ? token : `Bearer ${token}`;
+  };
+
+  // 🔥 책 클릭 핸들러 추가
+  const handleBookClick = (book) => {
+    // bookId 찾기 (다양한 필드명 체크)
+    const bookId = book.bookId || book.id || book.gNo;
+    
+    if (bookId) {
+      console.log("책 클릭됨:", book.title, "bookId:", bookId);
+      navigate(`/bookdetail/${bookId}`, { 
+        state: { 
+          book: book 
+        } 
+      });
+    } else {
+      console.error("bookId를 찾을 수 없습니다:", book);
+      alert("책 정보를 불러올 수 없습니다.");
+    }
   };
 
   useEffect(() => {
@@ -74,6 +94,18 @@ export default function MyPageBody({ authToken = null }) {
         // 🔥 안전한 JSON 파싱
         const json = JSON.parse(text);
         const books = json.data?.books || [];
+        
+        // 🔥 디버깅: 책 데이터 구조 확인
+        console.log("📚 불러온 책 데이터:", books);
+        if (books.length > 0) {
+          console.log("📖 첫 번째 책 데이터 구조:", books[0]);
+          console.log("🆔 사용 가능한 ID 필드들:", {
+            bookId: books[0].bookId,
+            id: books[0].id,
+            gNo: books[0].gNo
+          });
+        }
+        
         setData(books);
         setFilteredData(books);
       } catch (err) {
@@ -160,7 +192,12 @@ export default function MyPageBody({ authToken = null }) {
       <div className={styles.allBookListCtn}>
         <div className={styles.grid}>
           {filteredData.map((book, index) => (
-            <div key={index} className={styles.bookItem}>
+            <div 
+              key={index} 
+              className={styles.bookItem}
+              onClick={() => handleBookClick(book)} // 🔥 클릭 이벤트 추가
+              style={{ cursor: "pointer" }} // 🔥 포인터 커서 추가
+            >
               <img
                 className={styles.allBookCover}
                 src={book.cover}
