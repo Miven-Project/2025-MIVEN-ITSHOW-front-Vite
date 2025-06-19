@@ -65,8 +65,9 @@ const BookSearch = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
+        const encodedQuery = encodeURIComponent(query);
         const response = await axios.get(`${apiBaseUrl}/api/naver/book?query=`, {
-          params: { query },
+          params: { query: encodedQuery },
         });
         setSearchResults(response.data.items);
       } catch (error) {
