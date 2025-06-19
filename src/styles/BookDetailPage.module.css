@@ -163,6 +163,13 @@ html {
   animation: bounce 1.5s infinite;
 }
 
+/* 
+.scrollDownButtonWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
+
 /* 펄스 애니메이션 */
 @keyframes pulse {
   0% {
