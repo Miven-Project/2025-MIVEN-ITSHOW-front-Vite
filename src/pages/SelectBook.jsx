@@ -13,6 +13,39 @@ const SelectBook = () => {
 
   const apiBaseUrl = "https://leafin.mirim-it-show.site";
 
+  // 🔥 localStorage에서 네이버 API 책 데이터 가져오기
+  const getNaverBookData = (isbn, title) => {
+    try {
+      // 1. ISBN 기반으로 찾기 (가장 정확함)
+      if (isbn) {
+        const naverDatabase = localStorage.getItem('naverBookDatabase');
+        if (naverDatabase) {
+          const database = JSON.parse(naverDatabase);
+          if (database[isbn]) {
+            console.log("✅ ISBN으로 네이버 책 데이터 찾음:", database[isbn]);
+            return database[isbn];
+          }
+        }
+      }
+      
+      // 2. 현재 책 정보에서 찾기
+      const currentBook = localStorage.getItem('currentBook');
+      if (currentBook) {
+        const parsed = JSON.parse(currentBook);
+        if (parsed.isbn === isbn || parsed.title === title) {
+          console.log("✅ currentBook에서 찾음:", parsed);
+          return parsed;
+        }
+      }
+      
+      console.log("❌ 네이버 책 데이터를 찾을 수 없음:", { isbn, title });
+      return null;
+    } catch (error) {
+      console.error("네이버 책 데이터 가져오기 실패:", error);
+      return null;
+    }
+  };
+
   const getAuthToken = () => {
     const token = localStorage.getItem("authToken");
     if (!token) {
@@ -64,8 +97,8 @@ const SelectBook = () => {
           ...booksFromServer.map((book) => ({
             title: book.title,
             cover: book.cover,
-            bookId: book.bookId || book.gNo || null, // bookId 혹은 gNo 확인
-            ...book, // 필요시 원본 데이터도 포함
+            bookId: book.bookId || book.gNo || null,
+            ...book, // 원본 데이터도 포함
           })),
         ];
 
@@ -247,14 +280,32 @@ const SelectBook = () => {
           ) : (
             <div
               className={styles.editIconCenter}
-              onClick={() =>
+              onClick={() => {
+                const currentGalleryBook = books[centerIndex];
+                
+                // 🔥 네이버 API 원본 데이터 가져오기
+                const naverBookData = getNaverBookData(
+                  currentGalleryBook.isbn, 
+                  currentGalleryBook.title
+                );
+                
+                console.log("=== EditBookPage로 navigate ===");
+                console.log("📚 갤러리 책 데이터:", currentGalleryBook);
+                console.log("🔍 네이버 API 책 데이터:", naverBookData);
+                
+                if (naverBookData) {
+                  console.log("✅ 네이버 API 데이터와 함께 navigate");
+                } else {
+                  console.log("⚠️ 네이버 API 데이터 없음 - 갤러리 데이터만 전달");
+                }
+                
                 navigate("/editbookpage", {
                   state: {
-                    book: books[centerIndex],
-                    existingData: books[centerIndex], // 필요하면 분리해서 다르게 넘겨도 됨
+                    book: naverBookData, // 🔥 네이버 API 원본 데이터 (출판사 포함)
+                    existingData: currentGalleryBook, // 갤러리 서버 데이터
                   },
-                })
-              }
+                });
+              }}
               style={{ cursor: "pointer" }}
             >
               ✎
