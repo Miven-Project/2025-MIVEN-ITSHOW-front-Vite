@@ -64,8 +64,8 @@ export default function MyPageHeader({ authToken = null }) {
   const artistRef = useRef(null);
   const { setCoverColor } = useCoverColor();
 
-  // API 설정
-  const apiBaseUrl = "https://3.38.185.232:8080";
+  // 🔥 API 설정 - 프록시 사용을 위해 빈 문자열로 변경
+  const apiBaseUrl = "";
 
   // 🔥 MyPageBody와 동일한 토큰 가져오기 함수
   const getAuthToken = () => {
@@ -762,6 +762,11 @@ export default function MyPageHeader({ authToken = null }) {
               )}
             </div>
 
+            {/* 에러 메시지 표시 */}
+            {saveError && (
+              <div className={styles.errorMessage}>오류: {saveError}</div>
+            )}
+
             <div className={styles.actionSection}>
               <div className={styles.buttons}>
                 <button
@@ -857,6 +862,7 @@ export default function MyPageHeader({ authToken = null }) {
               {isMusicLoading && (
                 <div className={styles.loading}>검색 중...</div>
               )}
+              {error && <div className={styles.errorMessage}>{error}</div>}
               {!isMusicLoading &&
                 !error &&
                 searchResults.length === 0 &&
