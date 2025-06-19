@@ -37,7 +37,7 @@
 
 .Gradation {
   width: 100vw;
-  /* height: 416px; */
+  height: 416px;
 }
 
 .logo {
@@ -48,6 +48,24 @@
   display: flex;
   flex-direction: column;
   row-gap: 10px;
+}
+
+/* 프로필 영역이 네비게이션과 겹치도록 하는 추가 스타일 */
+.profile-container {
+  position: relative;
+  z-index: 5;
+  /* 네비게이션보다 낮은 z-index */
+  margin-top: -80px;
+  /* 프로필을 더 위로 올림 */
+}
+
+/* 네비게이션과 겹치는 프로필 요소들에 대한 특별한 스타일링 */
+.profile-overlap-safe {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .Clicknav {

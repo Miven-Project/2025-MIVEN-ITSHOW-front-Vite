@@ -142,7 +142,7 @@ const SelectBook = () => {
   if (isLoading) {
     return (
       <div className={styles.pageContainer}>
-        <Nav />
+        <Nav showBackGradient={true} />
         <div
           className={styles.loadingContainer}
           style={{

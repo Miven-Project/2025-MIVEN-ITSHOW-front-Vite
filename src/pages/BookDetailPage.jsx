@@ -545,7 +545,9 @@ const BookDetailPage = () => {
     // 하트를 누른 리뷰들과 총 하트 수 상태 관리
     const [likedReviews, setLikedReviews] = useState([]);
     const [totalLikeCount, setTotalLikeCount] = useState(0);
-    const [setAllReviews] = useState([]);
+    const [allReviews, setAllReviews] = useState([]);
+    console.log(allReviews);
+
 
     console.log("URL 파라미터 - bookId:", bookId, "gNo:", gNo, "isbn:", isbn);
     console.log("state로 전달받은 book:", bookFromState);
@@ -783,6 +785,27 @@ const BookDetailPage = () => {
         rgba(250, 241, 241, ${gradientOpacity}) 70%,
         rgba(250, 241, 241, ${Math.min(gradientOpacity + 0.2, 1)}) 90%)`
     };
+    // 🔥 추가: ModalContent에 표시할 summary 결정 로직
+    const getDisplaySummary = () => {
+        // 내 리뷰가 있으면 내 리뷰의 구절 사용
+        if (myReviews.length > 0 && myReviews[0].quote) {
+            return { quote: myReviews[0].quote };
+        }
+
+        // 내 리뷰가 없거나 구절이 없으면 다른 사람 리뷰 중 랜덤 선택
+        if (othersReviews.length > 0) {
+            const reviewsWithQuotes = othersReviews.filter(review => review.quote && review.quote.trim() !== "");
+            if (reviewsWithQuotes.length > 0) {
+                const randomIndex = Math.floor(Math.random() * reviewsWithQuotes.length);
+                return { quote: reviewsWithQuotes[randomIndex].quote };
+            }
+        }
+
+        // 모든 리뷰에 구절이 없으면 기본값
+        return { quote: "아직 등록된 구절이 없습니다." };
+    };
+
+    const displaySummary = getDisplaySummary();
 
     return (
         <div>
@@ -792,7 +815,7 @@ const BookDetailPage = () => {
                     <BoldText title={bookData.title} className={styles["heading-primary"]} />
                     <ModalContent book={bookData}>
                         <BookDetailRightPanel
-                            summary={bookData.summary}
+                            summary={displaySummary}
                             rating={bookData.rating}
                             review={bookData.review}
                             info={bookData.info}

@@ -65,7 +65,7 @@ export default function MyPageHeader({ authToken = null }) {
   const { setCoverColor } = useCoverColor();
 
   // API 설정
-  const apiBaseUrl = "https://leafin.mirim-it-show.site";
+  const apiBaseUrl = "http://3.38.185.232:8080";
 
   // 🔥 MyPageBody와 동일한 토큰 가져오기 함수
   const getAuthToken = () => {
@@ -399,7 +399,6 @@ export default function MyPageHeader({ authToken = null }) {
       const result = await response.json();
       setSearchResults(result.data?.slice(0, 20) || []);
     } catch (err) {
-      console.error("음악 검색 오류:", err); // err 사용
       setError("음악 검색 중 오류가 발생했습니다.");
       setSearchResults([]);
     } finally {

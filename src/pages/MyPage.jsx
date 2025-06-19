@@ -2,6 +2,7 @@ import React from 'react';
 import MyPageHeader from "../components/MyPageHeader";
 import MyPageBody from "../components/MyPageBody";
 
+
 const MyPage = () => {
   return (
     <div

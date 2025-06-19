@@ -4,9 +4,8 @@ import styles from "../styles/Nav.module.css";
 import { useCoverColor } from "../contexts/CoverColorContext";
 import LeafInLogo from "../assets/images/LeafInLogo.svg"
 import LeafInLogoWhiteVer from "../assets/images/LeafInLogoWhiteVer.svg"
-
-// named export로도 내보내기 (기존 코드 호환성을 위해)
-export function Nav({ showBackGradient = true }) {
+export default function Nav({ showBackGradient = true }) {
+  console.log("✅ Nav 렌더됨"); // 이거 찍히는지 확인!
   const { coverColor } = useCoverColor();
   const navigate = useNavigate();
 
@@ -27,19 +26,16 @@ export function Nav({ showBackGradient = true }) {
         }
       ></div>
       <div className={`${styles.Allnavcontainer} ${showBackGradient ? styles.gradientNav : ''}`}>
-        <div className={styles.Logo}>
-          <p
-            className={styles.Clicklogo}
-            onClick={() => handleNavigation("/home")}
-            style={{ cursor: "pointer" }}
-          >
-            <img
-              src={showBackGradient ? LeafInLogoWhiteVer : LeafInLogo}
-              alt=""
-              className={styles.logo}
-            />
-          </p>
-        </div>
+        <p
+          className={styles.Clicklogo}
+          onClick={() => handleNavigation("/home")}
+        >
+          <img
+            src={showBackGradient ? LeafInLogoWhiteVer : LeafInLogo}
+            alt=""
+            className={styles.logo}
+          />
+        </p>
 
         <div className={styles.Navdetail}>
           <div className={styles.Navfirstline}>
@@ -82,9 +78,7 @@ export function Nav({ showBackGradient = true }) {
           <div className={styles.Navfifthline}>
             <p
               className={`${styles.ClickbookSearch} ${styles.Clicknav}`}
-              onClick={() => navigate("/booksearch", { state: { from: "nav" } })}
-              style={{ cursor: "pointer" }}
-            >
+              onClick={() => navigate("/booksearch", { state: { from: "nav" } })}>
               Book Search
             </p>
           </div>
@@ -93,8 +87,3 @@ export function Nav({ showBackGradient = true }) {
     </div>
   );
 }
-
-// default export (새로운 방식)
-export default Nav;
-
-console.log("Style", styles);
