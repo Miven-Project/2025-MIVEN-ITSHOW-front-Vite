@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Homestyles from "../styles/Home.module.css";
+import NavStyles from "../styles/Nav.module.css";
 import HomeImgContainer from "../assets/images/HomeImgContainer.png";
 import LeafInLogo from "../assets/images/LeafInLogo.svg"
 
@@ -33,34 +34,34 @@ export function Nav() {
         <div className={Homestyles.Navdetail}>
           <div className={Homestyles.Navfirstline}>
             <p
-              className={`${Homestyles.Clickhome} ${Homestyles.Clicknav}`}
+              className={`${NavStyles.Clickhome} ${NavStyles.Clicknav}`}
               onClick={() => navigate("/Home")}
             >
               Home
             </p>
             <p
-              className={`${Homestyles.Clickbookgallery} ${Homestyles.Clicknav}`}
+              className={`${NavStyles.Clickbookgallery} ${NavStyles.Clicknav}`}
               onClick={() => navigate("/BookGallery")}
             >
               BookGallery
             </p>
           </div>
-          <div className={Homestyles.Navsecondline}>
+          <div className={NavStyles.Navsecondline}>
             <p
-              className={`${Homestyles.Clickwrite} ${Homestyles.Clicknav}`}
+              className={`${NavStyles.Clickwrite} ${NavStyles.Clicknav}`}
               onClick={() => navigate("/selectbook")}
             >
               Write
             </p>
             <p
-              className={`${Homestyles.Clickmypage} ${Homestyles.Clicknav}`}
+              className={`${NavStyles.Clickmypage} ${NavStyles.Clicknav}`}
               onClick={() => navigate("/MyPage")}
             >
               MyPage
             </p>
           </div>
           <p
-            className={`${Homestyles.ClickbookSearch} ${Homestyles.Clicknav}`}
+            className={`${NavStyles.ClickbookSearch} ${NavStyles.Clicknav}`}
             onClick={() => navigate("/booksearch", { state: { from: "nav" } })}>
             Book Search
           </p>

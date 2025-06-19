@@ -1,4 +1,4 @@
-import { Nav } from "../pages/Home.jsx";
+import Nav from "../pages/Home.jsx";
 import { useNavigate } from "react-router-dom";
 import "../styles/BookGallery.css";
 import React, { useEffect, useState, useRef } from "react";
