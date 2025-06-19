@@ -139,7 +139,7 @@ function Login() {
   };
 
   const goToSignUp = () => {
-    navigate("/signup");
+    navigate("/");
   };
 
   return (
