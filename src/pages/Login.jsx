@@ -137,7 +137,7 @@ function Login() {
   };
 
   const goToSignUp = () => {
-    navigate("/signup");
+    navigate("/");
   };
 
   // 🔧 개발용 디버깅 함수들
