@@ -65,11 +65,13 @@ const BookSearch = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const encodedQuery = encodeURIComponent(query);
+        // const encodedQuery = encodeURIComponent(query);
         const response = await axios.get(`${apiBaseUrl}/api/naver/book?`, {
-          params: { query: encodedQuery },
+          params: { query },
         });
         setSearchResults(response.data.items);
+
+        console.log("검색 API 응답 데이터:", response.data); // ← 이거 꼭 찍어보세요
       } catch (error) {
         console.error("도서 검색 실패:", error);
       }
