@@ -690,11 +690,7 @@ const EditBookPage = ({ initialQuote }) => {
                   />
                   {/* 🔥 출판사 정보 상태 표시 */}
                   
-                  {/* 🔥 디버깅 정보 표시 */}
-                  <div style={{ fontSize: "11px", color: "#666", marginTop: "4px" }}>
-                    {book?.publisher && `네이버 API: ${book.publisher}`}
-                    {bookDetail?.publisher && ` | 서버: ${bookDetail.publisher}`}
-                  </div>
+                
                 </div>
               </div>
 
