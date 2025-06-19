@@ -4,8 +4,8 @@ import styles from "../styles/Nav.module.css";
 import { useCoverColor } from "../contexts/CoverColorContext";
 import LeafInLogo from "../assets/images/LeafInLogo.svg"
 import LeafInLogoWhiteVer from "../assets/images/LeafInLogoWhiteVer.svg"
+
 export default function Nav({ showBackGradient = true }) {
-  console.log("✅ Nav 렌더됨"); // 이거 찍히는지 확인!
   const { coverColor } = useCoverColor();
   const navigate = useNavigate();
 

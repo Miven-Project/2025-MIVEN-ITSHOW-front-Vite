@@ -1,10 +1,8 @@
-import { Nav } from "../pages/Home.jsx";
-import { useNavigate } from "react-router-dom";
-import styles from "../styles/BookGallery.module.css";
-
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { Nav } from "../pages/Home.jsx";
+import styles from "../styles/BookGallery.module.css";
 import searchIcon from "/assets/images/search-icon.png";
-// import Navtyles from "../styles/Nav.module.css";
 
 function BookGallery() {
   const [bookData, setBookData] = useState([]);
@@ -170,7 +168,7 @@ function BookGallery() {
   if (isLoading) {
     return (
       <div>
-        <div className="">
+        <div>
           <Nav showBackGradient={false} />
 
         </div>

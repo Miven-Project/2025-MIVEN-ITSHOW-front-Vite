@@ -1,11 +1,11 @@
 // BookSearch.jsx - 수정된 버전
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import BookCard from "../components/BookCard";
 import booksData from "../data/book.json";
 import styles from "../styles/BookSearch.module.css";
-import Nav from "../pages/Home.jsx";
+import { Nav } from "../pages/Home.jsx";
 import { DebounceInput } from "react-debounce-input";
 import bookSearchImg from "../assets/images/Book Search.png";
 import bookSearchImg2 from "../assets/images/Book Search2.png";
@@ -13,9 +13,6 @@ import searchIcon from "../assets/images/search-icon.png";
 
 const apiBaseUrl = "https://leafin.mirim-it-show.site";
 
-// 🔥 바뫐 부분 : 서버에서 책 존재 여부 확인하는 함수 추가
-// 바뫐 부분 : 제목으로 서버에 등록된 책인지 확인하여 gNo를 반환하는 함수
-// 되야하는 동작 : 네이버 API 책이 서버에도 등록되어 있으면 gNo를 반환, 없으면 null 반환
 const checkBookExistsOnServer = async (bookTitle) => {
   try {
     const token = localStorage.getItem("authToken");
@@ -60,7 +57,15 @@ const BookSearch = () => {
   const [searchResults, setSearchResults] = useState([]);
   const hasQuery = query.trim() !== "";
   const navigate = useNavigate();
-  const from = location.state?.from || "nav"; // 기본은 nav
+  const from = location.state?.from || "nav";
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, []);
+
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -150,8 +155,6 @@ const BookSearch = () => {
       </div>
 
       <div className={styles.booksearchContainer}>
-        {/* 상단 이미지들 */}
-
         <img
           src={bookSearchImg}
           alt="Book Search"
@@ -173,6 +176,7 @@ const BookSearch = () => {
               className={styles.searchIcon}
             />
             <DebounceInput
+              inputRef={searchInputRef}
               type="text"
               className={styles.booksearchInput}
               placeholder="책 제목을 입력해 주세요"
@@ -190,10 +194,9 @@ const BookSearch = () => {
               {booksData.map((book, idx) => (
                 <div key={book.bookId || book.id || idx} onClick={() => handleBookClick(book, idx)}>
                   <BookCard
+                    className={styles.notQueryBookImage}
                     id={book.bookId || book.id || idx}
                     image={book.cover || book.image}
-                    title={book.title || "제목 없음"}
-                    author={book.writer || book.author || "저자 정보 없음"}
                   />
                 </div>
               ))}

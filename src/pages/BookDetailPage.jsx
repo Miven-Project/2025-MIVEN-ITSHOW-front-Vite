@@ -1,5 +1,5 @@
 // BookDetailPage.jsx - 에러 수정 버전
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from 'axios';
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { useParams, useLocation } from "react-router-dom";
@@ -52,7 +52,7 @@ const updateLikeOnServer = async (reviewId, isLiked) => {
 
         // 좋아요 추가/제거 API 호출
         const response = await axios.post(
-            `${apiBaseUrl}/api/gallery/${bookId}/like`,
+            `${apiBaseUrl}/api/gallery/${bookId}/likeCount`,
             {
                 liked: isLiked // 좋아요 상태
             },
@@ -97,7 +97,7 @@ const fetchUserLikedReviews = async () => {
 
     try {
         const response = await axios.get(
-            `${apiBaseUrl}/api/user/liked-reviews`,
+            `${apiBaseUrl}/api/user/likeCount`,
             {
                 headers: { Authorization: token }
             }
@@ -352,6 +352,7 @@ const mapToBookData = (data, originalBook = {}, allReviews = []) => {
     const comments = Array.isArray(data.comments?.comments) ? data.comments.comments : [];
 
     // 전체 리뷰 수 계산 (내 리뷰 + 다른 사용자 리뷰)
+    // 전체 리뷰 수 계산 (allReviews 배열 기준)
     const totalReviewCount = allReviews.length;
 
     return {
@@ -389,12 +390,33 @@ const mapToBookData = (data, originalBook = {}, allReviews = []) => {
             text: reviewText,
             comment: reviewText
         },
-        allReviews: comments.map(comment => ({
-            quote: comment.quote || "",
-            comment: comment.text || comment.comment || "",
-            writer: comment.writer || "",
-            likeCount: comment.likeCount || 0
-        }))
+        // 🔥 개선: allReviews와 comments를 모두 고려한 리뷰 데이터 생성
+        allReviews: [
+            // 현재 책의 리뷰 (메인 리뷰)
+            ...(reviewText || quote ? [{
+                quote: quote || "",
+                comment: reviewText || "",
+                writer: writer || "",
+                likeCount: likeCount || 0,
+                reviewId: `${writer}-${data.id || 'main'}`
+            }] : []),
+            // comments에서 추가 리뷰들
+            ...comments.map((comment, index) => ({
+                quote: comment.quote || "",
+                comment: comment.text || comment.comment || "",
+                writer: comment.writer || "",
+                likeCount: comment.likeCount || 0,
+                reviewId: `${comment.writer || 'unknown'}-${data.id || 'main'}-${index}`
+            })),
+            // 외부에서 전달받은 allReviews
+            ...allReviews.map(review => ({
+                quote: review.quote || "",
+                comment: review.comment || "",
+                writer: review.writer || "",
+                likeCount: review.likeCount || 0,
+                reviewId: review.reviewId || `${review.writer}-${review.bookId || 'unknown'}`
+            }))
+        ]
     };
 };
 
@@ -546,11 +568,100 @@ const BookDetailPage = () => {
     const [likedReviews, setLikedReviews] = useState([]);
     const [totalLikeCount, setTotalLikeCount] = useState(0);
     const [allReviews, setAllReviews] = useState([]);
+    // const sectionRefs = [useRef(null), useRef(null), useRef(null)];
     console.log(allReviews);
-
 
     console.log("URL 파라미터 - bookId:", bookId, "gNo:", gNo, "isbn:", isbn);
     console.log("state로 전달받은 book:", bookFromState);
+    // 개선된 handleScrollDown 함수
+    const handleScrollDown = () => {
+        const currentScroll = window.scrollY;
+        // const windowHeight = window.innerHeight;
+
+        // 현재 보이는 섹션들의 위치 계산
+        const sections = [
+            document.querySelector(`.${styles["book-detail"]}`),
+            document.querySelector(`.${bookDetailReview["book-detail-review"]}`),
+            document.querySelector(`.${bookDetailReview["review-content"]}`)
+        ].filter(Boolean); // null 값 제거
+
+        // 다음 섹션 찾기
+        let nextSection = null;
+        let minDistance = Infinity;
+
+        sections.forEach(section => {
+            const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+            const distance = sectionTop - currentScroll;
+
+            // 현재 위치보다 아래에 있고, 가장 가까운 섹션 찾기
+            if (distance > 50 && distance < minDistance) {
+                minDistance = distance;
+                nextSection = section;
+            }
+        });
+
+        if (nextSection) {
+            // 부드러운 스크롤
+            nextSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        } else {
+            // 마지막 섹션이거나 다음 섹션이 없으면 페이지 하단으로
+            window.scrollTo({
+                top: document.documentElement.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    };
+
+    // 스크롤 버튼 표시/숨김 관리
+    const manageScrollButtonVisibility = () => {
+        const scrollButton = document.querySelector(`.${styles["scrollDownButton"]}`);
+        if (!scrollButton) return;
+
+        const scrollTop = window.scrollY;
+        const documentHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+
+        // 페이지 하단 근처에서는 버튼 숨김
+        if (scrollTop + windowHeight >= documentHeight - 200) {
+            scrollButton.classList.add(styles["hidden"]);
+        } else {
+            scrollButton.classList.remove(styles["hidden"]);
+        }
+    };
+
+    // 개선된 useEffect에서 사용할 스크롤 이벤트 핸들러
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollY = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const reviewSection = document.querySelector(`.${bookDetailReview["book-detail-review"]}`);
+
+            // 기존 배경 고정 로직
+            if (reviewSection) {
+                const reviewSectionTop = reviewSection.offsetTop;
+                const scrollProgress = Math.min(scrollY / (reviewSectionTop * 0.5), 1);
+
+                if (scrollY > reviewSectionTop - windowHeight) {
+                    setBackgroundFixed(false);
+                } else {
+                    setBackgroundFixed(true);
+                }
+
+                const newOpacity = 0.3 + (scrollProgress * 0.5);
+                setGradientOpacity(Math.min(newOpacity, 0.8));
+            }
+
+            // 스크롤 버튼 표시/숨김 관리
+            manageScrollButtonVisibility();
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
 
     // 🔥 하트 클릭 핸들러
     const handleLikeUpdate = (isLiked, reviewId, newLikeCount) => {
@@ -697,6 +808,8 @@ const BookDetailPage = () => {
         loadBookDetail();
     }, [bookId, gNo, isbn, bookFromState]);
 
+
+
     // 🔥 수정: 스크롤 이벤트 핸들러를 별도 useEffect로 분리
     useEffect(() => {
         const handleScroll = () => {
@@ -722,6 +835,7 @@ const BookDetailPage = () => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
 
     // 로딩 상태 처리
     if (loading) {
@@ -864,6 +978,16 @@ const BookDetailPage = () => {
                     </div>
                 </section>
             </section>
+            <div
+                className={styles["scrollDownButton"]}
+                onClick={handleScrollDown}
+                style={{ pointerEvents: 'auto', cursor: 'pointer' }}>
+                <span ></span>
+            </div>
+            <div className={styles["bottomFade"]}>
+                <div className={styles["stars"]}>
+                </div>
+            </div>
         </div>
     );
 };

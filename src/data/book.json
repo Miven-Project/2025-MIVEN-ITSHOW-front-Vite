@@ -1,62 +1,42 @@
 [
   {
     "id": 1,
-    "title": "이어달리기",
-    "author": "조우리",
     "image": "/assets/images/Book_img2.png"
   },
   {
     "id": 2,
-    "title": "그대는 나의 여름이 되세요",
-    "author": "시덕준",
     "image": "/assets/images/Book_img3.png"
   },
   {
     "id": 3,
-    "title": "몽상과 착란",
-    "author": "조지 오웰",
     "image": "/assets/images/Book_img4.png"
   },
   {
     "id": 4,
-    "title": "분열된 자기",
-    "author": "한강",
     "image": "/assets/images/Book_img5.png"
   },
   {
     "id": 5,
-    "title": "여름비",
-    "author": "한강",
     "image": "/assets/images/Book_img6.png"
   },
   {
     "id": 6,
-    "title": "우리가 함께 달릴 때",
-    "author": "한강",
     "image": "/assets/images/Book_img7.png"
   },
   {
     "id": 7,
-    "title": "우리는 이 별을 떠나기로 했어",
-    "author": "한강",
     "image": "/assets/images/Book_img8.png"
   },
   {
     "id": 8,
-    "title": "채식주의자",
-    "author": "한강",
     "image": "/assets/images/Book_img9.png"
   },
   {
     "id": 9,
-    "title": "정체",
-    "author": "한강",
     "image": "/assets/images/Book_img10.png"
   },
   {
     "id": 10,
-    "title": "분열된 자기",
-    "author": "한강",
     "image": "/assets/images/Book_img5.png"
   }
 ]
