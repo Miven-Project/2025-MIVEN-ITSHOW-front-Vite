@@ -13,6 +13,7 @@ html {
   font-weight: 100;
   line-height: normal;
   z-index: 50;
+  width: 880px;
 }
 
 .book-detail {

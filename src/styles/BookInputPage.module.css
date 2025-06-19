@@ -453,11 +453,13 @@
 .page-title {
   position: absolute;
   height: 50px;
-  top: 115px;
-  left: 50%;
+  /* top: 115px;
+  left: 50%; */
+  top: 88px;
+  left: 52%;
   transform: translateX(-50%);
   color: white;
-  font-size: 40px;
+  font-size: 30px;
   font-family: Pretendard-Light;
   z-index: 100;
   /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);  */
