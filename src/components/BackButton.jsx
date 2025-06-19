@@ -12,8 +12,8 @@ const BackButton = ({ label = "책 다시 검색" }) => {
       <style>
         {`
           @font-face {
-            font-family: 'Pretendard-Light';
-            src: url(${PretendardLight}) format('truetype');
+            font-family: "Pretendard-Light";
+            src: url(${PretendardLight}) format("truetype");
             font-weight: 100;
             font-style: normal;
           }
@@ -24,7 +24,6 @@ const BackButton = ({ label = "책 다시 검색" }) => {
         style={{
           backgroundColor: "transparent",
           background: "none",
-          zIndex: "1",
           position: "fixed",
           zIndex: "1000",
           top: "4rem",
@@ -52,7 +51,7 @@ const BackButton = ({ label = "책 다시 검색" }) => {
             background: "none",
           }}
         >
-          <path d="M16 1L2 15L16 29" stroke="white" strokeWidth="1.7" fil="none" />
+          <path d="M16 1L2 15L16 29" stroke="white" strokeWidth="1.7"  />
         </svg>
         <span
           style={{

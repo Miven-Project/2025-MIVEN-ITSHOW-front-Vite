@@ -1,16 +1,17 @@
+import React from 'react';
 import MyPageHeader from "../components/MyPageHeader";
 import MyPageBody from "../components/MyPageBody";
-import { useCoverColor } from "../contexts/CoverColorContext";
 
-export default function MyPage() {
+
+const MyPage = () => {
   return (
     <div
       style={{
-        scrollbarWidth: "none", // Firefox
-        msOverflowStyle: "none", // IE/Edge
-        overflowX: "hidden", // 수평 스크롤 숨김
-        overflowY: "auto", // 수직 스크롤 허용
-        height: "100vh", // 전체 화면 높이로 설정해야 스크롤 작동
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+        overflowX: "hidden",
+        overflowY: "auto",
+        height: "100vh",
       }}
     >
       <style>{`
@@ -23,3 +24,4 @@ export default function MyPage() {
     </div>
   );
 }
+export default MyPage;

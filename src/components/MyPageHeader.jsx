@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import Nav from "../components/Nav";
+import Nav from "./Nav";
 import styles from "../styles/MyPageHeader.module.css";
 import { FiSettings, FiCamera } from "react-icons/fi";
 import { FaPlay, FaPause } from "react-icons/fa";
@@ -719,9 +719,8 @@ export default function MyPageHeader({ authToken = null }) {
 
           <div className={styles.lowerSection}>
             <div
-              className={`${styles.quoteBox} ${
-                isEditing ? styles.editingQuoteBox : ""
-              }`}
+              className={`${styles.quoteBox} ${isEditing ? styles.editingQuoteBox : ""
+                }`}
             >
               {isEditing ? (
                 <>

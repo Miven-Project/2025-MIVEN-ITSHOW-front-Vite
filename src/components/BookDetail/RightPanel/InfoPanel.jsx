@@ -7,7 +7,7 @@ const grayColor = "#B7C2C8";
 
 const InfoPanel = ({
   info = {},
-  writer = '',
+  writer = "",
   reading = {},
   reviewDetail = {},
   rating = 0,
@@ -21,15 +21,15 @@ const InfoPanel = ({
         <div className={styles["info-panel-blur"]}></div>
         <div className={styles["info-item"]}>
           <span className={styles["info-label"]}>ISBN</span>
-          <span className={styles["info-value"]}>{info.isbn || '-'}</span>
+          <span className={styles["info-value"]}>{info.isbn || "-"}</span>
         </div>
         <div className={styles["info-item"]}>
           <span className={styles["info-label"]}>발행일자</span>
-          <span className={styles["info-value"]}>{info.publishDate || '-'}</span>
+          <span className={styles["info-value"]}>{info.publishDate || "-"}</span>
         </div>
         <div className={styles["info-item"]}>
           <span className={styles["info-label"]}>출판사</span>
-          <span className={styles["info-value"]}>{info.publisher || '-'}</span>
+          <span className={styles["info-value"]}>{info.publisher || "-"}</span>
         </div>
       </div>
 
@@ -38,11 +38,11 @@ const InfoPanel = ({
         <div className={styles["info-panel-blur"]}></div>
         <div className={styles["info-item"]}>
           <span className={styles["info-label"]}>독서 기간</span>
-          <span className={styles["info-value"]}>{reading.period || '-'}</span>
+          <span className={styles["info-value"]}>{reading.period || "-"}</span>
         </div>
         <div className={styles["info-item"]}>
           <span className={styles["info-label"]}>작성자</span>
-          <span className={styles["info-value"]}>{writer || '-'}</span>
+          <span className={styles["info-value"]}>{writer || "-"}</span>
         </div>
       </div>
 
@@ -52,7 +52,7 @@ const InfoPanel = ({
         {/* <div className={styles["info-item"]}>{writer || '-'}님의 평점</div> */}
         <div className={styles["info-item"]}>
           <span className={styles["review-writer"]}>
-            {writer || '-'}님의 평점
+            {writer || "-"}님의 평점
           </span>
         </div>
         <div className={styles["info-item"]}>
@@ -69,7 +69,7 @@ const InfoPanel = ({
               <span className={styles["summary-rating-max"]}> / 5</span>
             </div>
             <span className={styles["review-comment"]}>
-              {reviewDetail.comment || reviewDetail.text || '아직 리뷰가 작성되지 않았습니다.'}
+              {reviewDetail.comment || reviewDetail.text || "아직 리뷰가 작성되지 않았습니다."}
             </span>
           </div>
         </div>
@@ -79,5 +79,6 @@ const InfoPanel = ({
     </div>
   );
 };
+
 
 export default InfoPanel;

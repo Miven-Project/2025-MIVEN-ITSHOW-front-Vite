@@ -11,7 +11,7 @@ const SelectBook = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const apiBaseUrl = "http://3.38.185.232:8080";
+  const apiBaseUrl = "https://leafin.mirim-it-show.site";
 
   const getAuthToken = () => {
     const token = localStorage.getItem("authToken");
@@ -142,7 +142,7 @@ const SelectBook = () => {
   if (isLoading) {
     return (
       <div className={styles.pageContainer}>
-        <Nav />
+        <Nav showBackGradient={true} />
         <div
           className={styles.loadingContainer}
           style={{

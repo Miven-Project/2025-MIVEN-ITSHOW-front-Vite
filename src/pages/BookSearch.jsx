@@ -5,9 +5,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import BookCard from "../components/BookCard";
 import booksData from "../data/book.json";
 import styles from "../styles/BookSearch.module.css";
-import BookDetail from "../pages/BookDetailPage";
-import { Nav } from "../pages/Home.jsx";
+import Nav from "../pages/Home.jsx";
 import { DebounceInput } from "react-debounce-input";
+import bookSearchImg from "../assets/images/Book Search.png";
+import bookSearchImg2 from "../assets/images/Book Search2.png";
+import searchIcon from "../assets/images/search-icon.png";
+
+const apiBaseUrl = "https://leafin.mirim-it-show.site";
 
 // 🔥 바뫐 부분 : 서버에서 책 존재 여부 확인하는 함수 추가
 // 바뫐 부분 : 제목으로 서버에 등록된 책인지 확인하여 gNo를 반환하는 함수
@@ -22,10 +26,7 @@ const checkBookExistsOnServer = async (bookTitle) => {
 
     const formattedToken = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
 
-    // 🔥 바뫐 부분 : API 엔드포인트를 /api/gallery/list로 수정
-    // 바뫐 부분 : keyword 파라미터에 공백 문자 대신 실제 검색어 전달
-    // 되야하는 동작 : 서버의 모든 책 목록을 가져와서 제목 비교
-    const response = await axios.get("http://3.38.185.232:8080/api/gallery/list", {
+    const response = await axios.get(`${apiBaseUrl}/api/gallery/list`, {
       params: { keyword: " " }, // 전체 목록을 가져오기 위해 공백 사용
       headers: { Authorization: formattedToken }
     });
@@ -61,26 +62,26 @@ const BookSearch = () => {
   const navigate = useNavigate();
   const from = location.state?.from || "nav"; // 기본은 nav
 
-  // 검색 기능 (Naver API)
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await axios.get("/naver-api/v1/search/book.json", {
+        // const encodedQuery = encodeURIComponent(query);
+        const response = await axios.get(`${apiBaseUrl}/api/naver/book?`, {
           params: { query },
-          headers: {
-            "X-Naver-Client-Id": "4gzXh5h99U1wXPgELMhm",
-            "X-Naver-Client-Secret": "eu8bsRmFqh",
-          },
         });
         setSearchResults(response.data.items);
+
+        console.log("검색 API 응답 데이터:", response.data); // ← 이거 꼭 찍어보세요
       } catch (error) {
         console.error("도서 검색 실패:", error);
       }
     };
+
     if (query.trim().length > 0) {
       fetchBooks();
     }
   }, [query]);
+
 
   const handleBookClick = async (book, index) => {
     console.log("클릭된 책:", book);
@@ -150,22 +151,24 @@ const BookSearch = () => {
 
       <div className={styles.booksearchContainer}>
         {/* 상단 이미지들 */}
+
         <img
-          src="/assets/images/Book Search.png"
+          src={bookSearchImg}
           alt="Book Search"
           className={styles.booksearchTopImage}
         />
         <img
-          src="/assets/images/Book Search2.png"
+          src={bookSearchImg2}
           alt="Book Search 2"
           className={styles.booksearchTopImage2}
         />
+
 
         {/* 검색창 */}
         <div className={styles.booksearchInputContainer}>
           <div className={styles.searchInputWrapper}>
             <img
-              src="/assets/images/search-icon.png"
+              src={searchIcon}
               alt="Search Icon"
               className={styles.searchIcon}
             />

@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import styles from "../styles/BookInputPage.module.css";
 import BackButton from "../components/BackButton";
 import bookIcon from "../assets/images/bookicon.png";
 
 const BookInputPage = () => {
   const { state } = useLocation();
-  const navigate = useNavigate();
   const book = state?.book;
 
   const [rating, setRating] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [userNickname, setUserNickname] = useState(""); // 사용자 닉네임 상태 추가
 
   const [formData, setFormData] = useState({
     isbn: book?.isbn || "",
@@ -26,7 +26,7 @@ const BookInputPage = () => {
   const [readingStartSelected, setReadingStartSelected] = useState(false);
   const [readingEndSelected, setReadingEndSelected] = useState(false);
 
-  const apiBaseUrl = "http://3.38.185.232:8080";
+  const apiBaseUrl = "https://leafin.mirim-it-show.site";
 
   // 🔥 동적 토큰 가져오기 함수
   const getAuthToken = () => {
@@ -39,6 +39,38 @@ const BookInputPage = () => {
     // Bearer 접두사가 없으면 추가
     return token.startsWith("Bearer ") ? token : `Bearer ${token}`;
   };
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const token = getAuthToken(); // Bearer 포함
+        const response = await fetch(`${apiBaseUrl}/api/profile`, {
+          headers: {
+            Authorization: token,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("프로필 정보를 가져오지 못했습니다.");
+        }
+
+        const result = await response.json();
+        const nickname = result.data?.name || "";
+
+        // 사용자 닉네임 상태 업데이트
+        setUserNickname(nickname);
+
+        setFormData((prev) => ({
+          ...prev,
+          writer: nickname,
+        }));
+      } catch (error) {
+        console.error("프로필 가져오기 실패:", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   // 순수 토큰 (Bearer 없이) 가져오기 함수
   const getPureToken = () => {
@@ -381,14 +413,16 @@ const BookInputPage = () => {
                     className={styles["info-input"]}
                     placeholder="작성자를 입력해주세요 (선택사항)"
                     value={formData.writer}
-                    onChange={(e) => handleInputChange("writer", e.target.value)}
+                    readOnly
                   />
                 </div>
               </div>
 
               <div className={styles["section-title"]}>리뷰</div>
               <div className={styles["rating-section"]}>
-                <div className={styles["rating-title"]}>이책바의 평점 *</div>
+                <div className={styles["rating-title"]}>
+                  {userNickname ? `${userNickname}의 평점` : "이책바의 평점"} *
+                </div>
                 <div className={styles["rating-stars"]}>
                   {[1, 2, 3, 4, 5].map((value) => (
                     <img
@@ -403,7 +437,7 @@ const BookInputPage = () => {
                   <span className={styles["rating-value"]}>{rating}</span>
                   <input
                     type="text"
-                    className={styles["info-input"]}
+                    className={styles["info-input-review"]}
                     placeholder="한줄 소감을 작성해 주세요"
                     value={formData.shortReview}
                     onChange={(e) =>

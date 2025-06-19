@@ -28,7 +28,7 @@ export default function MyPageBody({ authToken = null }) {
   };
 
   useEffect(() => {
-    const apiBaseUrl = "http://3.38.185.232:8080";
+    const apiBaseUrl = "https://leafin.mirim-it-show.site";
 
     const fetchData = async () => {
       try {
@@ -181,7 +181,7 @@ export default function MyPageBody({ authToken = null }) {
       {filteredData.length === 0 && searchQuery.trim() !== "" && (
         <div className={styles.noResultsContainer}>
           <div className={styles.noResultsText}>
-            '{searchQuery}'에 대한 검색 결과가 없습니다.
+            &#39;{searchQuery}&#39;에 대한 검색 결과가 없습니다.
           </div>
         </div>
       )}

@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../styles/BookDetailPage.module.css";
+// import styles from "../styles/BookDetailPage.module.css";
 
 const BookCover = ({ cover, className }) => {
     return (

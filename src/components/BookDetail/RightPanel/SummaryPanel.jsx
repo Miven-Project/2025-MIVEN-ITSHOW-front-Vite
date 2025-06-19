@@ -20,14 +20,14 @@ const CommentIcon = (props) => {
     )
 }
 const SummaryPanel = ({ summary = {}, rating = 0, review = {}, onDetailClick, BookIcon }) => {
-    const quotedHtml = `&quot;${summary.quote || ''}&quot;`;
+    const quotedHtml = `&quot;${summary.quote || ""}&quot;`;
     return (
         <div className="summary-panel">
             <div className={styles["summary-blur-block"]}></div>
-            <div className={styles['summary-quote-section']}>
-                <div dangerouslySetInnerHTML={{ __html: quotedHtml || '' }} className={styles["summary-quote"]} />
+            <div className={styles["summary-quote-section"]}>
+                <div dangerouslySetInnerHTML={{ __html: quotedHtml || "" }} className={styles["summary-quote"]} />
                 {/* <div className={styles["summary-quote"]}>"{summary.quote || ''}"</div> */}
-                <div className={styles['summary-row']}>
+                <div className={styles["summary-row"]}>
                     <div className={styles["summary-rating"]}>
                         {[...Array(MAX_RATING)].map((_, idx) => (
                             <BookIcon className={styles["book-icon"]}
@@ -60,11 +60,11 @@ const SummaryPanel = ({ summary = {}, rating = 0, review = {}, onDetailClick, Bo
                             {/* <div className={styles["summary-comment"]}>💬 {review.reviewCount || 0}</div> */}
                         </div>
                         <div className={styles["summary-writer"]}>작성자
-                            <span className={styles["summary-writer-data"]}>{review.writer || '-'}</span>
+                            <span className={styles["summary-writer-data"]}>{review.writer || "-"}</span>
                         </div>
                     </div>
 
-                    <div className={styles["summary-review-ment"]}>{review.reviewMent || ''}</div>
+                    <div className={styles["summary-review-ment"]}>{review.reviewMent || ""}</div>
                 </div>
             </div>
         </div>

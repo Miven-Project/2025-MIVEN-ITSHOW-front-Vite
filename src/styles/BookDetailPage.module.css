@@ -41,11 +41,9 @@ html {
   aspect-ratio: 460.22 / 671.00;
 }
 
-/* 리뷰 스크롤 페이지 */
 .review-header {
   display: flex;
   justify-content: center;
-  /* flex-direction: column; */
 }
 
 .review-book-cover {

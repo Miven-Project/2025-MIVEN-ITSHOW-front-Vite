@@ -31,7 +31,7 @@
   display: flex;
   align-items: flex-start;
   gap: 30px;
-  margin-top: 50px;
+  margin-top: -90px;
   position: relative;
   z-index: 10;
   margin-bottom: 35px;
@@ -302,12 +302,15 @@
   0% {
     transform: translateX(0);
   }
+
   20% {
     transform: translateX(0);
   }
+
   80% {
     transform: translateX(calc(-100% + 120px));
   }
+
   100% {
     transform: translateX(0);
   }
@@ -371,15 +374,13 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: conic-gradient(
-    from 98deg at 50% 50%,
-    #dc1717 0deg,
-    #ff4d00 77.4deg,
-    #ffec45 136.8deg,
-    #008d1f 199.8deg,
-    #2f4878 232.2deg,
-    #ad00ff 271.8deg
-  );
+  background: conic-gradient(from 98deg at 50% 50%,
+      #dc1717 0deg,
+      #ff4d00 77.4deg,
+      #ffec45 136.8deg,
+      #008d1f 199.8deg,
+      #2f4878 232.2deg,
+      #ad00ff 271.8deg);
 }
 
 .customColorInputWrapper {

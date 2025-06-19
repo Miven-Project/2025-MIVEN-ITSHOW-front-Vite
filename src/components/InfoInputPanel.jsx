@@ -8,7 +8,7 @@ const grayColor = "#B7C2C8";
 
 const InfoInputPanel = ({
   info = {},
-  writer = '',
+  writer = "",
   reading = {},
   reviewDetail = {},
   rating = 0,
@@ -25,7 +25,7 @@ const InfoInputPanel = ({
           <input
             className={`${styles["info-value-input"]}`}
             type="text"
-            value={info.isbn || ''}
+            value={info.isbn || ""}
             onChange={(e) => onInfoChange("isbn", e.target.value)}
           />
         </div>
@@ -34,7 +34,7 @@ const InfoInputPanel = ({
           <input
             className={styles["info-value-input"]}
             type="date"
-            value={info.publishDate || ''}
+            value={info.publishDate || ""}
             onChange={(e) => onInfoChange("publishDate", e.target.value)}
           />
         </div>
@@ -43,7 +43,7 @@ const InfoInputPanel = ({
           <input
             className={styles["info-value-input"]}
             type="number"
-            value={info.pages || ''}
+            value={info.pages || ""}
             onChange={(e) => onInfoChange("pages", e.target.value)}
           />
         </div>
@@ -57,7 +57,7 @@ const InfoInputPanel = ({
           <input
             className={`${styles["info-value-input"]}`}
             type="text"
-            value={reading.period || ''}
+            value={reading.period || ""}
             onChange={(e) => onInfoChange("readingPeriod", e.target.value)}
             placeholder="예: 2025.01.01 ~ 2025.01.10"
           />
@@ -67,7 +67,7 @@ const InfoInputPanel = ({
           <input
             className={`${styles["info-value-input"]}`}
             type="text"
-            value={writer || ''}
+            value={writer || ""}
             onChange={(e) => onInfoChange("writer", e.target.value)}
           />
         </div>
@@ -78,7 +78,7 @@ const InfoInputPanel = ({
         <div className={styles["info-panel-blur"]}></div>
         <div className={styles["info-item"]}>
           <span className={styles["review-writer"]}>
-            {writer || '-'}님의 평점
+            {writer || "-"}님의 평점
           </span>
         </div>
         <div className={styles["info-item"]}>
@@ -103,7 +103,7 @@ const InfoInputPanel = ({
             </div>
             <textarea
               className={styles["review-comment-input"]}
-              value={reviewDetail.comment || ''}
+              value={reviewDetail.comment || ""}
               onChange={(e) => onInfoChange("reviewComment", e.target.value)}
               placeholder="리뷰를 작성해주세요"
             />

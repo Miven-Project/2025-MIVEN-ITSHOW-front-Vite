@@ -12,6 +12,8 @@ function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  const apiBaseUrl = "https://leafin.mirim-it-show.site";
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -27,7 +29,7 @@ function Login() {
         passwd: form.password,
       });
 
-      const response = await fetch("http://3.38.185.232:8080/api/auth/login", {
+      const response = await fetch(`${apiBaseUrl}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -121,7 +123,7 @@ function Login() {
 
       if (isSuccess && finalToken) {
         alert("로그인 완료!");
-        navigate("/mypage"); // MyPage로 이동
+        navigate("/home"); // MyPage로 이동
       } else {
         console.warn("⚠️ 성공 조건을 만족하지 않음:");
         console.log("- data.code:", data.code);
@@ -138,25 +140,6 @@ function Login() {
 
   const goToSignUp = () => {
     navigate("/");
-  };
-
-  // 🔧 개발용 디버깅 함수들
-  const testTokenStorage = () => {
-    console.log("=== 토큰 저장 테스트 ===");
-    localStorage.setItem("authToken", "test-token-123");
-    console.log("저장된 토큰:", localStorage.getItem("authToken"));
-
-    // Bearer 접두사 추가 테스트
-    const token = localStorage.getItem("authToken");
-    const formattedToken = token.startsWith("Bearer ")
-      ? token
-      : `Bearer ${token}`;
-    console.log("Bearer 처리된 토큰:", formattedToken);
-  };
-
-  const clearStorage = () => {
-    localStorage.clear();
-    console.log("localStorage 전체 삭제됨");
   };
 
   return (

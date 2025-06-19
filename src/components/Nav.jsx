@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import styles from "../styles/Nav.module.css";
 import { useCoverColor } from "../contexts/CoverColorContext";
 import LeafInLogo from "../assets/images/LeafInLogo.svg"
-
+import LeafInLogoWhiteVer from "../assets/images/LeafInLogoWhiteVer.svg"
 export default function Nav({ showBackGradient = true }) {
+  console.log("✅ Nav 렌더됨"); // 이거 찍히는지 확인!
   const { coverColor } = useCoverColor();
   const navigate = useNavigate();
 
@@ -24,15 +25,18 @@ export default function Nav({ showBackGradient = true }) {
             : null
         }
       ></div>
-      <div className={styles.Allnavcontainer}>
-        <div className={styles.Logo}>
-          <p
-            className={styles.Clicklogo}
-            onClick={() => handleNavigation("/")}
-          >
-            <img src={LeafInLogo} alt="" className={styles.logo} style={{ cursor: "pointer" }} />
-          </p>
-        </div>
+      <div className={`${styles.Allnavcontainer} ${showBackGradient ? styles.gradientNav : ''}`}>
+        <p
+          className={styles.Clicklogo}
+          onClick={() => handleNavigation("/home")}
+        >
+          <img
+            src={showBackGradient ? LeafInLogoWhiteVer : LeafInLogo}
+            alt=""
+            className={styles.logo}
+          />
+        </p>
+
         <div className={styles.Navdetail}>
           <div className={styles.Navfirstline}>
             <p
@@ -42,6 +46,8 @@ export default function Nav({ showBackGradient = true }) {
             >
               Home
             </p>
+          </div>
+          <div className={styles.Navsecondline}>
             <p
               className={`${styles.Clickbookgallery} ${styles.Clicknav}`}
               onClick={() => handleNavigation("/bookgallery")}
@@ -50,14 +56,17 @@ export default function Nav({ showBackGradient = true }) {
               Book Gallery
             </p>
           </div>
-          <div className={styles.Navsecondline}>
+          <div className={styles.Navthirdline}>
             <p
               className={`${styles.Clickwrite} ${styles.Clicknav}`}
-              onClick={() => handleNavigation("/booksearch")}
+              onClick={() => handleNavigation("/selectbook")}
               style={{ cursor: "pointer" }}
             >
               Write
             </p>
+          </div>
+
+          <div className={styles.Navfourthline}>
             <p
               className={`${styles.Clickmypage} ${styles.Clicknav}`}
               onClick={() => handleNavigation("/mypage")}
@@ -66,11 +75,13 @@ export default function Nav({ showBackGradient = true }) {
               My Page
             </p>
           </div>
-          <p
-            className={`${styles.ClickbookSearch} ${styles.Clicknav}`}
-            onClick={() => navigate("/booksearch", { state: { from: "nav" } })}>
-            Book Search
-          </p>
+          <div className={styles.Navfifthline}>
+            <p
+              className={`${styles.ClickbookSearch} ${styles.Clicknav}`}
+              onClick={() => navigate("/booksearch", { state: { from: "nav" } })}>
+              Book Search
+            </p>
+          </div>
         </div>
       </div>
     </div>
