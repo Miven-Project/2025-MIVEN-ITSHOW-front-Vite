@@ -1,11 +1,14 @@
-import Nav from "../pages/Home.jsx";
+import Nav from "../components/Nav.jsx";
 import { useNavigate } from "react-router-dom";
-import "../styles/BookGallery.css";
+import styles from "../styles/BookGallery.module.css";
+
 import React, { useEffect, useState, useRef } from "react";
 import searchIcon from "/assets/images/search-icon.png";
+import NavStyles from "../styles/Nav.module.css";
 
 function BookGallery() {
-  const [setBookData] = useState([]);
+  const [bookData, setBookData] = useState([]);
+  console.log(bookData);
   const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [bookDetails, setBookDetails] = useState({}); // bookId를 key로 하는 상세 정보 저장소
@@ -167,7 +170,9 @@ function BookGallery() {
   if (isLoading) {
     return (
       <div>
-        <Nav />
+        <div className="">
+          <Nav showBackGradient={false} />
+        </div>
         <GalleryMark />
         <div
           className="loading-container"
@@ -183,10 +188,10 @@ function BookGallery() {
   if (error) {
     return (
       <div>
-        <Nav />
+        <Nav showBackGradient={false} />
         <GalleryMark />
         <div
-          className="error-container"
+          className={styles["error-container"]}
           style={{ textAlign: "center", padding: "50px", color: "#e74c3c" }}
         >
           <p>오류: {error}</p>
@@ -211,13 +216,14 @@ function BookGallery() {
 
   return (
     <div>
-      <Nav />
+      <Nav showBackGradient={false} />
+
       <GalleryMark />
-      <div className="search-bar-section">
-        <div className="search-input-container">
-          <img src={searchIcon} alt="Search" className="search-icon" />
+      <div className={styles["search-bar-section"]}>
+        <div className={styles["search-input-container"]}>
+          <img src={searchIcon} alt="Search" className={styles["search-icon"]} />
           <input
-            className="book-search-input"
+            className={styles["book-search-input"]}
             ref={searchInputRef}
             type="text"
             placeholder="책 제목을 입력해주세요"
@@ -227,10 +233,10 @@ function BookGallery() {
         </div>
       </div>
 
-      <div className="book-gallery-container">
+      <div className={styles["book-gallery-container"]}>
         {filteredBooks.length === 0 ? (
           <div
-            className="no-books-message"
+            className={styles["no-books-message"]}
             style={{ textAlign: "center", padding: "50px", color: "#999" }}
           >
             <p style={{ fontSize: "0.9rem", marginTop: "0.5rem", color: "#999" }}>
@@ -243,46 +249,50 @@ function BookGallery() {
             const quotedHtml = quote ? `&quot;${quote}&quot;` : "명언이 없습니다";
 
             return (
-              <div className="book-card" key={index}>
+              <div className={styles["book-card"]} key={index}>
                 <div
-                  className="book-cover-wrapper"
+                  className={styles["book-cover-wrapper"]}
                   onMouseEnter={() => fetchBookDetails(book.bookId)}
                 >
-                  <img src={book.cover} alt={book.title} className="book-cover" />
-                  <div className="hover-overlay">
+                  <img
+                    src={book.cover}
+                    alt={book.title}
+                    className={styles["book-cover"]}
+                  />
+                  <div className={styles["hover-overlay"]}>
                     {loadingDetails[book.bookId] ? (
                       <div>
-                        <p className="book-quote">상세 정보를 불러오는 중...</p>
+                        <p className={styles["book-quote"]}>상세 정보를 불러오는 중...</p>
                       </div>
                     ) : bookDetails[book.bookId] ? (
                       <div>
-                        <h3 className="detailed-title">
+                        <h3 className={styles["detailed-title"]}>
                           {bookDetails[book.bookId].title || book.title}
                         </h3>
                         {bookDetails[book.bookId].author && (
-                          <p className="book-author">
+                          <p className={styles["book-author"]}>
                             저자: {bookDetails[book.bookId].author}
                           </p>
                         )}
                         <p
-                          className="book-quote"
+                          className={styles["book-quote"]}
                           dangerouslySetInnerHTML={{ __html: quotedHtml }}
                         ></p>
                       </div>
                     ) : (
-                      <p className="book-quote">
+                      <p className={styles["book-quote"]}>
                         마우스를 올려 상세 정보를 확인하세요
                       </p>
                     )}
                     <button
-                      className="view-button"
+                      className={styles["view-button"]}
                       onClick={() => navigate(`/bookdetail/${book.bookId}`)}
                     >
                       View
                     </button>
                   </div>
                 </div>
-                <p className="book-title">{book.title}</p>
+                <p className={styles["book-title"]}>{book.title}</p>
               </div>
             );
           })
@@ -293,14 +303,14 @@ function BookGallery() {
 
   function GalleryMark() {
     return (
-      <div className="GalleryMark">
+      <div className={styles["GalleryMark"]}>
         <img
           className="GalleryMark-1"
           src="/assets/images/Gallery-1.png"
           alt="Gallery-1"
         />
         <img
-          className="GalleryMark-2"
+          className={styles["GalleryMark-2"]}
           src="/assets/images/Gallery.png"
           alt="Gallery-2"
         />
