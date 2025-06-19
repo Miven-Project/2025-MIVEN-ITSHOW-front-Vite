@@ -15,7 +15,6 @@
   row-gap: 10px;
   margin-left: 70px;
   margin-top: 55px;
-  /* 위로 올리기 */
   position: absolute;
   top: 0;
   left: 0;
@@ -36,19 +35,14 @@
   row-gap: 10px;
 }
 
-.Clicknav {
-  color: #98a9b2;
-  font-family: Pretendard;
-  font-size: 21px;
-  font-weight: 200;
-  cursor: pointer;
+.profile-overlap-safe {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.Navfirstline,
-.Navsecondline {
-  display: flex;
-  column-gap: 15px;
-}
 
 /*서치바*/
 .SearchBar {
