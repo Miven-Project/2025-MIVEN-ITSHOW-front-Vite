@@ -13,27 +13,9 @@
   flex-direction: column;
   position: relative;
   row-gap: 10px;
-  margin-left: 50px;
-  margin-top: -370px;
+  margin-left: 70px;
+  margin-top: -363px;
 }
-
-/* 
-
-.Allnavcontainer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 0.8rem 2rem;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-} */
-
 
 .Gradation {
   width: 100vw;
@@ -54,9 +36,7 @@
 .profile-container {
   position: relative;
   z-index: 5;
-  /* 네비게이션보다 낮은 z-index */
   margin-top: -80px;
-  /* 프로필을 더 위로 올림 */
 }
 
 /* 네비게이션과 겹치는 프로필 요소들에 대한 특별한 스타일링 */
@@ -75,12 +55,6 @@
   font-weight: 200;
   cursor: pointer;
 }
-
-/* 
-.gradientNav {
-  background: rgba(255, 255, 255, 0.1);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-} */
 
 .gradientNav .Clicknav {
   color: white;
@@ -107,7 +81,8 @@
   margin: 0;
   font-size: 0.95rem;
   font-weight: 400;
-  color: #15719E;
+  /* color: #15719E; */
+  color: #98a9b2;
   cursor: pointer;
   position: relative;
   transition: color 0.3s ease;
@@ -122,12 +97,12 @@
   left: 0;
   width: 0;
   height: 2px;
-  background-color: #ffffff;
+  background-color: #15719E;
   transition: width 0.4s ease;
 }
 
 .Clicknav:hover {
-  color: #4A90E2;
+  color: #15719E;
 }
 
 .Clicknav:hover::after {

@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Homestyles from "../styles/Home.module.css";
-import Navstyles from "../styles/Nav.module.css"; // 오타 수정: Navtyles -> Navstyles
+import styles from "../styles/Nav.module.css"; // 오타 수정: Navtyles -> Navstyles
 import HomeImgContainer from "../assets/images/HomeImgContainer.png";
 import LeafInLogo from "../assets/images/LeafInLogo.svg"
 
@@ -37,48 +37,53 @@ export function Nav() {
             style={{ cursor: 'pointer' }}
           />
         </div>
-        <div className={Navstyles.Navdetail}>
-          <div className={Navstyles.Navfirstline}>
-            <p
-              className={`${Navstyles.Clickhome} ${Navstyles.Clicknav}`}
-              onClick={() => navigate("/Home")}
-            >
-              Home
-            </p>
-          </div>
-          <div className={Navstyles.Navsecondline}>
-            <p
-              className={`${Navstyles.Clickbookgallery} ${Navstyles.Clicknav}`}
-              onClick={() => navigate("/BookGallery")}
-            >
-              BookGallery
-            </p>
-          </div>
-          <div className={Navstyles.Navthirdline}>
-            <p
-              className={`${Navstyles.Clickwrite} ${Navstyles.Clicknav}`}
-              onClick={() => navigate("/selectbook")}
-            >
-              Write
-            </p>
-          </div>
-          <div className={Navstyles.Navfourthline}>
-            <p
-              className={`${Navstyles.Clickmypage} ${Navstyles.Clicknav}`}
-              onClick={() => navigate("/MyPage")}
-            >
-              MyPage
-            </p>
-          </div>
-          <div className={Navstyles.Navfifthline}>
-            <p
-              className={`${Navstyles.ClickbookSearch} ${Navstyles.Clicknav}`}
-              onClick={() => navigate("/booksearch", { state: { from: "nav" } })}
-            >
-              Book Search
-            </p>
-          </div>
-        </div>
+        
+                <div className={styles.Navdetail}>
+                  <div className={styles.Navfirstline}>
+                    <p
+                      className={`${styles.Clickhome} ${styles.Clicknav}`}
+                      onClick={() => navigate("/home")}
+                      style={{ cursor: "pointer" }}
+                    >
+                      Home
+                    </p>
+                  </div>
+                  <div className={styles.Navsecondline}>
+                    <p
+                      className={`${styles.Clickbookgallery} ${styles.Clicknav}`}
+                      onClick={() => navigate("/bookgallery")}
+                      style={{ cursor: "pointer" }}
+                    >
+                      Book Gallery
+                    </p>
+                  </div>
+                  <div className={styles.Navthirdline}>
+                    <p
+                      className={`${styles.Clickwrite} ${styles.Clicknav}`}
+                      onClick={() => navigate("/selectbook")}
+                      style={{ cursor: "pointer" }}
+                    >
+                      Write
+                    </p>
+                  </div>
+        
+                  <div className={styles.Navfourthline}>
+                    <p
+                      className={`${styles.Clickmypage} ${styles.Clicknav}`}
+                      onClick={() => navigate("/mypage")}
+                      style={{ cursor: "pointer" }}
+                    >
+                      My Page
+                    </p>
+                  </div>
+                  <div className={styles.Navfifthline}>
+                    <p
+                      className={`${styles.ClickbookSearch} ${styles.Clicknav}`}
+                      onClick={() => navigate("/booksearch", { state: { from: "nav" } })}>
+                      Book Search
+                    </p>
+                  </div>
+                </div>
       </div>
     </div>
   );
