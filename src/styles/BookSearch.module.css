@@ -26,6 +26,10 @@
 }
 
 /* 검색창 스타일 */
+.booksearchInput {
+  border-radius: 30px;
+}
+
 .booksearchInputContainer,
 .searchInputContainer {
   position: absolute;
@@ -36,11 +40,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 99999;
 }
 
 .searchInputWrapper {
   position: relative;
-  width: 32rem;
+  width: 59rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   bottom: 50px;
 }
 
@@ -61,7 +69,7 @@
   text-align: center;
   width: 100%;
   padding: 1rem 1.5rem 1rem 3rem;
-  border-radius: 8px;
+  border-radius: 30px;
   border: 2px solid #ffffff;
   background-color: rgba(255, 255, 255, 0.721);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -85,17 +93,17 @@
 }
 
 .bookGrid {
-  top: -86px;
+  top: 51px;
 }
 
 .resultsGrid {
   top: -36px;
 }
 
+
 .bookGrid,
 .resultsGrid {
   position: relative;
-
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 1.5rem 1rem;
@@ -108,6 +116,10 @@
   justify-content: center !important;
   justify-items: center;
 }
+
+/* .notQueryBookImage {
+  gap: 2rem;
+} */
 
 .resultsGrid {
   position: relative;
@@ -189,7 +201,9 @@
   top: 380px;
   left: 0;
   right: 0;
+  z-index: 9999;
 }
+
 
 .dimOverlay {
   width: 1544px;
@@ -198,9 +212,11 @@
   z-index: 5;
   backdrop-filter: blur(2px);
   align-items: center;
+  box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.1);
   justify-content: center;
-  margin: 35px auto 0 113px;
+  margin: 176px auto 0 113px;
   margin-left: 190px;
+  z-index: 9999;
 }
 
 .Allnavcontainer,

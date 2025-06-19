@@ -1,33 +1,33 @@
 /* src/styles/BookCard.module.css */
 .card {
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  
-  .card:hover {
-    transform: scale(1.02);
-  }
-  
-  .bookImage {
-    width: 260px;
-    height: 390px;
-    border-radius: 8px;
-  }
-  
-  .bookInfo {
-    padding: 10px 0;
-  }
-  
-  .bookTitle {
-    font-size: 1.2rem;
-    font-weight: bold;
-    text-align: center;
-    color: #15719E;
-  }
-  
-  .bookAuthor {
-    font-size: 0.9rem;
-    color: #555;
-    text-align: center;
-  }
-  
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.bookImage {
+  width: 260px;
+  height: 390px;
+  border-radius: 8px;
+}
+
+.bookInfo {
+  padding: 10px 0;
+  width: 260px;
+}
+
+.bookTitle {
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  color: #15719E;
+}
+
+.bookAuthor {
+  font-size: 0.9rem;
+  color: #555;
+  text-align: center;
+}

@@ -51,3 +51,260 @@ html {
   justify-content: center;
   align-items: center;
 }
+
+/* 
+
+.scrollDownButton {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  z-index: 10000;
+  pointer-events: none;
+  animation: floatUpDown 2.5s ease-in-out infinite;
+}
+
+@keyframes floatUpDown {
+  0% {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  50% {
+    transform: translateX(-50%) translateY(-18px);
+  }
+
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.scrollDownButton span {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  margin-left: -12px;
+  border-left: 3px solid #ffffff;
+  border-bottom: 3px solid #ffffff;
+  transform: rotate(-45deg);
+  animation: arrowDown 1.5s infinite;
+  box-sizing: border-box;
+  opacity: 0.8;
+  filter: drop-shadow(0 0 4px #fff8);
+}
+
+@keyframes scrollDownButton {
+  0% {
+    transform: rotate(-45deg) translateY(0);
+    opacity: 0.2;
+  }
+
+  50% {
+    opacity: 1;
+    transform: rotate(-45deg) translateY(10px) scale(1.1);
+  }
+
+  100% {
+    transform: rotate(-45deg) translateY(0);
+    opacity: 0.2;
+  }
+}
+
+.bottomFade {
+  position: fixed;
+  bottom: -50px;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  pointer-events: none;
+  background: linear-gradient(to top, rgb(218, 238, 248), rgba(255, 255, 255, 0));
+  z-index: 1000;
+} */
+
+/* 스크롤 다운 버튼 스타일 */
+.scrollDownButton {
+  position: fixed;
+  bottom: 60px;
+  right: 30px;
+  width: 84px;
+  height: 84px;
+  /* background: rgba(255, 255, 255, 0.1); */
+  /* backdrop-filter: blur(10px); */
+  /* border: 2px solid rgba(255, 255, 255, 0.3); */
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  animation: pulse 2s infinite;
+}
+
+.scrollDownButton:hover {
+  /* background: rgba(255, 255, 255, 0.2); */
+  /* border-color: rgba(255, 255, 255, 0.5); */
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* 화살표 아이콘 */
+.scrollDownButton span {
+  width: 33px;
+  height: 33px;
+  border-right: 2px solid rgba(255, 255, 255, 0.8);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.8);
+  transform: rotate(45deg);
+  margin-bottom: 4px;
+  animation: bounce 1.5s infinite;
+}
+
+/* 펄스 애니메이션 */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3);
+  }
+
+  70% {
+    box-shadow: 0 0 0 20px rgba(255, 255, 255, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+/* 바운스 애니메이션 */
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: rotate(45deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(45deg) translateY(3px);
+  }
+}
+
+/* 하단 페이드 효과 */
+.bottomFade {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0.01) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.5) 100%);
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* 별 효과 */
+.stars {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(2px 2px at 160px 30px, rgba(255, 255, 255, 0.8), transparent);
+  background-repeat: repeat;
+  background-size: 200px 100px;
+  animation: twinkle 4s infinite;
+  opacity: 0.6;
+}
+
+/* 별 반짝이는 애니메이션 */
+@keyframes twinkle {
+
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.3;
+    transform: scale(1.1);
+  }
+}
+
+/* 대안 스타일들 */
+.scrollDownButton.minimal {
+  /* background: rgba(255, 255, 255, 0.5); */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 40px;
+  height: 40px;
+  animation: none;
+}
+
+.scrollDownButton.minimal:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.scrollDownButton.glassmorphism {
+  /* background: rgba(255, 255, 255, 0.08); */
+  backdrop-filter: blur(20px);
+  /* border: 1px solid rgba(255, 255, 255, 0.2); */
+  /* box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); */
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .scrollDownButton {
+    bottom: 40px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+  }
+
+  .scrollDownButton span {
+    width: 14px;
+    height: 14px;
+  }
+
+  .bottomFade {
+    height: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .scrollDownButton {
+    bottom: 30px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .scrollDownButton span {
+    width: 12px;
+    height: 12px;
+    border-width: 1.5px;
+  }
+}
+
+/* 스크롤 버튼 상태 관리 */
+.scrollDownButton.hidden {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+}
+
+.scrollDownButton.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* 부드러운 전환 효과 */
+.scrollDownButton {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
