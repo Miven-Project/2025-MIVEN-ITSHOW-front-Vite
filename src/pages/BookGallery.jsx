@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Nav } from "../pages/Home.jsx";
 import styles from "../styles/BookGallery.module.css";
 import searchIcon from "/assets/images/search-icon.png";
+import { DebounceInput } from "react-debounce-input";
 
 function BookGallery() {
   const [bookData, setBookData] = useState([]);
@@ -21,6 +22,11 @@ function BookGallery() {
 
   const apiBaseUrl = "https://leafin.mirim-it-show.site";
 
+  useEffect(() => {
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, []);
   // 🔥 동적 토큰 가져오기 함수
   const getAuthToken = () => {
     const token = localStorage.getItem("authToken");
@@ -219,17 +225,23 @@ function BookGallery() {
       <GalleryMark />
       <div className={styles["search-bar-section"]}>
         <div className={styles["search-input-container"]}>
-          <img src={searchIcon} alt="Search" className={styles["search-icon"]} />
-          <input
-            className={styles["book-search-input"]}
-            ref={searchInputRef}
+          <img
+            src={searchIcon}
+            alt="Search Icon"
+            className={styles["search-icon"]}
+          />
+          <DebounceInput
+            inputRef={searchInputRef}
             type="text"
-            placeholder="책 제목을 입력해주세요"
+            className={styles["book-search-input"]}
+            placeholder="책 제목을 입력해 주세요"
+            debounceTimeout={100}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
       </div>
+
 
       <div className={styles["book-gallery-container"]}>
         {filteredBooks.length === 0 ? (
