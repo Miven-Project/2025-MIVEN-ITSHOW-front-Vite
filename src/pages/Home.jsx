@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Homestyles from "../styles/Home.module.css";
-import NavStyles from "../styles/Nav.module.css";
+// import Navtyles from "../styles/Nav.module.css";
 import HomeImgContainer from "../assets/images/HomeImgContainer.png";
 import LeafInLogo from "../assets/images/LeafInLogo.svg"
 
@@ -34,34 +34,34 @@ export function Nav() {
         <div className={Homestyles.Navdetail}>
           <div className={Homestyles.Navfirstline}>
             <p
-              className={`${NavStyles.Clickhome} ${NavStyles.Clicknav}`}
+              className={`${Homestyles.Clickhome} ${Homestyles.Clicknav}`}
               onClick={() => navigate("/Home")}
             >
               Home
             </p>
             <p
-              className={`${NavStyles.Clickbookgallery} ${NavStyles.Clicknav}`}
+              className={`${Homestyles.Clickbookgallery} ${Homestyles.Clicknav}`}
               onClick={() => navigate("/BookGallery")}
             >
               BookGallery
             </p>
           </div>
-          <div className={NavStyles.Navsecondline}>
+          <div className={Homestyles.Navsecondline}>
             <p
-              className={`${NavStyles.Clickwrite} ${NavStyles.Clicknav}`}
+              className={`${Homestyles.Clickwrite} ${Homestyles.Clicknav}`}
               onClick={() => navigate("/selectbook")}
             >
               Write
             </p>
             <p
-              className={`${NavStyles.Clickmypage} ${NavStyles.Clicknav}`}
+              className={`${Homestyles.Clickmypage} ${Homestyles.Clicknav}`}
               onClick={() => navigate("/MyPage")}
             >
               MyPage
             </p>
           </div>
           <p
-            className={`${NavStyles.ClickbookSearch} ${NavStyles.Clicknav}`}
+            className={`${Homestyles.ClickbookSearch} ${Homestyles.Clicknav}`}
             onClick={() => navigate("/booksearch", { state: { from: "nav" } })}>
             Book Search
           </p>
