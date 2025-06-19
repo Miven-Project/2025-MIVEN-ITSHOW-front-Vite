@@ -1,0 +1,116 @@
+/* BookLoader.css */
+.book-loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+}
+
+.book-page {
+    transform-origin: bottom right;
+    opacity: 0.7;
+    animation: page-flip 1.2s infinite;
+}
+
+.book-page.left {
+    transform-origin: bottom left;
+}
+
+.book-page.right {
+    transform-origin: bottom right;
+}
+
+.book-page.page-0 {
+    animation-delay: 0s;
+}
+
+.book-page.page-1 {
+    animation-delay: 0.1s;
+}
+
+.book-page.page-2 {
+    animation-delay: 0.2s;
+}
+
+.book-page.page-3 {
+    animation-delay: 0.3s;
+}
+
+.book-page.page-4 {
+    animation-delay: 0.4s;
+}
+
+.book-page.page-5 {
+    animation-delay: 0.5s;
+}
+
+@keyframes page-flip {
+    0% {
+        transform: scaleY(1);
+        opacity: 0.7;
+    }
+
+    50% {
+        transform: scaleY(1.2);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scaleY(1);
+        opacity: 0.7;
+    }
+}
+
+/* 중앙 빛나는 효과 */
+.book-center circle {
+    animation: shine 1.2s infinite;
+}
+
+@keyframes shine {
+
+    0%,
+    100% {
+        opacity: 0.7;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* 중앙에서 빛이 퍼지는 듯한 애니메이션 */
+.center-ray {
+    animation: ray-blink 1.2s infinite;
+}
+
+.ray-0 {
+    animation-delay: 0.1s;
+}
+
+.ray-1 {
+    animation-delay: 0.2s;
+}
+
+.ray-2 {
+    animation-delay: 0.3s;
+}
+
+.ray-3 {
+    animation-delay: 0.4s;
+}
+
+.ray-4 {
+    animation-delay: 0.5s;
+}
+
+@keyframes ray-blink {
+
+    0%,
+    100% {
+        opacity: 0.2;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}

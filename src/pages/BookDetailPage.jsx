@@ -1,5 +1,5 @@
 // BookDetailPage.jsx - 에러 수정 버전
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { useParams, useLocation } from "react-router-dom";
@@ -978,11 +978,14 @@ const BookDetailPage = () => {
                     </div>
                 </section>
             </section>
-            <div
-                className={styles["scrollDownButton"]}
-                onClick={handleScrollDown}
-                style={{ pointerEvents: 'auto', cursor: 'pointer' }}>
-                <span ></span>
+            <div className={styles["scrollDownButtonWrapper"]}>
+                <div
+                    className={styles["scrollDownButton"]}
+                    onClick={handleScrollDown}
+                    style={{ pointerEvents: 'auto', cursor: 'pointer' }}>
+                    <span ></span>
+                </div>
+
             </div>
             <div className={styles["bottomFade"]}>
                 <div className={styles["stars"]}>
