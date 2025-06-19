@@ -65,7 +65,7 @@ const BookSearch = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await axios.get(`${apiBaseUrl}/api/naver/book`, {
+        const response = await axios.get(`${apiBaseUrl}/api/naver/book?query=`, {
           params: { query },
         });
         setSearchResults(response.data.items);
@@ -78,6 +78,7 @@ const BookSearch = () => {
       fetchBooks();
     }
   }, [query]);
+
 
   const handleBookClick = async (book, index) => {
     console.log("클릭된 책:", book);
